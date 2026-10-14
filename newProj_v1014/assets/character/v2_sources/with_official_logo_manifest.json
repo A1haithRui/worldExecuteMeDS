@@ -1,0 +1,114 @@
+{
+  "bust": {
+    "output": "deepseek_bust_v2_with_official_logo.png",
+    "source_png": "v2_sources/deepseek_official_whale.png",
+    "base": "v2_sources/deepseek_bust_v2_base.png",
+    "placement": {
+      "asset": "deepseek_official_whale.png",
+      "top_left_px": [
+        645,
+        846
+      ],
+      "size_px": [
+        88,
+        61
+      ],
+      "center_normalized": [
+        0.5134128166915052,
+        0.5143779342723005
+      ],
+      "uniform_scale": 0.176,
+      "rotation_degrees": 0,
+      "source_quad": null,
+      "independent_layer": "v2_sources/deepseek_bust_v2_official_logo_layer.png"
+    },
+    "canvas_size": [
+      1342,
+      1704
+    ]
+  },
+  "profile": {
+    "output": "deepseek_profile_v2_with_official_logo.png",
+    "source_png": "v2_sources/deepseek_official_whale.png",
+    "base": "v2_sources/deepseek_profile_v2_base.png",
+    "placement": {
+      "asset": "deepseek_official_whale.png",
+      "top_left_px": [
+        497,
+        893
+      ],
+      "size_px": [
+        76,
+        52
+      ],
+      "center_normalized": [
+        0.3986587183308495,
+        0.5393192488262911
+      ],
+      "uniform_scale": 0.152,
+      "rotation_degrees": 0,
+      "source_quad": null,
+      "independent_layer": "v2_sources/deepseek_profile_v2_official_logo_layer.png"
+    },
+    "canvas_size": [
+      1342,
+      1704
+    ]
+  },
+  "reach": {
+    "output": "deepseek_reach_v2_with_official_logo.png",
+    "source_png": "v2_sources/deepseek_official_whale.png",
+    "base": "v2_sources/deepseek_reach_v2_base.png",
+    "placement": {
+      "asset": "deepseek_official_whale.png",
+      "top_left_px": [
+        706,
+        834
+      ],
+      "size_px": [
+        88,
+        61
+      ],
+      "center_normalized": [
+        0.5588673621460507,
+        0.5073356807511737
+      ],
+      "uniform_scale": 0.176,
+      "rotation_degrees": 0,
+      "source_quad": null,
+      "independent_layer": "v2_sources/deepseek_reach_v2_official_logo_layer.png"
+    },
+    "canvas_size": [
+      1342,
+      1704
+    ]
+  },
+  "eye": {
+    "output": "deepseek_eye_v2_with_official_logo.png",
+    "source_png": "v2_sources/deepseek_official_whale.png",
+    "base": "v2_sources/deepseek_eye_v2_base.png",
+    "placement": {
+      "asset": "deepseek_official_whale.png",
+      "top_left_px": [
+        762,
+        1217
+      ],
+      "size_px": [
+        116,
+        80
+      ],
+      "center_normalized": [
+        0.543046357615894,
+        0.8324503311258278
+      ],
+      "uniform_scale": 0.232,
+      "rotation_degrees": 0,
+      "source_quad": null,
+      "independent_layer": "v2_sources/deepseek_eye_v2_official_logo_layer.png"
+    },
+    "canvas_size": [
+      1510,
+      1510
+    ]
+  }
+}

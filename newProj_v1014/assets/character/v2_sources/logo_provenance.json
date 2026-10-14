@@ -1,0 +1,8 @@
+{
+  "source_url": "https://github.com/deepseek-ai/DeepSeek-LLM/blob/main/images/logo.svg",
+  "original_sha256": "ac13bdc805820c46bf0faf053aa5d31f72b051794abfe1dd72a682f09de2966b",
+  "whale_extraction": "Last root-level path copied verbatim; wordmark omitted. Original path data and fill #4D6BFE retained. viewBox 0 0 60 41.3594. No nonuniform scale, warp, rotation, recolor or ornament added to official path.",
+  "guidelines_url": "https://github.com/deepseek-ai/awesome-deepseek-integration/blob/main/docs/_logo%20svg/guidelines.md",
+  "public_release_note": "The supplied guidelines condition brand asset use on actual model/API integration. Independent fan MV is not expressly covered. Official-logo compositions are review candidates pending usage clearance. Original-whale variants are the alternative. No official production or endorsement claimed.",
+  "original_whale": "Original geometric swim-whale artwork created for this project, distinct from DeepSeek official path."
+}

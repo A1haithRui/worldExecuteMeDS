@@ -1,0 +1,276 @@
+{
+  "official_svg_path_and_attributes_identical": true,
+  "independent_logo_layer_rebuild_pixel_exact": true,
+  "checks": [
+    {
+      "file": "deepseek_bust_v2.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1267218,
+      "partial_alpha_pixels": 1012452,
+      "bbox": [
+        128,
+        137,
+        1214,
+        1564
+      ],
+      "edge_max_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "safety_margin_px": [
+        128,
+        137,
+        128,
+        140
+      ],
+      "passed_alpha_and_margin": true
+    },
+    {
+      "file": "deepseek_bust_v2_original.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1267218,
+      "partial_alpha_pixels": 1013264,
+      "bbox": [
+        128,
+        137,
+        1214,
+        1564
+      ],
+      "edge_max_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "safety_margin_px": [
+        128,
+        137,
+        128,
+        140
+      ],
+      "passed_alpha_and_margin": true
+    },
+    {
+      "file": "deepseek_profile_v2.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1224802,
+      "partial_alpha_pixels": 1056081,
+      "bbox": [
+        128,
+        142,
+        1214,
+        1567
+      ],
+      "edge_max_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "safety_margin_px": [
+        128,
+        142,
+        128,
+        137
+      ],
+      "passed_alpha_and_margin": true
+    },
+    {
+      "file": "deepseek_profile_v2_original.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1224802,
+      "partial_alpha_pixels": 1056663,
+      "bbox": [
+        128,
+        142,
+        1214,
+        1567
+      ],
+      "edge_max_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "safety_margin_px": [
+        128,
+        142,
+        128,
+        137
+      ],
+      "passed_alpha_and_margin": true
+    },
+    {
+      "file": "deepseek_reach_v2.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1229309,
+      "partial_alpha_pixels": 1050843,
+      "bbox": [
+        128,
+        128,
+        1214,
+        1564
+      ],
+      "edge_max_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "safety_margin_px": [
+        128,
+        128,
+        128,
+        140
+      ],
+      "passed_alpha_and_margin": true
+    },
+    {
+      "file": "deepseek_reach_v2_original.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1229309,
+      "partial_alpha_pixels": 1051666,
+      "bbox": [
+        128,
+        128,
+        1214,
+        1564
+      ],
+      "edge_max_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "safety_margin_px": [
+        128,
+        128,
+        128,
+        140
+      ],
+      "passed_alpha_and_margin": true
+    },
+    {
+      "file": "deepseek_eye_v2.png",
+      "size": [
+        1510,
+        1510
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1189493,
+      "partial_alpha_pixels": 1082969,
+      "bbox": [
+        128,
+        145,
+        1369,
+        1368
+      ],
+      "edge_max_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "safety_margin_px": [
+        128,
+        145,
+        141,
+        142
+      ],
+      "passed_alpha_and_margin": true
+    },
+    {
+      "file": "deepseek_eye_v2_original.png",
+      "size": [
+        1510,
+        1510
+      ],
+      "mode": "RGBA",
+      "alpha_range": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1189493,
+      "partial_alpha_pixels": 1084391,
+      "bbox": [
+        128,
+        145,
+        1369,
+        1368
+      ],
+      "edge_max_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "safety_margin_px": [
+        128,
+        145,
+        141,
+        142
+      ],
+      "passed_alpha_and_margin": true
+    }
+  ],
+  "limitations": [
+    "Generated character body remains a single layer; anatomical rigging and hidden-parts reconstruction are not included.",
+    "Fine hair edge antialiasing and a few inherited cyan fringe pixels remain; inspect on MV background.",
+    "Posture-dependent clothing folds and hair lock shapes are not exact mechanical turnarounds."
+  ],
+  "v1_files_unchanged": true
+}

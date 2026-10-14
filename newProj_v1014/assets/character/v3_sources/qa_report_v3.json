@@ -1,0 +1,115 @@
+{
+  "tool": "built-in image_gen",
+  "headpiece": "Generated within each character image, with pose-dependent perspective and cel-shaded thickness; not a pixel-exact official vector layer.",
+  "padding_only": "128px transparent padding; generated alpha and all subject pixels preserved.",
+  "assets": [
+    {
+      "file": "deepseek_bust_v3.png",
+      "source": "deepseek_bust_v3_generated.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1254129,
+      "safety_margin_px": [
+        128,
+        128,
+        128,
+        138
+      ],
+      "passed_alpha_and_margin": true,
+      "headpiece_detail_native_bbox": [
+        625,
+        210,
+        870,
+        400
+      ]
+    },
+    {
+      "file": "deepseek_profile_v3.png",
+      "source": "deepseek_profile_v3_refined.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1210784,
+      "safety_margin_px": [
+        128,
+        139,
+        128,
+        138
+      ],
+      "passed_alpha_and_margin": true,
+      "headpiece_detail_native_bbox": [
+        410,
+        210,
+        650,
+        400
+      ]
+    },
+    {
+      "file": "deepseek_reach_v3.png",
+      "source": "deepseek_reach_v3_generated.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1222818,
+      "safety_margin_px": [
+        128,
+        128,
+        128,
+        137
+      ],
+      "passed_alpha_and_margin": true,
+      "headpiece_detail_native_bbox": [
+        640,
+        190,
+        860,
+        380
+      ]
+    },
+    {
+      "file": "deepseek_eye_v3.png",
+      "source": "deepseek_eye_v3_refined.png",
+      "size": [
+        1510,
+        1510
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "transparent_pixels": 1175925,
+      "safety_margin_px": [
+        128,
+        142,
+        141,
+        128
+      ],
+      "passed_alpha_and_margin": true,
+      "headpiece_detail_native_bbox": [
+        890,
+        295,
+        1170,
+        530
+      ]
+    }
+  ]
+}

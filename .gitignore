@@ -1,0 +1,31 @@
+# Locally supplied song and lyrics
+/MusicFile/
+
+# Upstream checkouts still contain their own Git metadata.
+# Remove these two lines after their .git directories are removed locally.
+/world-execute-me-dsh-pv/
+/world-execute-me-lyric-mv/
+
+*.mp3
+*.wav
+*.flac
+*.m4a
+*.ogg
+*.lrc
+
+# Local tools and generated output
+**/node_modules/
+**/.venv/
+**/__pycache__/
+**/out/
+**/export/
+*.pyc
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+# Local agent settings
+**/.claude/settings.local.json
