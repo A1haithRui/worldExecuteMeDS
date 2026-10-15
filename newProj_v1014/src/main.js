@@ -1,3 +1,5 @@
+import { renderP0 } from './p0.js';
+
 const $ = (id) => document.getElementById(id);
 const stage = $('stage');
 const audio = $('audio');
@@ -39,7 +41,10 @@ function render() {
   const img = images[scene.image];
   if (!character.src.endsWith(img)) character.src = img;
   if (!stage.classList.contains(`mode-${scene.mode}`)) stage.className = `stage mode-${scene.mode}`;
-  $('sceneName').textContent = scene.title;
+  const inP0 = t >= 59.223 && t < 74.045;
+  stage.classList.toggle('p0-draft', inP0);
+  const p0Scene = inP0 ? renderP0($('storyboardCanvas'), t, line?.text || '') : null;
+  $('sceneName').textContent = p0Scene || scene.title;
   $('systemText').textContent = scene.system;
   $('chatText').innerHTML = `${scene.chat}<span class="cursor">_</span>`;
   $('thinkingText').textContent = `${scene.title.split(' / ')[0].toLowerCase()} trace / ${Math.floor(t * 13).toString(16).padStart(4, '0')}`;
