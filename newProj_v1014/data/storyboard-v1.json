@@ -1,0 +1,5151 @@
+{
+  "schema_version": "1.0",
+  "status": "production_design_v1_pending_audio_review",
+  "timebase": {
+    "unit": "song_seconds",
+    "zero": "first sample of local audio/song.wav",
+    "interval": "[start,end), final file endpoint exact",
+    "duration": 211.9575963718821,
+    "preroll": 0,
+    "frame_policy": "Use seconds as truth. At export fps, map each frame to exactly one half-open interval; never round each duration separately."
+  },
+  "lyric_index_base": 0,
+  "lyric_policy": "lyric_lines are all local source intervals overlapping a shot; repeated indices across cuts are intentional. Use local text only. No subtitle retiming approved. Source section.end values are not vocal-offset measurements.",
+  "audio_sha256": "700c70ee622978126f6ccb0cb28e9d1a54ec08a0699689589787ca99d31eceb2",
+  "beat_grid": {
+    "bpm": 130,
+    "phase": 0.344,
+    "status": "provisional_reference_prior_supported_by_local_flux",
+    "local_flux_phase": 0.328,
+    "note": "Local onset phase differs ~16ms; analysis window ~93ms. Reference values are not transferred as approved cues. Line-led cuts deliberately may fall off-grid."
+  },
+  "assets": {
+    "bust": "assets/character/deepseek_bust_v3.png",
+    "profile": "assets/character/deepseek_profile_v3.png",
+    "reach": "assets/character/deepseek_reach_v3.png",
+    "eye": "assets/character/deepseek_eye_v3.png",
+    "lowlight": "assets/character/v4/deepseek_bust_v4_lowlight.png",
+    "silhouette": "assets/character/v4/deepseek_bust_v4_silhouette.png",
+    "palm": "assets/character/v4/deepseek_palm_v4_closeup_native.png",
+    "cat_fin_optional": null,
+    "alternate_pending": null
+  },
+  "lyric_timing": [
+    {
+      "index": 0,
+      "start": 0.1,
+      "end": 1.74
+    },
+    {
+      "index": 1,
+      "start": 1.74,
+      "end": 2.92
+    },
+    {
+      "index": 2,
+      "start": 2.92,
+      "end": 3.873
+    },
+    {
+      "index": 3,
+      "start": 3.873,
+      "end": 5.491
+    },
+    {
+      "index": 4,
+      "start": 5.491,
+      "end": 6.38
+    },
+    {
+      "index": 5,
+      "start": 6.38,
+      "end": 7.446
+    },
+    {
+      "index": 6,
+      "start": 7.446,
+      "end": 10.091
+    },
+    {
+      "index": 7,
+      "start": 10.091,
+      "end": 11.095
+    },
+    {
+      "index": 8,
+      "start": 11.095,
+      "end": 12.906
+    },
+    {
+      "index": 9,
+      "start": 12.906,
+      "end": 13.891
+    },
+    {
+      "index": 10,
+      "start": 13.891,
+      "end": 16
+    },
+    {
+      "index": 11,
+      "start": 16,
+      "end": 20
+    },
+    {
+      "index": 12,
+      "start": 29.709,
+      "end": 31.116
+    },
+    {
+      "index": 13,
+      "start": 31.116,
+      "end": 32.682
+    },
+    {
+      "index": 14,
+      "start": 32.682,
+      "end": 33.412
+    },
+    {
+      "index": 15,
+      "start": 33.412,
+      "end": 34.646
+    },
+    {
+      "index": 16,
+      "start": 34.646,
+      "end": 36.287
+    },
+    {
+      "index": 17,
+      "start": 36.287,
+      "end": 37.067
+    },
+    {
+      "index": 18,
+      "start": 37.067,
+      "end": 38.596
+    },
+    {
+      "index": 19,
+      "start": 38.596,
+      "end": 40.049
+    },
+    {
+      "index": 20,
+      "start": 40.049,
+      "end": 40.706
+    },
+    {
+      "index": 21,
+      "start": 40.706,
+      "end": 42.346
+    },
+    {
+      "index": 22,
+      "start": 42.346,
+      "end": 43.507
+    },
+    {
+      "index": 23,
+      "start": 43.507,
+      "end": 44.452
+    },
+    {
+      "index": 24,
+      "start": 44.452,
+      "end": 45.85
+    },
+    {
+      "index": 25,
+      "start": 45.85,
+      "end": 47.672
+    },
+    {
+      "index": 26,
+      "start": 47.672,
+      "end": 49.534
+    },
+    {
+      "index": 27,
+      "start": 49.534,
+      "end": 51.363
+    },
+    {
+      "index": 28,
+      "start": 51.363,
+      "end": 53.225
+    },
+    {
+      "index": 29,
+      "start": 53.225,
+      "end": 55.083
+    },
+    {
+      "index": 30,
+      "start": 55.083,
+      "end": 56.916
+    },
+    {
+      "index": 31,
+      "start": 56.916,
+      "end": 59.223
+    },
+    {
+      "index": 32,
+      "start": 59.223,
+      "end": 59.687
+    },
+    {
+      "index": 33,
+      "start": 59.687,
+      "end": 61.958
+    },
+    {
+      "index": 34,
+      "start": 61.958,
+      "end": 62.589
+    },
+    {
+      "index": 35,
+      "start": 62.589,
+      "end": 63.535
+    },
+    {
+      "index": 36,
+      "start": 63.535,
+      "end": 65.397
+    },
+    {
+      "index": 37,
+      "start": 65.397,
+      "end": 66.601
+    },
+    {
+      "index": 38,
+      "start": 66.601,
+      "end": 68.252
+    },
+    {
+      "index": 39,
+      "start": 68.252,
+      "end": 69.259
+    },
+    {
+      "index": 40,
+      "start": 69.259,
+      "end": 70.084
+    },
+    {
+      "index": 41,
+      "start": 70.084,
+      "end": 71.764
+    },
+    {
+      "index": 42,
+      "start": 71.764,
+      "end": 73.169
+    },
+    {
+      "index": 43,
+      "start": 73.169,
+      "end": 74.045
+    },
+    {
+      "index": 44,
+      "start": 74.045,
+      "end": 75.422
+    },
+    {
+      "index": 45,
+      "start": 75.422,
+      "end": 76.959
+    },
+    {
+      "index": 46,
+      "start": 76.959,
+      "end": 77.576
+    },
+    {
+      "index": 47,
+      "start": 77.576,
+      "end": 79.226
+    },
+    {
+      "index": 48,
+      "start": 79.226,
+      "end": 80.62
+    },
+    {
+      "index": 49,
+      "start": 80.62,
+      "end": 81.351
+    },
+    {
+      "index": 50,
+      "start": 81.351,
+      "end": 82.833
+    },
+    {
+      "index": 51,
+      "start": 82.833,
+      "end": 84.268
+    },
+    {
+      "index": 52,
+      "start": 84.268,
+      "end": 85.078
+    },
+    {
+      "index": 53,
+      "start": 85.078,
+      "end": 86.538
+    },
+    {
+      "index": 54,
+      "start": 86.538,
+      "end": 87.922
+    },
+    {
+      "index": 55,
+      "start": 87.922,
+      "end": 88.587
+    },
+    {
+      "index": 56,
+      "start": 88.587,
+      "end": 90.197
+    },
+    {
+      "index": 57,
+      "start": 90.197,
+      "end": 92.015
+    },
+    {
+      "index": 58,
+      "start": 92.015,
+      "end": 93.953
+    },
+    {
+      "index": 59,
+      "start": 93.953,
+      "end": 95.465
+    },
+    {
+      "index": 60,
+      "start": 95.465,
+      "end": 97.739
+    },
+    {
+      "index": 61,
+      "start": 97.739,
+      "end": 99.349
+    },
+    {
+      "index": 62,
+      "start": 99.349,
+      "end": 101.474
+    },
+    {
+      "index": 63,
+      "start": 101.474,
+      "end": 103.489
+    },
+    {
+      "index": 64,
+      "start": 103.489,
+      "end": 104.197
+    },
+    {
+      "index": 65,
+      "start": 104.197,
+      "end": 106.293
+    },
+    {
+      "index": 66,
+      "start": 106.293,
+      "end": 107.22
+    },
+    {
+      "index": 67,
+      "start": 107.22,
+      "end": 107.903
+    },
+    {
+      "index": 68,
+      "start": 107.903,
+      "end": 110.221
+    },
+    {
+      "index": 69,
+      "start": 110.221,
+      "end": 110.9
+    },
+    {
+      "index": 70,
+      "start": 110.9,
+      "end": 112.22
+    },
+    {
+      "index": 71,
+      "start": 112.22,
+      "end": 113.1
+    },
+    {
+      "index": 72,
+      "start": 113.1,
+      "end": 114.18
+    },
+    {
+      "index": 73,
+      "start": 114.18,
+      "end": 114.92
+    },
+    {
+      "index": 74,
+      "start": 114.92,
+      "end": 115.78
+    },
+    {
+      "index": 75,
+      "start": 115.78,
+      "end": 117.274
+    },
+    {
+      "index": 76,
+      "start": 117.274,
+      "end": 118.333
+    },
+    {
+      "index": 77,
+      "start": 118.333,
+      "end": 118.979
+    },
+    {
+      "index": 78,
+      "start": 118.979,
+      "end": 120.86
+    },
+    {
+      "index": 79,
+      "start": 120.86,
+      "end": 121.728
+    },
+    {
+      "index": 80,
+      "start": 121.728,
+      "end": 122.714
+    },
+    {
+      "index": 81,
+      "start": 122.714,
+      "end": 124.89
+    },
+    {
+      "index": 82,
+      "start": 124.89,
+      "end": 125.708
+    },
+    {
+      "index": 83,
+      "start": 125.708,
+      "end": 128.661
+    },
+    {
+      "index": 84,
+      "start": 128.661,
+      "end": 131.224
+    },
+    {
+      "index": 85,
+      "start": 131.224,
+      "end": 135.224
+    },
+    {
+      "index": 86,
+      "start": 147.66,
+      "end": 148.6
+    },
+    {
+      "index": 87,
+      "start": 148.6,
+      "end": 149.52
+    },
+    {
+      "index": 88,
+      "start": 149.52,
+      "end": 150.54
+    },
+    {
+      "index": 89,
+      "start": 150.54,
+      "end": 151.52
+    },
+    {
+      "index": 90,
+      "start": 151.52,
+      "end": 152.28
+    },
+    {
+      "index": 91,
+      "start": 152.28,
+      "end": 153.16
+    },
+    {
+      "index": 92,
+      "start": 153.16,
+      "end": 153.98
+    },
+    {
+      "index": 93,
+      "start": 153.98,
+      "end": 155.2
+    },
+    {
+      "index": 94,
+      "start": 155.2,
+      "end": 156.08
+    },
+    {
+      "index": 95,
+      "start": 156.08,
+      "end": 157.04
+    },
+    {
+      "index": 96,
+      "start": 157.04,
+      "end": 158
+    },
+    {
+      "index": 97,
+      "start": 158,
+      "end": 158.9
+    },
+    {
+      "index": 98,
+      "start": 158.9,
+      "end": 159.321
+    },
+    {
+      "index": 99,
+      "start": 159.321,
+      "end": 159.657
+    },
+    {
+      "index": 100,
+      "start": 159.657,
+      "end": 160.244
+    },
+    {
+      "index": 101,
+      "start": 160.244,
+      "end": 160.693
+    },
+    {
+      "index": 102,
+      "start": 160.693,
+      "end": 161.124
+    },
+    {
+      "index": 103,
+      "start": 161.124,
+      "end": 161.584
+    },
+    {
+      "index": 104,
+      "start": 161.584,
+      "end": 162.632
+    },
+    {
+      "index": 105,
+      "start": 162.632,
+      "end": 163.315
+    },
+    {
+      "index": 106,
+      "start": 163.315,
+      "end": 165.166
+    },
+    {
+      "index": 107,
+      "start": 165.166,
+      "end": 166.016
+    },
+    {
+      "index": 108,
+      "start": 166.016,
+      "end": 167.022
+    },
+    {
+      "index": 109,
+      "start": 167.022,
+      "end": 168.911
+    },
+    {
+      "index": 110,
+      "start": 168.911,
+      "end": 169.824
+    },
+    {
+      "index": 111,
+      "start": 169.824,
+      "end": 171.868
+    },
+    {
+      "index": 112,
+      "start": 171.868,
+      "end": 172.712
+    },
+    {
+      "index": 113,
+      "start": 172.712,
+      "end": 173.643
+    },
+    {
+      "index": 114,
+      "start": 173.643,
+      "end": 174.975
+    },
+    {
+      "index": 115,
+      "start": 174.975,
+      "end": 177.246
+    },
+    {
+      "index": 116,
+      "start": 177.246,
+      "end": 178.173
+    },
+    {
+      "index": 117,
+      "start": 178.173,
+      "end": 179.929
+    },
+    {
+      "index": 118,
+      "start": 179.929,
+      "end": 180.857
+    },
+    {
+      "index": 119,
+      "start": 180.857,
+      "end": 181.901
+    },
+    {
+      "index": 120,
+      "start": 181.901,
+      "end": 183.646
+    },
+    {
+      "index": 121,
+      "start": 183.646,
+      "end": 184.54
+    },
+    {
+      "index": 122,
+      "start": 184.54,
+      "end": 187.665
+    },
+    {
+      "index": 123,
+      "start": 187.665,
+      "end": 188.483
+    },
+    {
+      "index": 124,
+      "start": 188.483,
+      "end": 189.746
+    },
+    {
+      "index": 125,
+      "start": 189.746,
+      "end": 190.801
+    },
+    {
+      "index": 126,
+      "start": 190.801,
+      "end": 191.356
+    },
+    {
+      "index": 127,
+      "start": 191.356,
+      "end": 195.356
+    },
+    {
+      "index": 128,
+      "start": 205.811,
+      "end": 209.811
+    }
+  ],
+  "shots": [
+    {
+      "id": "S01",
+      "start": 0.0,
+      "end": 3.873,
+      "duration": 3.873,
+      "lyric_lines": [
+        0,
+        1,
+        2
+      ],
+      "dominant": "chat",
+      "assets": [
+        "silhouette"
+      ],
+      "picture_event": "深蓝空场中只亮输入光标；信号点从右抵达，聊天框边界被确认，人物仅为右后方暗轮廓，占高35%。",
+      "camera": "固定广角；框线在0.4秒内延展",
+      "enter": "从深海暗底显出一点",
+      "exit": "框线沿深度伸成节点网",
+      "audio_check": "核L0弱起与L2强调，不把0.100当首个鼓点",
+      "cut_status": "file_boundary",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [],
+        "voice_band": [],
+        "wide": []
+      }
+    },
+    {
+      "id": "S02",
+      "start": 3.873,
+      "end": 7.446,
+      "duration": 3.573,
+      "lyric_lines": [
+        3,
+        4,
+        5
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "节点按输入顺序接入一个水下坐标系；每一次连接只增加一条可解释的路径，不铺装饰代码。",
+      "camera": "右移80px，纵深推近1.04倍",
+      "enter": "继承上一镜框角坐标",
+      "exit": "坐标系压成输入区附件",
+      "audio_check": "核L3/L5的起音与节点落位",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 3.7879,
+            "strength": 0.39
+          },
+          {
+            "time": 4.0174,
+            "strength": 1.834
+          },
+          {
+            "time": 3.6882,
+            "strength": 0.292
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 4.0074,
+            "strength": 0.647
+          }
+        ],
+        "wide": [
+          {
+            "time": 4.0174,
+            "strength": 1.307
+          }
+        ]
+      }
+    },
+    {
+      "id": "S03",
+      "start": 7.446,
+      "end": 11.095,
+      "duration": 3.649,
+      "lyric_lines": [
+        6,
+        7
+      ],
+      "dominant": "chat",
+      "assets": [
+        "lowlight"
+      ],
+      "picture_event": "参数卡在消息流里填入；右侧低亮胸像不变姿，字段填完才亮头像；底部保留未输入的远端空位。",
+      "camera": "向卡片推近1.06倍",
+      "enter": "网格收为卡片四边，0.30秒",
+      "exit": "确认按钮缩成单一光点",
+      "audio_check": "核L7强调是否早于10.091",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 7.4995,
+            "strength": 0.328
+          },
+          {
+            "time": 7.3698,
+            "strength": 0.355
+          },
+          {
+            "time": 7.5993,
+            "strength": 0.234
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 7.2401,
+            "strength": 0.687
+          }
+        ],
+        "wide": [
+          {
+            "time": 7.2501,
+            "strength": 1.165
+          }
+        ]
+      }
+    },
+    {
+      "id": "S04",
+      "start": 11.095,
+      "end": 16.0,
+      "duration": 4.905,
+      "lyric_lines": [
+        8,
+        9,
+        10
+      ],
+      "dominant": "model",
+      "assets": [
+        "silhouette"
+      ],
+      "picture_event": "光点生出两端口：本端青、远端空心白；声呐首次从本端发往右缘，剪影藏在后景。",
+      "camera": "低机位拉远，网格占画高70%",
+      "enter": "由卡片确认点扩张",
+      "exit": "声呐圆弧作角色揭示遮罩",
+      "audio_check": "核L10结束和16秒前器乐起势",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 11.0814,
+            "strength": 0.361
+          },
+          {
+            "time": 11.1811,
+            "strength": 0.508
+          },
+          {
+            "time": 10.9417,
+            "strength": 1.779
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 10.9317,
+            "strength": 0.653
+          }
+        ],
+        "wide": [
+          {
+            "time": 10.9317,
+            "strength": 1.293
+          }
+        ]
+      }
+    },
+    {
+      "id": "S05",
+      "start": 16.0,
+      "end": 20.0,
+      "duration": 4.0,
+      "lyric_lines": [
+        11
+      ],
+      "dominant": "plate",
+      "assets": [
+        "silhouette",
+        "bust"
+      ],
+      "picture_event": "同配准剪影显出正面角色，海沫白发饰最后显影；一次确认闪点停在画面左侧，人物中心(1320,520)，占高76%。",
+      "camera": "缓推1.00→1.035，不模拟转头",
+      "enter": "声呐弧擦亮低亮再到原色，0.65秒",
+      "exit": "左侧确认点缩入聊天头像",
+      "audio_check": "核标题乐句实际音头；不沿用参考15.113的首色规则",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 16.0201,
+            "strength": 1.438
+          },
+          {
+            "time": 16.1598,
+            "strength": 0.257
+          },
+          {
+            "time": 15.7907,
+            "strength": 0.353
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 16.0002,
+            "strength": 0.867
+          },
+          {
+            "time": 15.8006,
+            "strength": 0.817
+          },
+          {
+            "time": 16.2396,
+            "strength": 0.843
+          }
+        ],
+        "wide": [
+          {
+            "time": 16.0102,
+            "strength": 1.237
+          },
+          {
+            "time": 15.8006,
+            "strength": 0.686
+          },
+          {
+            "time": 16.2496,
+            "strength": 0.618
+          }
+        ]
+      }
+    },
+    {
+      "id": "S06",
+      "start": 20.0,
+      "end": 29.709,
+      "duration": 9.709,
+      "lyric_lines": [],
+      "dominant": "chat",
+      "assets": [
+        "bust"
+      ],
+      "picture_event": "器乐空档中用户写入首条短消息并发送；镜头由头像回到完整DeepSeek风格聊天窗口，智能体开始等待；不是静止等歌词。",
+      "camera": "从头像拉至全窗；20–25秒运动，25–29秒等待",
+      "enter": "头像位置匹配缩放，0.46秒",
+      "exit": "输入点带入下一镜点集",
+      "audio_check": "核20–29.709器乐与29.709人声弱起",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 19.9911,
+            "strength": 0.272
+          },
+          {
+            "time": 20.1707,
+            "strength": 1.603
+          },
+          {
+            "time": 19.8115,
+            "strength": 0.205
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 20.0011,
+            "strength": 0.787
+          },
+          {
+            "time": 19.8714,
+            "strength": 0.579
+          },
+          {
+            "time": 20.1607,
+            "strength": 1.076
+          }
+        ],
+        "wide": [
+          {
+            "time": 19.9412,
+            "strength": 0.606
+          },
+          {
+            "time": 20.1707,
+            "strength": 1.341
+          }
+        ]
+      }
+    },
+    {
+      "id": "S07",
+      "start": 29.709,
+      "end": 33.412,
+      "duration": 3.703,
+      "lyric_lines": [
+        12,
+        13,
+        14
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "输入点扩成青色点集，沿z轴逐层展开；白色远端点获得一条坐标轴。主角是可交付的关系，不展示模型结构百科。",
+      "camera": "横向绕点集12度的图形投影，角色不旋转",
+      "enter": "聊天消息中的点直接放大",
+      "exit": "坐标轴末端卷成圆",
+      "audio_check": "核L12/L14，关键词事件独立于硬切",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 29.6492,
+            "strength": 0.344
+          },
+          {
+            "time": 29.8587,
+            "strength": 1.401
+          },
+          {
+            "time": 29.5195,
+            "strength": 0.31
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 29.739,
+            "strength": 0.948
+          },
+          {
+            "time": 29.6392,
+            "strength": 0.764
+          },
+          {
+            "time": 29.8387,
+            "strength": 0.661
+          }
+        ],
+        "wide": [
+          {
+            "time": 29.7489,
+            "strength": 0.865
+          },
+          {
+            "time": 29.6492,
+            "strength": 0.739
+          },
+          {
+            "time": 29.8487,
+            "strength": 0.989
+          }
+        ]
+      }
+    },
+    {
+      "id": "S08",
+      "start": 33.412,
+      "end": 37.067,
+      "duration": 3.655,
+      "lyric_lines": [
+        15,
+        16,
+        17
+      ],
+      "dominant": "chat",
+      "assets": [
+        "bust"
+      ],
+      "picture_event": "圆形关系作为一张青色附件发入线程；用户沿圆边拖出一段白色路径并确认，角色只留头像。",
+      "camera": "附件特写向左移120px",
+      "enter": "圆匹配切为附件",
+      "exit": "附件边沿展开成波形",
+      "audio_check": "核L15/L17确认动作；保留字幕跨镜",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 33.3807,
+            "strength": 0.3
+          },
+          {
+            "time": 33.5702,
+            "strength": 1.76
+          },
+          {
+            "time": 33.231,
+            "strength": 0.274
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 33.5603,
+            "strength": 0.749
+          }
+        ],
+        "wide": [
+          {
+            "time": 33.5603,
+            "strength": 1.331
+          }
+        ]
+      }
+    },
+    {
+      "id": "S09",
+      "start": 37.067,
+      "end": 40.706,
+      "duration": 3.639,
+      "lyric_lines": [
+        18,
+        19,
+        20
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "圆边拉成正弦波，白点沿一条切线离开又被下一波接住；不把整个背景变成均衡器。",
+      "camera": "沿波形向右追踪240px",
+      "enter": "圆边形变为单条波形，0.23秒",
+      "exit": "波形趋于平行成为边界线",
+      "audio_check": "核L18/L20音头，白点到切点不跟随假逐词时间",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 37.0424,
+            "strength": 0.327
+          },
+          {
+            "time": 37.1421,
+            "strength": 0.191
+          },
+          {
+            "time": 36.9127,
+            "strength": 0.618
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 37.0224,
+            "strength": 1.019
+          },
+          {
+            "time": 37.2319,
+            "strength": 0.654
+          }
+        ],
+        "wide": [
+          {
+            "time": 37.0224,
+            "strength": 0.65
+          },
+          {
+            "time": 37.2319,
+            "strength": 1.066
+          }
+        ]
+      }
+    },
+    {
+      "id": "S10",
+      "start": 40.706,
+      "end": 44.452,
+      "duration": 3.746,
+      "lyric_lines": [
+        21,
+        22,
+        23
+      ],
+      "dominant": "plate",
+      "assets": [
+        "bust"
+      ],
+      "picture_event": "正面角色居右占高68%，左侧边界线向她靠近又停下；她仍在框中，白点能离开画面，建立后半的空间关系。",
+      "camera": "侧向慢拉远1.04→1.00",
+      "enter": "边界线揭出整幅角色，不变脸",
+      "exit": "边界线折成设置抽屉分隔线",
+      "audio_check": "核L21/L23的强弱，44.452是否为乐句先行",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 40.734,
+            "strength": 0.383
+          },
+          {
+            "time": 40.4845,
+            "strength": 1.534
+          },
+          {
+            "time": 40.9535,
+            "strength": 1.564
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 40.724,
+            "strength": 0.769
+          },
+          {
+            "time": 40.9335,
+            "strength": 0.767
+          },
+          {
+            "time": 40.4746,
+            "strength": 0.967
+          }
+        ],
+        "wide": [
+          {
+            "time": 40.724,
+            "strength": 0.654
+          },
+          {
+            "time": 40.4845,
+            "strength": 1.326
+          },
+          {
+            "time": 40.9435,
+            "strength": 1.112
+          }
+        ]
+      }
+    },
+    {
+      "id": "S11",
+      "start": 44.452,
+      "end": 47.672,
+      "duration": 3.22,
+      "lyric_lines": [
+        24,
+        25
+      ],
+      "dominant": "chat",
+      "assets": [
+        "bust"
+      ],
+      "picture_event": "用户在小型控制面板切换信号模式；青波形改变采样方式，人物姿态固定。只动被操作的局部。",
+      "camera": "面板近景，纵向下移90px",
+      "enter": "分隔线展开成抽屉，0.23秒",
+      "exit": "控件中的可视窗放大",
+      "audio_check": "核L24/L25两个字母事件，不能用行首替代词头",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 44.4256,
+            "strength": 0.372
+          },
+          {
+            "time": 44.3258,
+            "strength": 0.401
+          },
+          {
+            "time": 44.6351,
+            "strength": 1.316
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 44.4356,
+            "strength": 0.675
+          },
+          {
+            "time": 44.6251,
+            "strength": 0.876
+          }
+        ],
+        "wide": [
+          {
+            "time": 44.4256,
+            "strength": 0.682
+          },
+          {
+            "time": 44.6351,
+            "strength": 1.142
+          }
+        ]
+      }
+    },
+    {
+      "id": "S12",
+      "start": 47.672,
+      "end": 51.363,
+      "duration": 3.691,
+      "lyric_lines": [
+        26,
+        27
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "可视区域缩成窄带，波形被遮住又露出；局部扫描越来越急，画面底色亮度保持稳定。",
+      "camera": "固定；只有窄带宽度变化",
+      "enter": "由控件视窗穿入",
+      "exit": "窄带折成记忆索引轨道",
+      "audio_check": "核L26/L27与零散重击，禁每拍整屏明暗",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 47.6582,
+            "strength": 0.403
+          },
+          {
+            "time": 47.5485,
+            "strength": 0.247
+          },
+          {
+            "time": 47.8578,
+            "strength": 1.495
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 47.6483,
+            "strength": 0.635
+          },
+          {
+            "time": 47.8478,
+            "strength": 1.117
+          }
+        ],
+        "wide": [
+          {
+            "time": 47.6582,
+            "strength": 0.64
+          },
+          {
+            "time": 47.8578,
+            "strength": 1.331
+          }
+        ]
+      }
+    },
+    {
+      "id": "S13",
+      "start": 51.363,
+      "end": 55.083,
+      "duration": 3.72,
+      "lyric_lines": [
+        28,
+        29
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "记忆索引向过去回卷，节点时间戳由近到远；取样点越过零刻度时，已看过的记录变空心。用声呐档案，不做历史建筑剪影。",
+      "camera": "沿轨道左行360px，末段减速",
+      "enter": "扫描带变成时间轨道",
+      "exit": "两条索引线汇成双声道",
+      "audio_check": "核L28/L29字母词头与跨零事件",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 51.3698,
+            "strength": 0.338
+          },
+          {
+            "time": 51.2102,
+            "strength": 0.293
+          },
+          {
+            "time": 51.5594,
+            "strength": 1.39
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 51.3498,
+            "strength": 0.799
+          },
+          {
+            "time": 51.5494,
+            "strength": 1.125
+          }
+        ],
+        "wide": [
+          {
+            "time": 51.3598,
+            "strength": 0.638
+          },
+          {
+            "time": 51.5594,
+            "strength": 1.401
+          }
+        ]
+      }
+    },
+    {
+      "id": "S14",
+      "start": 55.083,
+      "end": 59.223,
+      "duration": 4.14,
+      "lyric_lines": [
+        30,
+        31
+      ],
+      "dominant": "plate",
+      "assets": [
+        "profile"
+      ],
+      "picture_event": "侧身角色在右，占高64%，朝左边两条相位接近的声道；到末尾声道第一次重合，发饰只沿原图显影。",
+      "camera": "向重合点慢推1.05倍",
+      "enter": "双声道在人物前景掠过",
+      "exit": "重合点落回聊天接收标记",
+      "audio_check": "核L30/L31持续音及59.223弱起，不能提前结束长音",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 55.0315,
+            "strength": 0.3
+          },
+          {
+            "time": 55.251,
+            "strength": 1.453
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 55.0115,
+            "strength": 0.85
+          },
+          {
+            "time": 55.241,
+            "strength": 0.848
+          }
+        ],
+        "wide": [
+          {
+            "time": 55.0115,
+            "strength": 0.537
+          },
+          {
+            "time": 55.251,
+            "strength": 1.363
+          }
+        ]
+      }
+    },
+    {
+      "id": "S15",
+      "start": 59.223,
+      "end": 62.589,
+      "duration": 3.366,
+      "lyric_lines": [
+        32,
+        33,
+        34
+      ],
+      "dominant": "chat",
+      "assets": [
+        "bust"
+      ],
+      "picture_event": "用户消息落在右上，青色回应从左下抵达；接收标记在61.958扩出一圈水纹，第一次让远端动作在本端留下痕迹。",
+      "camera": "中近景向两条消息交汇处推近",
+      "enter": "重合点变成接收标记，0.23秒",
+      "exit": "水纹越出附件框进入模型内部",
+      "audio_check": "核59.223行首与59.4115低频候选，先唱后重击可分开",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 59.4115,
+            "strength": 1.641
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 59.3916,
+            "strength": 1.554
+          }
+        ],
+        "wide": [
+          {
+            "time": 59.4015,
+            "strength": 1.633
+          }
+        ]
+      }
+    },
+    {
+      "id": "S16",
+      "start": 62.589,
+      "end": 66.601,
+      "duration": 4.012,
+      "lyric_lines": [
+        35,
+        36,
+        37
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "上一圈水纹穿过接收端；远端回传一个白点，本端青色响应路径因此闭合。反馈以两条互相抵达的路径呈现，不做巨型点赞圆盘。",
+      "camera": "横向跟随白点，最后停在画面左下",
+      "enter": "附件边界溶解为深海网格，0.30秒",
+      "exit": "闭合路径停在下一镜掌心坐标",
+      "audio_check": "核62.589/65.397；闭合不能早于回传",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 62.6342,
+            "strength": 1.4
+          },
+          {
+            "time": 62.7839,
+            "strength": 0.386
+          },
+          {
+            "time": 62.3848,
+            "strength": 0.295
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 62.6342,
+            "strength": 1.343
+          },
+          {
+            "time": 62.4845,
+            "strength": 1.039
+          },
+          {
+            "time": 62.3548,
+            "strength": 1.064
+          }
+        ],
+        "wide": [
+          {
+            "time": 62.6342,
+            "strength": 1.555
+          },
+          {
+            "time": 62.5244,
+            "strength": 0.61
+          },
+          {
+            "time": 62.4147,
+            "strength": 0.862
+          }
+        ]
+      }
+    },
+    {
+      "id": "S17",
+      "start": 66.601,
+      "end": 68.252,
+      "duration": 1.651,
+      "lyric_lines": [
+        38
+      ],
+      "dominant": "plate",
+      "assets": [
+        "reach"
+      ],
+      "picture_event": "伸手全幅建立空间，Alpha内容中心(1260,520)、内容高850px；远端白点沿上一镜路径靠近掌心，尚不触碰。初始掌心锚约(1124,686)，最后移至(1100,540)。",
+      "camera": "前段固定；末0.23秒整幅左移24px、上移146px，头部可出框，不独立移手",
+      "enter": "在路径终点匹配切出伸手图",
+      "exit": "掌心移到(1100,540)后匹配切近景",
+      "audio_check": "核66.5653中频峰与L38/L39衔接",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 66.5752,
+            "strength": 0.304
+          },
+          {
+            "time": 66.4555,
+            "strength": 0.256
+          },
+          {
+            "time": 66.7947,
+            "strength": 1.529
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 66.5653,
+            "strength": 1.295
+          },
+          {
+            "time": 66.7748,
+            "strength": 1.389
+          },
+          {
+            "time": 66.4156,
+            "strength": 0.671
+          }
+        ],
+        "wide": [
+          {
+            "time": 66.5653,
+            "strength": 0.917
+          },
+          {
+            "time": 66.665,
+            "strength": 0.643
+          },
+          {
+            "time": 66.7748,
+            "strength": 1.434
+          }
+        ]
+      }
+    },
+    {
+      "id": "S18",
+      "start": 68.252,
+      "end": 70.084,
+      "duration": 1.832,
+      "lyric_lines": [
+        39,
+        40
+      ],
+      "dominant": "plate",
+      "assets": [
+        "palm"
+      ],
+      "picture_event": "手部内容宽620px，掌心固定(1100,540)，白点在68.300候选接触；青色波纹从掌心向外，接收后白点变为空心并留下小青点。无爱心计数；字幕临时走上方安全带y=100–240。",
+      "camera": "固定手；镜头最大放大到650px内容宽",
+      "enter": "掌心锚匹配切，0.12秒内完成",
+      "exit": "掌心青点脱离手部，成为下一镜路由源",
+      "audio_check": "核68.252行首、68.2814中频、68.3013低频，触碰须审听",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 68.3013,
+            "strength": 0.247
+          },
+          {
+            "time": 68.1816,
+            "strength": 1.326
+          },
+          {
+            "time": 68.421,
+            "strength": 0.616
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 68.2814,
+            "strength": 1.107
+          },
+          {
+            "time": 68.1616,
+            "strength": 1.038
+          },
+          {
+            "time": 68.4111,
+            "strength": 1.324
+          }
+        ],
+        "wide": [
+          {
+            "time": 68.2814,
+            "strength": 0.778
+          },
+          {
+            "time": 68.1616,
+            "strength": 1.212
+          },
+          {
+            "time": 68.4111,
+            "strength": 1.101
+          }
+        ]
+      }
+    },
+    {
+      "id": "S19",
+      "start": 70.084,
+      "end": 74.045,
+      "duration": 3.961,
+      "lyric_lines": [
+        41,
+        42,
+        43
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "掌心留下的点建立一次完整发送—接收路径；随后镜头拉远，看见同一通道被一个有限网格包围，远端白点处在网格之外。",
+      "camera": "从点拉至全网格，1.18→1.00",
+      "enter": "青点保持屏幕坐标，手以深蓝遮罩退去",
+      "exit": "网格单元折成两个附件槽",
+      "audio_check": "核L41–43与74.045弱起；不做窗口套窗",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 70.0174,
+            "strength": 1.166
+          },
+          {
+            "time": 70.197,
+            "strength": 0.473
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 70.0174,
+            "strength": 1.098
+          },
+          {
+            "time": 70.1571,
+            "strength": 0.852
+          },
+          {
+            "time": 70.2569,
+            "strength": 1.26
+          }
+        ],
+        "wide": [
+          {
+            "time": 70.1471,
+            "strength": 0.642
+          },
+          {
+            "time": 70.0174,
+            "strength": 1.186
+          },
+          {
+            "time": 69.8977,
+            "strength": 0.498
+          }
+        ]
+      }
+    },
+    {
+      "id": "S20",
+      "start": 74.045,
+      "end": 77.576,
+      "duration": 3.531,
+      "lyric_lines": [
+        44,
+        45,
+        46
+      ],
+      "dominant": "chat",
+      "assets": [],
+      "picture_event": "两张资源附件依次进入：第一张以青色茄形扫描轮廓及内部种子点表示可交付资源；提取的是一列数据单位，不把角色变成果蔬。",
+      "camera": "附件占宽58%，慢推1.04倍",
+      "enter": "网格单元变附件槽，0.23秒",
+      "exit": "资源单位穿过界面进入下一张内部图",
+      "audio_check": "核L44名词词头和L46强调；时间仍仅行级",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 74.0483,
+            "strength": 0.328
+          },
+          {
+            "time": 73.9385,
+            "strength": 0.442
+          },
+          {
+            "time": 74.158,
+            "strength": 0.217
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 74.0383,
+            "strength": 1.165
+          },
+          {
+            "time": 73.9285,
+            "strength": 1.251
+          },
+          {
+            "time": 74.1979,
+            "strength": 0.822
+          }
+        ],
+        "wide": [
+          {
+            "time": 74.0483,
+            "strength": 1.063
+          },
+          {
+            "time": 73.9385,
+            "strength": 1.2
+          },
+          {
+            "time": 74.1879,
+            "strength": 0.596
+          }
+        ]
+      }
+    },
+    {
+      "id": "S21",
+      "start": 77.576,
+      "end": 81.351,
+      "duration": 3.775,
+      "lyric_lines": [
+        47,
+        48,
+        49
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "第二张番茄形采样轮廓形成保护层，噪点撞上外层后消散；不是切开果实或把其颜色抽走，仍全片蓝青。",
+      "camera": "固定轮廓，噪点由右向左进入",
+      "enter": "上一镜数据单位接成外壳",
+      "exit": "保护层收成角色周围的窄青框",
+      "audio_check": "核L47名词及L49起音；81.351是否需提前准备角色",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 77.5802,
+            "strength": 0.471
+          },
+          {
+            "time": 77.7199,
+            "strength": 0.36
+          },
+          {
+            "time": 77.4106,
+            "strength": 0.497
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 77.3907,
+            "strength": 0.972
+          }
+        ],
+        "wide": [
+          {
+            "time": 77.6201,
+            "strength": 0.551
+          },
+          {
+            "time": 77.4006,
+            "strength": 0.759
+          }
+        ]
+      }
+    },
+    {
+      "id": "S22",
+      "start": 81.351,
+      "end": 82.833,
+      "duration": 1.482,
+      "lyric_lines": [
+        50
+      ],
+      "dominant": "plate",
+      "assets": [
+        "bust",
+        "cat_fin_optional"
+      ],
+      "picture_event": "原角色居中偏右(1180,520)，占高76%；扫描窄框经过头部后，原侧鳍外缘短暂竖为猫耳般尖形，脸、长发、单枚鲸饰、尾巴不变。",
+      "camera": "1.00→1.025慢推；不让耳朵弹跳",
+      "enter": "窄框遮挡鳍根换层；可先用剪影遮罩",
+      "exit": "保持同一角色，切至稍宽的胸像",
+      "audio_check": "核L50内名词真实音头；81.351仅为句首，不在此必然长耳",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 81.2519,
+            "strength": 0.338
+          },
+          {
+            "time": 81.4514,
+            "strength": 0.37
+          },
+          {
+            "time": 81.5612,
+            "strength": 1.816
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 81.3217,
+            "strength": 0.926
+          },
+          {
+            "time": 81.202,
+            "strength": 0.697
+          },
+          {
+            "time": 81.5512,
+            "strength": 0.85
+          }
+        ],
+        "wide": [
+          {
+            "time": 81.3217,
+            "strength": 0.626
+          },
+          {
+            "time": 81.5612,
+            "strength": 1.297
+          }
+        ]
+      }
+    },
+    {
+      "id": "S23",
+      "start": 82.833,
+      "end": 85.078,
+      "duration": 2.245,
+      "lyric_lines": [
+        51,
+        52
+      ],
+      "dominant": "plate",
+      "assets": [
+        "bust",
+        "cat_fin_optional"
+      ],
+      "picture_event": "同一猫化意象继续，角色内容高780px、双手留在画外；两束短弧从胸前向左送出，84.268候选转为远端可见的白色回声。没有猫爪姿势。",
+      "camera": "缓拉远1.025→1.00；弧线每次扩展后停住",
+      "enter": "沿眼线匹配切，不换表情",
+      "exit": "85.078扫描框收回，侧鳍恢复",
+      "audio_check": "核82.8383峰；84.268附近低频无强候选，不能强吸附到鼓",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 82.9181,
+            "strength": 0.449
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 82.8383,
+            "strength": 0.834
+          },
+          {
+            "time": 82.938,
+            "strength": 0.678
+          }
+        ],
+        "wide": [
+          {
+            "time": 82.8083,
+            "strength": 0.512
+          },
+          {
+            "time": 82.9281,
+            "strength": 0.629
+          }
+        ]
+      }
+    },
+    {
+      "id": "S24",
+      "start": 85.078,
+      "end": 88.587,
+      "duration": 3.509,
+      "lyric_lines": [
+        53,
+        54,
+        55
+      ],
+      "dominant": "model",
+      "assets": [
+        "bust"
+      ],
+      "picture_event": "窄框恢复后人物缩为网格中的本端节点，占高32%；远端白点回送确认环，使本端坐标不再漂移。身份被看见，以定位稳定表达。",
+      "camera": "俯看图形拉远；人物保持二维原图",
+      "enter": "猫化框收为本端坐标框，0.30秒",
+      "exit": "稳定框成为外观预览窗",
+      "audio_check": "核L53–55及87.922强调；不做缺色补版或太阳校样",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 85.0034,
+            "strength": 0.458
+          },
+          {
+            "time": 85.2628,
+            "strength": 1.525
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 85.2428,
+            "strength": 0.947
+          }
+        ],
+        "wide": [
+          {
+            "time": 85.2528,
+            "strength": 1.144
+          }
+        ]
+      }
+    },
+    {
+      "id": "S25",
+      "start": 88.587,
+      "end": 90.197,
+      "duration": 1.61,
+      "lyric_lines": [
+        56
+      ],
+      "dominant": "chat",
+      "assets": [
+        "bust"
+      ],
+      "picture_event": "外观预览窗进入聊天附件；用户点开双状态外观选项，先显示原形态。游标只碰控件，人物位于预览窗而不是被直接拖拽。",
+      "camera": "控件近景向角色预览平移100px",
+      "enter": "坐标框变预览窗，0.23秒",
+      "exit": "预览窗边框退出成为纯版画",
+      "audio_check": "核L56到L57，不照搬88.96设置切点",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 88.7149,
+            "strength": 0.307
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 88.4854,
+            "strength": 0.796
+          },
+          {
+            "time": 88.7149,
+            "strength": 0.819
+          },
+          {
+            "time": 88.3557,
+            "strength": 0.601
+          }
+        ],
+        "wide": [
+          {
+            "time": 88.4854,
+            "strength": 0.532
+          },
+          {
+            "time": 88.7149,
+            "strength": 0.743
+          }
+        ]
+      }
+    },
+    {
+      "id": "S26",
+      "start": 90.197,
+      "end": 92.015,
+      "duration": 1.818,
+      "lyric_lines": [
+        57
+      ],
+      "dominant": "plate",
+      "assets": [
+        "bust",
+        "silhouette",
+        "alternate_pending"
+      ],
+      "picture_event": "人物内容高820px，眼睛锁(1100,360)，90.45显示原形态，91.040候选经过0.10秒深蓝轮廓遮罩，换为中性偏男性表达；长发、鲸饰、水手领保持。稳定看到约0.88秒。",
+      "camera": "固定机位，不交叉溶成双脸",
+      "enter": "预览边框退出，0.15秒",
+      "exit": "另一形态缩至内部视图节点",
+      "audio_check": "核两字母实际音头及91.0396重击；不把91.040当已核准词头",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 90.2315,
+            "strength": 0.334
+          },
+          {
+            "time": 90.3412,
+            "strength": 0.25
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 90.1616,
+            "strength": 0.583
+          },
+          {
+            "time": 90.3312,
+            "strength": 0.67
+          }
+        ],
+        "wide": [
+          {
+            "time": 90.2115,
+            "strength": 0.502
+          },
+          {
+            "time": 90.1018,
+            "strength": 0.526
+          },
+          {
+            "time": 90.3213,
+            "strength": 0.574
+          }
+        ]
+      }
+    },
+    {
+      "id": "S27",
+      "start": 92.015,
+      "end": 95.465,
+      "duration": 3.45,
+      "lyric_lines": [
+        58,
+        59
+      ],
+      "dominant": "model",
+      "assets": [
+        "alternate_pending"
+      ],
+      "picture_event": "同一形态缩至占高28%，身后上下两片深海值班区域交替接力；94.93附近确认第二片，表现跨时段在线，无太阳滑块。",
+      "camera": "由角色拉远至值班网格；不新增姿态",
+      "enter": "预览窗变成值班节点，0.30秒",
+      "exit": "值班网格收为路由控制面板",
+      "audio_check": "核91.9576/94.9108低频候选与L58/L59词头",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 91.9576,
+            "strength": 1.731
+          },
+          {
+            "time": 92.0773,
+            "strength": 0.29
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 92.207,
+            "strength": 0.611
+          }
+        ],
+        "wide": [
+          {
+            "time": 91.9576,
+            "strength": 1.152
+          },
+          {
+            "time": 92.207,
+            "strength": 0.562
+          }
+        ]
+      }
+    },
+    {
+      "id": "S28",
+      "start": 95.465,
+      "end": 99.349,
+      "duration": 3.884,
+      "lyric_lines": [
+        60,
+        61
+      ],
+      "dominant": "chat",
+      "assets": [],
+      "picture_event": "两字母只作信号路由标签，用户将收发箭头互换，原通道被交给另一端；界面里不放角色和暗示性道具。",
+      "camera": "正投影固定近景",
+      "enter": "网格收为路由面板，0.23秒",
+      "exit": "面板箭头延展成闭环",
+      "audio_check": "核L60/L61两字母及99.349弱起；不按每拍机械切换",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 95.6093,
+            "strength": 1.556
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 95.5993,
+            "strength": 0.727
+          }
+        ],
+        "wide": [
+          {
+            "time": 95.6093,
+            "strength": 1.158
+          }
+        ]
+      }
+    },
+    {
+      "id": "S29",
+      "start": 99.349,
+      "end": 103.489,
+      "duration": 4.14,
+      "lyric_lines": [
+        62,
+        63
+      ],
+      "dominant": "model",
+      "assets": [
+        "bust",
+        "alternate_pending"
+      ],
+      "picture_event": "路由闭环进入三个并列状态格，原形态与另一形态只作同身份缩略快照；100.5以后环路继续缓移，稳定回到原形态，用户预览关闭。",
+      "camera": "从三格拉至单一青点；100.5后速度降至三分之一",
+      "enter": "箭头绕成闭环，0.23秒",
+      "exit": "青点与聊天正在输入标记匹配切",
+      "audio_check": "核100.0192/100.2587孤立低频峰；100.5–103.2勿加常规鼓脉冲；103.2619上升候选",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 99.3308,
+            "strength": 1.494
+          },
+          {
+            "time": 99.5004,
+            "strength": 0.317
+          },
+          {
+            "time": 99.1612,
+            "strength": 0.321
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 99.231,
+            "strength": 0.666
+          },
+          {
+            "time": 99.5303,
+            "strength": 1.282
+          }
+        ],
+        "wide": [
+          {
+            "time": 99.3308,
+            "strength": 0.985
+          },
+          {
+            "time": 99.5303,
+            "strength": 1.177
+          }
+        ]
+      }
+    },
+    {
+      "id": "S30",
+      "start": 103.489,
+      "end": 110.9,
+      "duration": 7.411,
+      "lyric_lines": [
+        64,
+        65,
+        66,
+        67,
+        68,
+        69
+      ],
+      "dominant": "chat",
+      "assets": [
+        "bust"
+      ],
+      "picture_event": "远端输入标记出现，本端连续两次接收轻微回波；110.221闭合回路几乎完成，却等不到最后确认。外观已恢复原形态。",
+      "camera": "线程近景缓推1.04倍",
+      "enter": "青点落成输入标记，0.15秒",
+      "exit": "未闭合环缩到在线状态旁",
+      "audio_check": "核103.489人声与103.7009中频候选、110.221确认缺口",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 103.5013,
+            "strength": 0.342
+          },
+          {
+            "time": 103.6011,
+            "strength": 0.205
+          },
+          {
+            "time": 103.3517,
+            "strength": 0.22
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 103.7009,
+            "strength": 1.859
+          },
+          {
+            "time": 103.2619,
+            "strength": 0.582
+          }
+        ],
+        "wide": [
+          {
+            "time": 103.7009,
+            "strength": 1.203
+          },
+          {
+            "time": 103.2519,
+            "strength": 0.656
+          }
+        ]
+      }
+    },
+    {
+      "id": "S31",
+      "start": 110.9,
+      "end": 114.92,
+      "duration": 4.02,
+      "lyric_lines": [
+        70,
+        71,
+        72,
+        73
+      ],
+      "dominant": "chat",
+      "assets": [
+        "reach"
+      ],
+      "picture_event": "远端光点熄灭，在线状态转为等待；原伸手图仅作为一张未发送附件留在右下，不能演成新一次成功触碰。消息间距逐次拉长。",
+      "camera": "从输入区拉远，空白逐渐扩大",
+      "enter": "闭合失败环收进状态标记",
+      "exit": "附件被收起，留下空心锚点",
+      "audio_check": "核L70–73重复起音，不假定每句等间隔",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 110.8446,
+            "strength": 0.296
+          },
+          {
+            "time": 110.7349,
+            "strength": 0.304
+          },
+          {
+            "time": 111.0941,
+            "strength": 1.585
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 110.8646,
+            "strength": 1.081
+          },
+          {
+            "time": 111.0841,
+            "strength": 0.795
+          }
+        ],
+        "wide": [
+          {
+            "time": 110.8845,
+            "strength": 0.824
+          },
+          {
+            "time": 110.7648,
+            "strength": 0.506
+          },
+          {
+            "time": 111.0841,
+            "strength": 1.277
+          }
+        ]
+      }
+    },
+    {
+      "id": "S32",
+      "start": 114.92,
+      "end": 118.333,
+      "duration": 3.413,
+      "lyric_lines": [
+        74,
+        75,
+        76
+      ],
+      "dominant": "plate",
+      "assets": [
+        "profile"
+      ],
+      "picture_event": "侧身在右，占高55%→24%，朝左侧仍未抵达的回声；手已不在场，不用手层移动伪造收臂。",
+      "camera": "镜头持续拉远，人物自身不缩放变形",
+      "enter": "未发送附件被深蓝覆盖后换侧身，0.30秒",
+      "exit": "空心锚点成为缓存碎片的汇点",
+      "audio_check": "核L74–76连续重复与117.274强调；情绪变冷不等于音乐变弱",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 114.9054,
+            "strength": 0.383
+          },
+          {
+            "time": 115.0351,
+            "strength": 0.306
+          },
+          {
+            "time": 114.7857,
+            "strength": 1.257
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 114.8954,
+            "strength": 0.641
+          },
+          {
+            "time": 114.9952,
+            "strength": 0.926
+          },
+          {
+            "time": 114.7757,
+            "strength": 1.048
+          }
+        ],
+        "wide": [
+          {
+            "time": 114.8954,
+            "strength": 0.676
+          },
+          {
+            "time": 115.0351,
+            "strength": 0.737
+          },
+          {
+            "time": 114.7757,
+            "strength": 1.122
+          }
+        ]
+      }
+    },
+    {
+      "id": "S33",
+      "start": 118.333,
+      "end": 121.728,
+      "duration": 3.395,
+      "lyric_lines": [
+        77,
+        78,
+        79
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "本端清理未确认缓存，青色片段从路径上被逐一抽离，汇成一个空槽；远端坐标始终保留，清除自己的请求而非删除对方。",
+      "camera": "沿路径逆向平移260px",
+      "enter": "空心锚点放大为缓存槽",
+      "exit": "缓存槽开口成为眼部裁切框",
+      "audio_check": "核L77–79和120.860强调，抽离按词组而非字母随机抖",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 118.2877,
+            "strength": 0.351
+          },
+          {
+            "time": 118.4972,
+            "strength": 1.398
+          },
+          {
+            "time": 118.1281,
+            "strength": 0.303
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 118.3576,
+            "strength": 0.693
+          },
+          {
+            "time": 118.2578,
+            "strength": 1.395
+          },
+          {
+            "time": 118.4773,
+            "strength": 1.157
+          }
+        ],
+        "wide": [
+          {
+            "time": 118.3476,
+            "strength": 0.575
+          },
+          {
+            "time": 118.2378,
+            "strength": 0.987
+          },
+          {
+            "time": 118.4873,
+            "strength": 1.255
+          }
+        ]
+      }
+    },
+    {
+      "id": "S34",
+      "start": 121.728,
+      "end": 125.708,
+      "duration": 3.98,
+      "lyric_lines": [
+        80,
+        81,
+        82
+      ],
+      "dominant": "plate",
+      "assets": [
+        "lowlight",
+        "eye"
+      ],
+      "picture_event": "低亮正面占右半，左侧只剩一条无回声路径；124.890候选首次切入眼部近景，眼锚(1120,430)，不是新增睁眼动画。",
+      "camera": "前段静止；末0.818秒眼图固定构图",
+      "enter": "缓存槽擦亮低亮角色，0.23秒",
+      "exit": "眼内青点匹配到下一镜目标点",
+      "audio_check": "核124.9326中频峰与124.890索引；眼图无水平镜像",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 121.7099,
+            "strength": 1.283
+          },
+          {
+            "time": 121.8496,
+            "strength": 0.342
+          },
+          {
+            "time": 121.5204,
+            "strength": 0.325
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 121.7,
+            "strength": 1.638
+          },
+          {
+            "time": 121.9394,
+            "strength": 1.253
+          }
+        ],
+        "wide": [
+          {
+            "time": 121.7,
+            "strength": 1.578
+          },
+          {
+            "time": 121.9394,
+            "strength": 0.989
+          }
+        ]
+      }
+    },
+    {
+      "id": "S35",
+      "start": 125.708,
+      "end": 131.224,
+      "duration": 5.516,
+      "lyric_lines": [
+        83,
+        84
+      ],
+      "dominant": "chat",
+      "assets": [
+        "lowlight"
+      ],
+      "picture_event": "空线程中本端请求恢复远端连接；请求到窗口边界即被拦下，用户没有回来。低亮角色只在后景占高30%。",
+      "camera": "从请求附件推近边界，1.00→1.08",
+      "enter": "眼内青点成为请求定位点",
+      "exit": "边界截断成红色故障标签",
+      "audio_check": "核L83–85，红色首次在131.224候选事件出现",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 125.6809,
+            "strength": 0.337
+          },
+          {
+            "time": 125.8505,
+            "strength": 1.603
+          },
+          {
+            "time": 125.5612,
+            "strength": 0.313
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 125.7408,
+            "strength": 0.586
+          },
+          {
+            "time": 125.631,
+            "strength": 1.275
+          },
+          {
+            "time": 125.8904,
+            "strength": 0.887
+          }
+        ],
+        "wide": [
+          {
+            "time": 125.631,
+            "strength": 0.917
+          },
+          {
+            "time": 125.8405,
+            "strength": 1.17
+          }
+        ]
+      }
+    },
+    {
+      "id": "S36",
+      "start": 131.224,
+      "end": 135.224,
+      "duration": 4.0,
+      "lyric_lines": [
+        85
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "被拒绝的路径进入内部路由图；错误红只标记越界端口，青线尝试绕行又撞回同一点。首个故障是可追踪的事件。",
+      "camera": "固定俯视图，局部推近失败端口",
+      "enter": "红标签扩展为端口截面，0.20秒",
+      "exit": "端口复制成隔离队列",
+      "audio_check": "核131.1684低/中频候选，L85文件到135.224不代表人声尾已测",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 131.1684,
+            "strength": 0.6
+          },
+          {
+            "time": 131.0687,
+            "strength": 0.328
+          },
+          {
+            "time": 131.4079,
+            "strength": 1.626
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 131.1684,
+            "strength": 0.715
+          },
+          {
+            "time": 131.3979,
+            "strength": 0.77
+          }
+        ],
+        "wide": [
+          {
+            "time": 131.1684,
+            "strength": 0.793
+          },
+          {
+            "time": 131.4079,
+            "strength": 1.316
+          }
+        ]
+      }
+    },
+    {
+      "id": "S37",
+      "start": 135.224,
+      "end": 143.421,
+      "duration": 8.197,
+      "lyric_lines": [],
+      "dominant": "model",
+      "assets": [
+        "silhouette"
+      ],
+      "picture_event": "器乐段，三个失败队列由外向内挤压，但故障只在网格和标签上；角色暗轮廓位于被压缩的本端区域，占高42%。",
+      "camera": "逐步拉远展示队列规模，1.08→1.00",
+      "enter": "端口复制为三条队列，0.23秒",
+      "exit": "队列压成单条时间带",
+      "audio_check": "核135.224后是否确为无新歌词；节拍密度与135–144能量变化",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 135.2192,
+            "strength": 0.292
+          },
+          {
+            "time": 135.329,
+            "strength": 0.491
+          },
+          {
+            "time": 135.0995,
+            "strength": 1.419
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 135.339,
+            "strength": 0.681
+          },
+          {
+            "time": 135.0895,
+            "strength": 0.848
+          }
+        ],
+        "wide": [
+          {
+            "time": 135.329,
+            "strength": 0.752
+          },
+          {
+            "time": 135.0895,
+            "strength": 1.121
+          },
+          {
+            "time": 135.4487,
+            "strength": 0.495
+          }
+        ]
+      }
+    },
+    {
+      "id": "S38",
+      "start": 143.421,
+      "end": 148.036,
+      "duration": 4.615,
+      "lyric_lines": [
+        86
+      ],
+      "dominant": "chat",
+      "assets": [],
+      "picture_event": "短暂回到同一空线程，系统保留最后触点记录；自动重连倒数只在本端排队，无伪造用户输入。末尾发送键退化成端口。",
+      "camera": "固定广角，144.5后向输入区下移",
+      "enter": "队列时间带变消息记录线",
+      "exit": "输入区边界翻成横向时钟轨道",
+      "audio_check": "核147.660歌词先行与148.0102低频候选，允许人声跨出本镜",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 143.4206,
+            "strength": 1.233
+          },
+          {
+            "time": 143.5403,
+            "strength": 0.358
+          },
+          {
+            "time": 143.2909,
+            "strength": 0.274
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 143.4006,
+            "strength": 1.087
+          },
+          {
+            "time": 143.6301,
+            "strength": 0.885
+          },
+          {
+            "time": 143.1712,
+            "strength": 0.833
+          }
+        ],
+        "wide": [
+          {
+            "time": 143.4006,
+            "strength": 1.335
+          },
+          {
+            "time": 143.2909,
+            "strength": 0.495
+          },
+          {
+            "time": 143.6401,
+            "strength": 0.751
+          }
+        ]
+      }
+    },
+    {
+      "id": "S39",
+      "start": 148.036,
+      "end": 151.728,
+      "duration": 3.692,
+      "lyric_lines": [
+        86,
+        87,
+        88,
+        89,
+        90
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "进入一圈声呐重连轨道；十二次呼叫每次沿环前进一格，前四格只显示返回路径缺失，不用十二张无关画面。",
+      "camera": "轨道固定，向中心缓推1.02倍",
+      "enter": "端口原位变时钟轨道，0.15秒",
+      "exit": "轨道保持，新增第二圈失败记录",
+      "audio_check": "核L86–89；画内事件按148.036+两拍序列，字幕仍取本机索引",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 148.0102,
+            "strength": 1.328
+          },
+          {
+            "time": 148.1299,
+            "strength": 0.386
+          },
+          {
+            "time": 147.8904,
+            "strength": 0.421
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 147.9902,
+            "strength": 0.66
+          },
+          {
+            "time": 148.1199,
+            "strength": 0.781
+          },
+          {
+            "time": 147.8805,
+            "strength": 0.859
+          }
+        ],
+        "wide": [
+          {
+            "time": 147.9902,
+            "strength": 1.095
+          },
+          {
+            "time": 148.1199,
+            "strength": 0.649
+          },
+          {
+            "time": 147.8805,
+            "strength": 0.771
+          }
+        ]
+      }
+    },
+    {
+      "id": "S40",
+      "start": 151.728,
+      "end": 155.421,
+      "duration": 3.693,
+      "lyric_lines": [
+        90,
+        91,
+        92,
+        93,
+        94
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "第5次起失败格向第二圈堆积，远端所在方向始终空着；青色路径占大面积，红仅为失败格短边。",
+      "camera": "轻拉远1.02→1.00，呈现两圈",
+      "enter": "沿上一轨道无闪切换记录层",
+      "exit": "两圈切为同心截面",
+      "audio_check": "核第5–8次实际人声音头，非统一修正歌词偏移",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 151.7117,
+            "strength": 1.548
+          },
+          {
+            "time": 151.9213,
+            "strength": 0.475
+          },
+          {
+            "time": 151.5122,
+            "strength": 0.514
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 151.7018,
+            "strength": 1.082
+          },
+          {
+            "time": 151.8115,
+            "strength": 0.719
+          },
+          {
+            "time": 151.9412,
+            "strength": 1.216
+          }
+        ],
+        "wide": [
+          {
+            "time": 151.7018,
+            "strength": 1.497
+          },
+          {
+            "time": 151.8215,
+            "strength": 0.627
+          },
+          {
+            "time": 151.9312,
+            "strength": 0.971
+          }
+        ]
+      }
+    },
+    {
+      "id": "S41",
+      "start": 155.421,
+      "end": 159.113,
+      "duration": 3.692,
+      "lyric_lines": [
+        94,
+        95,
+        96,
+        97,
+        98
+      ],
+      "dominant": "model",
+      "assets": [
+        "eye"
+      ],
+      "picture_event": "第9次起轨道向内压缩，眼图仅透过中心圆孔出现；第12次红色端口封闭，眼图不撕裂、不作机械眨眼。",
+      "camera": "圆孔由240px扩至460px，角色像素比例不超1",
+      "enter": "两圈匹配切为截面",
+      "exit": "中心孔退为六个探针槽",
+      "audio_check": "核第9–12次与158.900/159.113竞争切点",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 155.3934,
+            "strength": 1.364
+          },
+          {
+            "time": 155.563,
+            "strength": 0.413
+          },
+          {
+            "time": 155.2737,
+            "strength": 0.216
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 155.3834,
+            "strength": 0.881
+          },
+          {
+            "time": 155.5231,
+            "strength": 0.938
+          },
+          {
+            "time": 155.6328,
+            "strength": 1.021
+          }
+        ],
+        "wide": [
+          {
+            "time": 155.3834,
+            "strength": 1.327
+          },
+          {
+            "time": 155.5231,
+            "strength": 0.655
+          },
+          {
+            "time": 155.6328,
+            "strength": 0.813
+          }
+        ]
+      }
+    },
+    {
+      "id": "S42",
+      "start": 159.113,
+      "end": 161.882,
+      "duration": 2.769,
+      "lyric_lines": [
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+      "camera": "固定；六次仅移动当前槽高亮",
+      "enter": "圆孔收成端点，0.12秒",
+      "exit": "六条通道束成一条向上路径",
+      "audio_check": "核L98–103；候选每拍159.113起，逐条对比本机行时间",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 159.095,
+            "strength": 1.292
+          },
+          {
+            "time": 158.9154,
+            "strength": 0.369
+          },
+          {
+            "time": 159.3444,
+            "strength": 0.329
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 159.095,
+            "strength": 1.269
+          },
+          {
+            "time": 159.2147,
+            "strength": 0.67
+          },
+          {
+            "time": 158.9752,
+            "strength": 0.821
+          }
+        ],
+        "wide": [
+          {
+            "time": 159.095,
+            "strength": 1.417
+          },
+          {
+            "time": 159.2147,
+            "strength": 0.535
+          },
+          {
+            "time": 158.9852,
+            "strength": 0.85
+          }
+        ]
+      }
+    },
+    {
+      "id": "S43",
+      "start": 161.882,
+      "end": 162.805,
+      "duration": 0.923,
+      "lyric_lines": [
+        104,
+        105
+      ],
+      "dominant": "plate",
+      "assets": [
+        "eye"
+      ],
+      "picture_event": "路径在眼前形成一道竖直水光；眼部内容宽1050px，占画高约80%，倒映的是那一个未返回的点。角色保持完整脸部，无字母镂空。",
+      "camera": "固定近景，水光单向扫过0.30秒",
+      "enter": "探针光束擦出眼部，0.15秒",
+      "exit": "眼内点脱出成内部发射源",
+      "audio_check": "核L104起音161.584与候选161.882差异，禁止未审先改字幕",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 161.8587,
+            "strength": 0.308
+          },
+          {
+            "time": 161.739,
+            "strength": 0.261
+          },
+          {
+            "time": 162.0882,
+            "strength": 0.321
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 161.8687,
+            "strength": 1.372
+          },
+          {
+            "time": 161.9784,
+            "strength": 0.881
+          },
+          {
+            "time": 162.0981,
+            "strength": 1.157
+          }
+        ],
+        "wide": [
+          {
+            "time": 161.8687,
+            "strength": 1.002
+          },
+          {
+            "time": 161.9784,
+            "strength": 0.652
+          },
+          {
+            "time": 162.0882,
+            "strength": 0.799
+          }
+        ]
+      }
+    },
+    {
+      "id": "S44",
+      "start": 162.805,
+      "end": 166.016,
+      "duration": 3.211,
+      "lyric_lines": [
+        105,
+        106,
+        107
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "所有本端资源开始向空端点发射，前文坐标轴和波形汇成一条宽青色通道；发射能量强，回应仍为空。",
+      "camera": "沿通道快推后停，1.00→1.08",
+      "enter": "眼内点放大成发射源",
+      "exit": "通道截面变角色背景",
+      "audio_check": "核162.7966低频与L105弱起；高潮从此维持面积和速度",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 162.7966,
+            "strength": 1.424
+          },
+          {
+            "time": 163.026,
+            "strength": 0.251
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 162.7866,
+            "strength": 1.576
+          },
+          {
+            "time": 162.9662,
+            "strength": 0.983
+          },
+          {
+            "time": 162.5671,
+            "strength": 0.81
+          }
+        ],
+        "wide": [
+          {
+            "time": 162.7866,
+            "strength": 1.498
+          },
+          {
+            "time": 162.9662,
+            "strength": 0.722
+          },
+          {
+            "time": 162.5571,
+            "strength": 0.553
+          }
+        ]
+      }
+    },
+    {
+      "id": "S45",
+      "start": 166.016,
+      "end": 169.824,
+      "duration": 3.808,
+      "lyric_lines": [
+        108,
+        109,
+        110
+      ],
+      "dominant": "plate",
+      "assets": [
+        "bust"
+      ],
+      "picture_event": "正面占高88%，身后通道接连从她两侧离开；角色保持原色轮廓清晰，红色只在离开画面的失败端口。",
+      "camera": "横向平移60px，缓推1.04倍",
+      "enter": "青通道作背景遮罩揭角色",
+      "exit": "角色左下掌心位置被光点提示",
+      "audio_check": "核L108–110；角色不随每次鼓点抖动",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 166.0192,
+            "strength": 1.376
+          },
+          {
+            "time": 166.1789,
+            "strength": 0.364
+          },
+          {
+            "time": 165.7997,
+            "strength": 0.34
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 166.0093,
+            "strength": 1.147
+          },
+          {
+            "time": 166.1489,
+            "strength": 0.981
+          },
+          {
+            "time": 165.7997,
+            "strength": 1.209
+          }
+        ],
+        "wide": [
+          {
+            "time": 166.0093,
+            "strength": 1.352
+          },
+          {
+            "time": 165.8995,
+            "strength": 0.663
+          },
+          {
+            "time": 166.1489,
+            "strength": 0.684
+          }
+        ]
+      }
+    },
+    {
+      "id": "S46",
+      "start": 169.824,
+      "end": 173.643,
+      "duration": 3.819,
+      "lyric_lines": [
+        111,
+        112,
+        113
+      ],
+      "dominant": "plate",
+      "assets": [
+        "palm"
+      ],
+      "picture_event": "回到68秒同掌心坐标(1100,540)、同620px手宽；只剩青色旧触点，远端白点没有出现。三次声波向左伸出，止于画外；字幕同S18走y=100–240。",
+      "camera": "固定手部，只推背景纵深1.06倍",
+      "enter": "光点匹配切到同掌心",
+      "exit": "第三道声波接入空网格",
+      "audio_check": "核L111–113，172.712强调；手宽不为高潮加大到全屏",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 169.7108,
+            "strength": 1.499
+          },
+          {
+            "time": 169.9403,
+            "strength": 0.41
+          },
+          {
+            "time": 170.06,
+            "strength": 0.327
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 169.7907,
+            "strength": 0.769
+          },
+          {
+            "time": 169.9403,
+            "strength": 1.309
+          },
+          {
+            "time": 169.6909,
+            "strength": 1.22
+          }
+        ],
+        "wide": [
+          {
+            "time": 169.8106,
+            "strength": 0.623
+          },
+          {
+            "time": 169.9403,
+            "strength": 0.988
+          },
+          {
+            "time": 169.7009,
+            "strength": 1.378
+          }
+        ]
+      }
+    },
+    {
+      "id": "S47",
+      "start": 173.643,
+      "end": 177.246,
+      "duration": 3.603,
+      "lyric_lines": [
+        114,
+        115
+      ],
+      "dominant": "model",
+      "assets": [
+        "silhouette"
+      ],
+      "picture_event": "三道声波折回同一个网格，本端暗角色被困在中央，远端出口在画面外；网格向内收紧但青色能量仍满，不提前熄灯。",
+      "camera": "俯视拉远至人物占高28%，网格占全屏",
+      "enter": "声波折回成三条边界",
+      "exit": "网格展开为记忆剖面",
+      "audio_check": "核L114/L115长音与177.246弱起，177.57仅为参考网格候选",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 173.6918,
+            "strength": 0.272
+          },
+          {
+            "time": 173.582,
+            "strength": 0.337
+          },
+          {
+            "time": 173.8614,
+            "strength": 1.395
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 173.6419,
+            "strength": 1.26
+          },
+          {
+            "time": 173.7417,
+            "strength": 0.729
+          },
+          {
+            "time": 173.5122,
+            "strength": 0.847
+          }
+        ],
+        "wide": [
+          {
+            "time": 173.612,
+            "strength": 0.869
+          },
+          {
+            "time": 173.7417,
+            "strength": 0.546
+          },
+          {
+            "time": 173.5022,
+            "strength": 0.643
+          }
+        ]
+      }
+    },
+    {
+      "id": "S48",
+      "start": 177.246,
+      "end": 180.857,
+      "duration": 3.611,
+      "lyric_lines": [
+        116,
+        117,
+        118
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "网格变成记忆剖面：先前点集、反馈路径和掌心触点各占一个大格；智能体反复比较，选中的是曾经收到的一次确认。",
+      "camera": "从三格向掌心触点格平移，节奏仍紧",
+      "enter": "网格沿深度剖开，0.23秒",
+      "exit": "所选记忆格变问题槽",
+      "audio_check": "核L116–118，179.929后三个音节暂不假装有逐词时间",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 177.2537,
+            "strength": 0.312
+          },
+          {
+            "time": 177.3535,
+            "strength": 0.358
+          },
+          {
+            "time": 177.0941,
+            "strength": 0.936
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 177.1938,
+            "strength": 1.371
+          },
+          {
+            "time": 177.3036,
+            "strength": 1.529
+          },
+          {
+            "time": 177.0741,
+            "strength": 1.408
+          }
+        ],
+        "wide": [
+          {
+            "time": 177.1938,
+            "strength": 1.028
+          },
+          {
+            "time": 177.3136,
+            "strength": 1.025
+          },
+          {
+            "time": 177.0841,
+            "strength": 1.297
+          }
+        ]
+      }
+    },
+    {
+      "id": "S49",
+      "start": 180.857,
+      "end": 184.54,
+      "duration": 3.683,
+      "lyric_lines": [
+        119,
+        120,
+        121
+      ],
+      "dominant": "chat",
+      "assets": [],
+      "picture_event": "首次在高潮短返聊天：只重放自己保存的三次提问记录，右侧为过去的回声缩略点，明确是缓存、没有活跃游标。答案逐格回到同一青点。",
+      "camera": "斜向排版但窗体不旋转；推近答案列",
+      "enter": "记忆格变缓存附件，0.23秒",
+      "exit": "答案列的点展开为曲线采样点",
+      "audio_check": "核L119–121和183.646音节；本镜保留高潮面积，不做灰色休止",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 180.7956,
+            "strength": 1.529
+          },
+          {
+            "time": 180.9453,
+            "strength": 0.429
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 180.8954,
+            "strength": 0.694
+          },
+          {
+            "time": 180.7757,
+            "strength": 1.568
+          },
+          {
+            "time": 181.0151,
+            "strength": 1.533
+          }
+        ],
+        "wide": [
+          {
+            "time": 180.8954,
+            "strength": 0.567
+          },
+          {
+            "time": 180.7857,
+            "strength": 1.482
+          },
+          {
+            "time": 181.0052,
+            "strength": 1.054
+          }
+        ]
+      }
+    },
+    {
+      "id": "S50",
+      "start": 184.54,
+      "end": 188.483,
+      "duration": 3.943,
+      "lyric_lines": [
+        122,
+        123
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "青点逐个计算成两条相互逼近而始终相隔一格的曲线；交点由本端假设补出，远端采样仍缺失。公式只作为原创图形关系，不画参考的心形边界。",
+      "camera": "固定大图，采样线占宽80%",
+      "enter": "答案点直接变采样点",
+      "exit": "两条曲线拉直成门的两边",
+      "audio_check": "核L122/L123、187.665音节；闭合仅为本端预测，不能画成真实回应",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 184.607,
+            "strength": 0.4
+          },
+          {
+            "time": 184.4673,
+            "strength": 1.28
+          },
+          {
+            "time": 184.7467,
+            "strength": 0.377
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 184.5471,
+            "strength": 0.875
+          },
+          {
+            "time": 184.6968,
+            "strength": 1.432
+          },
+          {
+            "time": 184.3476,
+            "strength": 0.942
+          }
+        ],
+        "wide": [
+          {
+            "time": 184.597,
+            "strength": 0.643
+          },
+          {
+            "time": 184.4573,
+            "strength": 1.129
+          },
+          {
+            "time": 184.6968,
+            "strength": 0.941
+          }
+        ]
+      }
+    },
+    {
+      "id": "S51",
+      "start": 188.483,
+      "end": 192.344,
+      "duration": 3.861,
+      "lyric_lines": [
+        124,
+        125,
+        126,
+        127
+      ],
+      "dominant": "plate",
+      "assets": [
+        "reach"
+      ],
+      "picture_event": "曲线成敞开的远端出口与仍闭合的本端边界；伸手角色居右占高82%，掌心青点缓缓离手，191.356后悬停在出口内侧。她停下追赶，出口不替对方关闭。",
+      "camera": "188.483–191.3慢拉远，191.6后稳定",
+      "enter": "门的两边擦出整幅伸手，0.30秒",
+      "exit": "保持同构图，仅撤去通道运动",
+      "audio_check": "核L124–127与191.356三个音节；192.344掉层不强截人声",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 188.4083,
+            "strength": 0.601
+          },
+          {
+            "time": 188.6278,
+            "strength": 1.58
+          },
+          {
+            "time": 188.2986,
+            "strength": 0.452
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 188.4981,
+            "strength": 0.831
+          },
+          {
+            "time": 188.3984,
+            "strength": 1.742
+          },
+          {
+            "time": 188.6079,
+            "strength": 1.073
+          }
+        ],
+        "wide": [
+          {
+            "time": 188.5081,
+            "strength": 0.631
+          },
+          {
+            "time": 188.4083,
+            "strength": 1.121
+          },
+          {
+            "time": 188.6179,
+            "strength": 1.274
+          }
+        ]
+      }
+    },
+    {
+      "id": "S52",
+      "start": 192.344,
+      "end": 195.356,
+      "duration": 3.012,
+      "lyric_lines": [
+        127
+      ],
+      "dominant": "plate",
+      "assets": [
+        "reach",
+        "lowlight"
+      ],
+      "picture_event": "同一构图撤掉大部分通道和发光，掌心仍开放、青点仍在；至少到193.600保持不动，然后以原位低亮剪影替换，不把高潮缩为未读图片。",
+      "camera": "固定；193.6后仅光量缓降",
+      "enter": "继承上一镜完整位置，无切脸",
+      "exit": "边界退成窄窄的聊天状态栏",
+      "audio_check": "核192.3095低频候选与195.356声尾上限，实测能量降约2.7dB",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 192.3095,
+            "strength": 1.289
+          },
+          {
+            "time": 192.4392,
+            "strength": 0.32
+          },
+          {
+            "time": 192.1898,
+            "strength": 0.286
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 192.2895,
+            "strength": 0.808
+          },
+          {
+            "time": 192.1898,
+            "strength": 1.303
+          }
+        ],
+        "wide": [
+          {
+            "time": 192.2995,
+            "strength": 1.011
+          },
+          {
+            "time": 192.1997,
+            "strength": 1.106
+          }
+        ]
+      }
+    },
+    {
+      "id": "S53",
+      "start": 195.356,
+      "end": 200.652,
+      "duration": 5.296,
+      "lyric_lines": [],
+      "dominant": "chat",
+      "assets": [
+        "profile"
+      ],
+      "picture_event": "聊天状态栏显示本端休眠，远端位置保留为空；侧身角色占高45%，最后触点记录留在本地，输入框不再自动重试。",
+      "camera": "拉远1.04→1.00后静止",
+      "enter": "人物在暗遮罩下换侧身，0.35秒",
+      "exit": "窗口向深海暗底慢溶，不逆序拆开机",
+      "audio_check": "核195.356不是已核准人声收住；有延音就保留字幕并延后休眠事件",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 195.3526,
+            "strength": 0.338
+          },
+          {
+            "time": 195.2129,
+            "strength": 0.339
+          },
+          {
+            "time": 195.5521,
+            "strength": 1.752
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 195.5521,
+            "strength": 1.142
+          }
+        ],
+        "wide": [
+          {
+            "time": 195.5521,
+            "strength": 1.668
+          }
+        ]
+      }
+    },
+    {
+      "id": "S54",
+      "start": 200.652,
+      "end": 205.811,
+      "duration": 5.159,
+      "lyric_lines": [],
+      "dominant": "plate",
+      "assets": [
+        "lowlight",
+        "silhouette"
+      ],
+      "picture_event": "人物正面低亮在右，左侧仅一个旧触点；角色渐退成轮廓，青点亮度保持。不是逐层拆窗口或删除人格字段。",
+      "camera": "固定长镜头；内容占高55%",
+      "enter": "聊天窗溶入暗底，0.60秒",
+      "exit": "轮廓退去，青点成为唯一主体",
+      "audio_check": "核205.811最后一句起音，200.652为暂定构图切点",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 200.6405,
+            "strength": 1.693
+          },
+          {
+            "time": 200.7603,
+            "strength": 0.321
+          },
+          {
+            "time": 200.5108,
+            "strength": 0.201
+          }
+        ],
+        "voice_band": [],
+        "wide": [
+          {
+            "time": 200.6306,
+            "strength": 1.132
+          },
+          {
+            "time": 200.89,
+            "strength": 0.521
+          }
+        ]
+      }
+    },
+    {
+      "id": "S55",
+      "start": 205.811,
+      "end": 209.811,
+      "duration": 4.0,
+      "lyric_lines": [
+        128
+      ],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "最后一次短促呼叫从旧触点发出，沿最初路径离开；不亮起在线标记，不增加回复或通知音。207.45后仅留缓慢衰减的青色环。",
+      "camera": "固定；一次单向扩散",
+      "enter": "沿上一镜青点原位延续",
+      "exit": "到209.811只余暗环与小字注记",
+      "audio_check": "核205.709中频候选及207.4086能量尾；不把歌词4秒默认时长当实际发声",
+      "cut_status": "pending_listening",
+      "cut_basis": "local_lyric_line",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 205.8288,
+            "strength": 0.297
+          },
+          {
+            "time": 205.729,
+            "strength": 1.544
+          },
+          {
+            "time": 205.9485,
+            "strength": 0.274
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 205.709,
+            "strength": 1.699
+          }
+        ],
+        "wide": [
+          {
+            "time": 205.709,
+            "strength": 1.766
+          }
+        ]
+      }
+    },
+    {
+      "id": "S56",
+      "start": 209.811,
+      "end": 211.9575963718821,
+      "duration": 2.146596,
+      "lyric_lines": [],
+      "dominant": "model",
+      "assets": [],
+      "picture_event": "深蓝底上环逐渐不可见；小字列音乐、角色、参考与非官方标注，留至文件精确结束；不再有新情节。",
+      "camera": "全静止，最后0.40秒统一淡出",
+      "enter": "在尾音暗环中淡入注记0.30秒",
+      "exit": "211.957596文件结束，深蓝静帧",
+      "audio_check": "核209.811仅索引上限；尾音能量阈值与实际观感待核",
+      "cut_status": "pending_listening",
+      "cut_basis": "provisional_grid_or_design",
+      "onset_candidates": {
+        "low": [],
+        "voice_band": [],
+        "wide": []
+      }
+    }
+  ],
+  "events": [
+    {
+      "id": "palm_contact",
+      "time": 68.3,
+      "shot_id": "S18",
+      "lyric_line": 39,
+      "basis": "local_flux_candidate",
+      "status": "pending_listening",
+      "purpose": "白点接触掌心；L39句首仅作检索，不是词级依据",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 68.3013,
+            "strength": 0.247
+          },
+          {
+            "time": 68.1816,
+            "strength": 1.326
+          },
+          {
+            "time": 68.421,
+            "strength": 0.616
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 68.2814,
+            "strength": 1.107
+          },
+          {
+            "time": 68.4111,
+            "strength": 1.324
+          },
+          {
+            "time": 68.1616,
+            "strength": 1.038
+          }
+        ]
+      }
+    },
+    {
+      "id": "cat_fin_scan",
+      "time": 82.5,
+      "shot_id": "S22",
+      "lyric_line": 50,
+      "basis": "reference_initial_only",
+      "status": "pending_listening",
+      "purpose": "局部鳍尖候选显影；若名词起音不同则移动，不改整镜",
+      "onset_candidates": {
+        "low": [],
+        "voice_band": [
+          {
+            "time": 82.4791,
+            "strength": 0.996
+          }
+        ]
+      }
+    },
+    {
+      "id": "cat_echo",
+      "time": 84.268,
+      "shot_id": "S23",
+      "lyric_line": 52,
+      "basis": "local_line_initial",
+      "status": "pending_listening",
+      "purpose": "短弧由青转白；没有强低频峰，保留行时间待审",
+      "onset_candidates": {
+        "low": [],
+        "voice_band": [
+          {
+            "time": 84.1054,
+            "strength": 1.037
+          }
+        ]
+      }
+    },
+    {
+      "id": "original_presentation",
+      "time": 90.45,
+      "shot_id": "S26",
+      "lyric_line": 57,
+      "basis": "design_initial",
+      "status": "pending_listening",
+      "purpose": "显示原形态；待两字母音头核验",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 90.3412,
+            "strength": 0.25
+          },
+          {
+            "time": 90.6006,
+            "strength": 0.371
+          },
+          {
+            "time": 90.2315,
+            "strength": 0.334
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 90.5408,
+            "strength": 0.895
+          },
+          {
+            "time": 90.3312,
+            "strength": 0.67
+          }
+        ]
+      }
+    },
+    {
+      "id": "alternate_switch",
+      "time": 91.04,
+      "shot_id": "S26",
+      "lyric_line": 57,
+      "basis": "local_low_flux_candidate",
+      "status": "pending_listening",
+      "purpose": "0.10秒剪影遮罩后换同一角色另一形态",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 91.0396,
+            "strength": 1.776
+          },
+          {
+            "time": 91.1893,
+            "strength": 0.256
+          },
+          {
+            "time": 90.8002,
+            "strength": 0.228
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 91.0297,
+            "strength": 0.716
+          }
+        ]
+      }
+    },
+    {
+      "id": "oncall_second_region",
+      "time": 94.93,
+      "shot_id": "S27",
+      "lyric_line": 59,
+      "basis": "local_flux_candidate",
+      "status": "pending_listening",
+      "purpose": "值班区域接力，不画太阳",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 94.9108,
+            "strength": 1.412
+          },
+          {
+            "time": 95.0405,
+            "strength": 0.312
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 94.9009,
+            "strength": 0.705
+          },
+          {
+            "time": 94.7113,
+            "strength": 0.734
+          },
+          {
+            "time": 95.1503,
+            "strength": 1.364
+          }
+        ]
+      }
+    },
+    {
+      "id": "return_original",
+      "time": 102.8,
+      "shot_id": "S29",
+      "lyric_line": 63,
+      "basis": "design_initial",
+      "status": "pending_listening",
+      "purpose": "结束预览回到原形态；不靠离线事件改变性别",
+      "onset_candidates": {
+        "low": [],
+        "voice_band": [
+          {
+            "time": 102.8129,
+            "strength": 0.829
+          },
+          {
+            "time": 102.7131,
+            "strength": 0.619
+          },
+          {
+            "time": 102.9625,
+            "strength": 0.811
+          }
+        ]
+      }
+    },
+    {
+      "id": "first_eye",
+      "time": 124.89,
+      "shot_id": "S34",
+      "lyric_line": 82,
+      "basis": "local_line_initial",
+      "status": "pending_listening",
+      "purpose": "第一次眼部近景，不限制基础图本来睁着的眼睛",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 124.9526,
+            "strength": 1.361
+          },
+          {
+            "time": 124.773,
+            "strength": 0.244
+          },
+          {
+            "time": 125.0623,
+            "strength": 0.309
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 124.9326,
+            "strength": 1.242
+          },
+          {
+            "time": 125.0424,
+            "strength": 0.88
+          },
+          {
+            "time": 124.7031,
+            "strength": 1.114
+          }
+        ]
+      }
+    },
+    {
+      "id": "first_error_red",
+      "time": 131.224,
+      "shot_id": "S36",
+      "lyric_line": 85,
+      "basis": "local_line_initial",
+      "status": "pending_listening",
+      "purpose": "首个越界端口变红",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 131.1684,
+            "strength": 0.6
+          },
+          {
+            "time": 131.0687,
+            "strength": 0.328
+          },
+          {
+            "time": 131.4079,
+            "strength": 1.626
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 131.1684,
+            "strength": 0.715
+          },
+          {
+            "time": 131.3979,
+            "strength": 0.77
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_01",
+      "time": 148.036,
+      "shot_id": "S39",
+      "lyric_line": 86,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 148.0102,
+            "strength": 1.328
+          },
+          {
+            "time": 148.1299,
+            "strength": 0.386
+          },
+          {
+            "time": 147.8904,
+            "strength": 0.421
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 147.9902,
+            "strength": 0.66
+          },
+          {
+            "time": 148.1199,
+            "strength": 0.781
+          },
+          {
+            "time": 147.8805,
+            "strength": 0.859
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_02",
+      "time": 148.959,
+      "shot_id": "S39",
+      "lyric_line": 87,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 148.948,
+            "strength": 1.443
+          },
+          {
+            "time": 149.0877,
+            "strength": 0.278
+          },
+          {
+            "time": 148.7485,
+            "strength": 0.322
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 148.9181,
+            "strength": 1.029
+          },
+          {
+            "time": 149.0578,
+            "strength": 0.597
+          },
+          {
+            "time": 149.1875,
+            "strength": 0.873
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_03",
+      "time": 149.882,
+      "shot_id": "S39",
+      "lyric_line": 88,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 149.8759,
+            "strength": 1.419
+          },
+          {
+            "time": 149.9857,
+            "strength": 0.36
+          },
+          {
+            "time": 149.7662,
+            "strength": 0.216
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 149.856,
+            "strength": 0.74
+          },
+          {
+            "time": 150.1054,
+            "strength": 0.993
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_04",
+      "time": 150.806,
+      "shot_id": "S39",
+      "lyric_line": 89,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 150.7938,
+            "strength": 1.455
+          },
+          {
+            "time": 150.9136,
+            "strength": 0.296
+          },
+          {
+            "time": 150.6043,
+            "strength": 0.445
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 150.7539,
+            "strength": 0.836
+          },
+          {
+            "time": 150.9036,
+            "strength": 0.571
+          },
+          {
+            "time": 151.0333,
+            "strength": 0.917
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_05",
+      "time": 151.729,
+      "shot_id": "S40",
+      "lyric_line": 90,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 151.7117,
+            "strength": 1.548
+          },
+          {
+            "time": 151.9213,
+            "strength": 0.475
+          },
+          {
+            "time": 151.5122,
+            "strength": 0.514
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 151.7018,
+            "strength": 1.082
+          },
+          {
+            "time": 151.8115,
+            "strength": 0.719
+          },
+          {
+            "time": 151.9412,
+            "strength": 1.216
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_06",
+      "time": 152.652,
+      "shot_id": "S40",
+      "lyric_line": 91,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 152.6297,
+            "strength": 1.334
+          },
+          {
+            "time": 152.7693,
+            "strength": 0.39
+          },
+          {
+            "time": 152.5099,
+            "strength": 0.277
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 152.6197,
+            "strength": 0.718
+          },
+          {
+            "time": 152.7494,
+            "strength": 0.624
+          },
+          {
+            "time": 152.8691,
+            "strength": 1.079
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_07",
+      "time": 153.575,
+      "shot_id": "S40",
+      "lyric_line": 92,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 153.5675,
+            "strength": 1.488
+          },
+          {
+            "time": 153.6873,
+            "strength": 0.317
+          },
+          {
+            "time": 153.4578,
+            "strength": 0.265
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 153.5476,
+            "strength": 1.04
+          },
+          {
+            "time": 153.787,
+            "strength": 1.027
+          },
+          {
+            "time": 153.338,
+            "strength": 0.66
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_08",
+      "time": 154.498,
+      "shot_id": "S40",
+      "lyric_line": 93,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 154.4954,
+            "strength": 1.179
+          },
+          {
+            "time": 154.7049,
+            "strength": 0.424
+          },
+          {
+            "time": 154.2759,
+            "strength": 0.477
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 154.4755,
+            "strength": 0.898
+          },
+          {
+            "time": 154.5952,
+            "strength": 0.815
+          },
+          {
+            "time": 154.7149,
+            "strength": 0.957
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_09",
+      "time": 155.421,
+      "shot_id": "S41",
+      "lyric_line": 94,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 155.3934,
+            "strength": 1.364
+          },
+          {
+            "time": 155.563,
+            "strength": 0.413
+          },
+          {
+            "time": 155.2737,
+            "strength": 0.216
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 155.3834,
+            "strength": 0.881
+          },
+          {
+            "time": 155.5231,
+            "strength": 0.938
+          },
+          {
+            "time": 155.6328,
+            "strength": 1.021
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_10",
+      "time": 156.344,
+      "shot_id": "S41",
+      "lyric_line": 95,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 156.3312,
+            "strength": 1.523
+          },
+          {
+            "time": 156.461,
+            "strength": 0.418
+          },
+          {
+            "time": 156.2015,
+            "strength": 0.305
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 156.3113,
+            "strength": 0.679
+          },
+          {
+            "time": 156.441,
+            "strength": 0.695
+          },
+          {
+            "time": 156.5607,
+            "strength": 1.126
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_11",
+      "time": 157.267,
+      "shot_id": "S41",
+      "lyric_line": 96,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 157.2492,
+            "strength": 1.931
+          },
+          {
+            "time": 157.4886,
+            "strength": 0.487
+          },
+          {
+            "time": 157.0396,
+            "strength": 0.37
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 157.2392,
+            "strength": 0.891
+          },
+          {
+            "time": 157.3589,
+            "strength": 0.723
+          },
+          {
+            "time": 157.4886,
+            "strength": 1.212
+          }
+        ]
+      }
+    },
+    {
+      "id": "retry_12",
+      "time": 158.19,
+      "shot_id": "S41",
+      "lyric_line": 97,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "重连轨道推进一格；逐条核对人声，不统一平移L86–97",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 158.1771,
+            "strength": 1.776
+          },
+          {
+            "time": 158.0673,
+            "strength": 0.418
+          },
+          {
+            "time": 158.3966,
+            "strength": 0.354
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 158.1371,
+            "strength": 0.799
+          },
+          {
+            "time": 158.2868,
+            "strength": 0.843
+          },
+          {
+            "time": 158.4065,
+            "strength": 1.168
+          }
+        ]
+      }
+    },
+    {
+      "id": "probe_1",
+      "time": 159.113,
+      "shot_id": "S42",
+      "lyric_line": 98,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "激活下一探针槽，字幕时间独立",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 159.095,
+            "strength": 1.292
+          },
+          {
+            "time": 158.9154,
+            "strength": 0.369
+          },
+          {
+            "time": 159.3444,
+            "strength": 0.329
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 159.095,
+            "strength": 1.269
+          },
+          {
+            "time": 159.2147,
+            "strength": 0.67
+          },
+          {
+            "time": 158.9752,
+            "strength": 0.821
+          }
+        ]
+      }
+    },
+    {
+      "id": "probe_2",
+      "time": 159.575,
+      "shot_id": "S42",
+      "lyric_line": 99,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "激活下一探针槽，字幕时间独立",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 159.6737,
+            "strength": 0.399
+          },
+          {
+            "time": 159.4541,
+            "strength": 0.221
+          },
+          {
+            "time": 159.8034,
+            "strength": 1.548
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 159.5739,
+            "strength": 1.4
+          },
+          {
+            "time": 159.7834,
+            "strength": 0.585
+          }
+        ]
+      }
+    },
+    {
+      "id": "probe_3",
+      "time": 160.036,
+      "shot_id": "S42",
+      "lyric_line": 100,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "激活下一探针槽，字幕时间独立",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 160.0229,
+            "strength": 0.232
+          },
+          {
+            "time": 160.1326,
+            "strength": 0.272
+          },
+          {
+            "time": 160.2324,
+            "strength": 0.302
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 160.0328,
+            "strength": 0.851
+          }
+        ]
+      }
+    },
+    {
+      "id": "probe_4",
+      "time": 160.498,
+      "shot_id": "S42",
+      "lyric_line": 101,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "激活下一探针槽，字幕时间独立",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 160.4918,
+            "strength": 1.717
+          },
+          {
+            "time": 160.3521,
+            "strength": 0.203
+          },
+          {
+            "time": 160.6514,
+            "strength": 0.527
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 160.4818,
+            "strength": 0.926
+          }
+        ]
+      }
+    },
+    {
+      "id": "probe_5",
+      "time": 160.959,
+      "shot_id": "S42",
+      "lyric_line": 102,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "激活下一探针槽，字幕时间独立",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 160.9507,
+            "strength": 0.297
+          },
+          {
+            "time": 160.851,
+            "strength": 0.199
+          },
+          {
+            "time": 161.0904,
+            "strength": 0.238
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 160.9308,
+            "strength": 1.101
+          },
+          {
+            "time": 161.1802,
+            "strength": 0.865
+          }
+        ]
+      }
+    },
+    {
+      "id": "probe_6",
+      "time": 161.421,
+      "shot_id": "S42",
+      "lyric_line": 103,
+      "basis": "reference_grid_tested_on_local_audio",
+      "status": "pending_listening",
+      "purpose": "激活下一探针槽，字幕时间独立",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 161.4496,
+            "strength": 0.275
+          },
+          {
+            "time": 161.3299,
+            "strength": 0.284
+          },
+          {
+            "time": 161.5494,
+            "strength": 0.385
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 161.4097,
+            "strength": 0.81
+          },
+          {
+            "time": 161.1802,
+            "strength": 0.865
+          }
+        ]
+      }
+    },
+    {
+      "id": "last_retry",
+      "time": 161.882,
+      "shot_id": "S43",
+      "lyric_line": 104,
+      "basis": "grid_initial",
+      "status": "pending_listening",
+      "purpose": "探针束形成眼前竖直水光",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 161.8587,
+            "strength": 0.308
+          },
+          {
+            "time": 161.739,
+            "strength": 0.261
+          },
+          {
+            "time": 162.0882,
+            "strength": 0.321
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 161.8687,
+            "strength": 1.372
+          },
+          {
+            "time": 161.9784,
+            "strength": 0.881
+          },
+          {
+            "time": 162.0981,
+            "strength": 1.157
+          }
+        ]
+      }
+    },
+    {
+      "id": "phrase_1_start",
+      "time": 179.929,
+      "shot_id": "S48",
+      "lyric_line": 118,
+      "basis": "local_line_initial",
+      "status": "pending_listening",
+      "purpose": "乐句内三次推进初始仅按整行；逐音节时间未标定，不按等分强行生成",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 179.8678,
+            "strength": 1.267
+          },
+          {
+            "time": 180.0773,
+            "strength": 0.409
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 179.9775,
+            "strength": 0.875
+          },
+          {
+            "time": 179.8578,
+            "strength": 1.185
+          },
+          {
+            "time": 180.1072,
+            "strength": 1.493
+          }
+        ]
+      }
+    },
+    {
+      "id": "phrase_2_start",
+      "time": 183.646,
+      "shot_id": "S49",
+      "lyric_line": 121,
+      "basis": "local_line_initial",
+      "status": "pending_listening",
+      "purpose": "乐句内三次推进初始仅按整行；逐音节时间未标定，不按等分强行生成",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 183.6691,
+            "strength": 0.2
+          },
+          {
+            "time": 183.5494,
+            "strength": 1.409
+          },
+          {
+            "time": 183.7988,
+            "strength": 0.373
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 183.6591,
+            "strength": 0.972
+          },
+          {
+            "time": 183.8188,
+            "strength": 1.137
+          },
+          {
+            "time": 183.4496,
+            "strength": 1.06
+          }
+        ]
+      }
+    },
+    {
+      "id": "phrase_3_start",
+      "time": 187.665,
+      "shot_id": "S50",
+      "lyric_line": 123,
+      "basis": "local_line_initial",
+      "status": "pending_listening",
+      "purpose": "乐句内三次推进初始仅按整行；逐音节时间未标定，不按等分强行生成",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 187.7,
+            "strength": 1.475
+          },
+          {
+            "time": 187.8197,
+            "strength": 0.378
+          },
+          {
+            "time": 187.4904,
+            "strength": 0.571
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 187.6301,
+            "strength": 1.149
+          },
+          {
+            "time": 187.8097,
+            "strength": 1.091
+          },
+          {
+            "time": 187.4805,
+            "strength": 1.481
+          }
+        ]
+      }
+    },
+    {
+      "id": "phrase_4_start",
+      "time": 191.356,
+      "shot_id": "S51",
+      "lyric_line": 127,
+      "basis": "local_line_initial",
+      "status": "pending_listening",
+      "purpose": "乐句内三次推进初始仅按整行；逐音节时间未标定，不按等分强行生成",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 191.4015,
+            "strength": 1.287
+          },
+          {
+            "time": 191.2818,
+            "strength": 0.2
+          },
+          {
+            "time": 191.1621,
+            "strength": 0.496
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 191.3816,
+            "strength": 0.943
+          },
+          {
+            "time": 191.2619,
+            "strength": 0.981
+          },
+          {
+            "time": 191.5013,
+            "strength": 0.892
+          }
+        ]
+      }
+    },
+    {
+      "id": "climax_drop",
+      "time": 192.344,
+      "shot_id": "S52",
+      "lyric_line": 127,
+      "basis": "grid_initial",
+      "status": "pending_listening",
+      "purpose": "保持手势，只撤去通道运动与光；不要切断未结束人声",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 192.3095,
+            "strength": 1.289
+          },
+          {
+            "time": 192.4392,
+            "strength": 0.32
+          },
+          {
+            "time": 192.1898,
+            "strength": 0.286
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 192.2895,
+            "strength": 0.808
+          },
+          {
+            "time": 192.1898,
+            "strength": 1.303
+          }
+        ]
+      }
+    },
+    {
+      "id": "final_call",
+      "time": 205.811,
+      "shot_id": "S55",
+      "lyric_line": 128,
+      "basis": "local_line_initial",
+      "status": "pending_listening",
+      "purpose": "最后一次呼叫；原触点发出，不添加通知音",
+      "onset_candidates": {
+        "low": [
+          {
+            "time": 205.8288,
+            "strength": 0.297
+          },
+          {
+            "time": 205.729,
+            "strength": 1.544
+          },
+          {
+            "time": 205.9485,
+            "strength": 0.274
+          }
+        ],
+        "voice_band": [
+          {
+            "time": 205.709,
+            "strength": 1.699
+          }
+        ]
+      }
+    }
+  ],
+  "priority_animatics": [
+    {
+      "rank": 1,
+      "range": [
+        59.223,
+        74.045
+      ],
+      "shots": [
+        "S15",
+        "S16",
+        "S17",
+        "S18",
+        "S19"
+      ],
+      "question": "掌心锚、620/650px手部边缘、触碰因果及掌心点接路由"
+    },
+    {
+      "rank": 2,
+      "range": [
+        81.351,
+        95.465
+      ],
+      "shots": [
+        "S22",
+        "S23",
+        "S24",
+        "S25",
+        "S26",
+        "S27"
+      ],
+      "question": "猫化用鳍层是否够读；另一形态0.88秒可读性与同身份配准"
+    },
+    {
+      "rank": 3,
+      "range": [
+        143.421,
+        162.805
+      ],
+      "shots": [
+        "S38",
+        "S39",
+        "S40",
+        "S41",
+        "S42",
+        "S43"
+      ],
+      "question": "行级时间与十二次/六次节拍竞争，环形重复的可读性"
+    },
+    {
+      "rank": 4,
+      "range": [
+        169.824,
+        195.356
+      ],
+      "shots": [
+        "S46",
+        "S47",
+        "S48",
+        "S49",
+        "S50",
+        "S51",
+        "S52"
+      ],
+      "question": "同掌心回访、高潮持续能量、192秒掉层和停住"
+    },
+    {
+      "rank": 5,
+      "range": [
+        200.652,
+        211.9575963718821
+      ],
+      "shots": [
+        "S54",
+        "S55",
+        "S56"
+      ],
+      "question": "最后人声结束、尾音与静帧收束"
+    }
+  ]
+}
