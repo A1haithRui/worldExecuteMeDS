@@ -11,9 +11,9 @@
 
 ## 当前进度
 
-- `newProj_v1014/assets/character/tmp_file/deepseek_*_v3.png`：当前选定的四张鲸鱼娘角色成品图（透明 PNG）。
+- `newProj_v1014/assets/character/deepseek_*_v3.png`：当前选定的四张鲸鱼娘角色成品图（透明 PNG）。
 - `newProj_v1014/assets/character/v3_sources/`：v3 的生成源图、提示词、制作记录与质量检查。
 - `newProj_v1014/assets/character/v2_sources/`：前一版设计及标识来源记录，供追溯。
 - `MusicFile/`：本机自备音频，不纳入 Git。
 
-接下来的实现以 `newProj_v1014/` 为主；参考项目中的源码和素材先保持原样，按需汲取渲染、分镜和视觉表现的方法。
+`newProj_v1014/` 另有独立的浏览器样片；运行方式见该目录的 README。参考项目中的源码和素材先保持原样，按需汲取渲染、分镜和视觉表现的方法。

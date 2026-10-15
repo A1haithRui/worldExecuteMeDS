@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>world.execute(me); · DeepSeek MV 概念样片</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="page-head">
+      <div><span class="eyebrow">WORLD.EXECUTE(ME); / FAN CONCEPT</span><h1>深海信号 <span>·</span> DeepSeek</h1></div>
+      <span class="draft">CONCEPT 01 / WORK IN PROGRESS</span>
+    </header>
+
+    <section id="stage" class="stage mode-boot" aria-label="MV 预览画面">
+      <div class="grid"></div><div class="beam"></div><div class="orb orb-one"></div><div class="orb orb-two"></div>
+      <div class="scanline"></div>
+      <div class="stage-head"><span class="brand-mark">◉</span><span>deepseek <small>/ world model</small></span><span class="stage-head-right">SIGNAL <b id="signal">00</b> · CONNECTED</span></div>
+      <div class="left-panel">
+        <div class="panel-top"><span class="traffic"><i></i><i></i><i></i></span><span>deepseek / conversation</span><span class="panel-id">SESSION 001</span></div>
+        <div class="panel-body">
+          <div class="system-line"><span>system</span><strong id="systemText">initializing world model...</strong></div>
+          <div class="thread">
+            <div class="message user"><small>YOU · 00:00</small><p>Can you hear me?</p></div>
+            <div class="message assistant"><small>DEEPSEEK · LIVE</small><p id="chatText">Searching for your signal<span class="cursor">_</span></p></div>
+          </div>
+          <div class="thinking"><i></i><span id="thinkingText">reasoning trace / waiting for input</span></div>
+        </div>
+        <div class="panel-foot"><span>MODEL ACTIVE</span><span id="panelTime">00:00.0</span></div>
+      </div>
+      <div class="sonar"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><span class="cross x1">+</span><span class="cross x2">+</span></div>
+      <img id="character" class="character" src="/assets/character/deepseek_profile_v3.png" alt="DeepSeek 主题鲸鱼娘">
+      <div class="character-label"><span class="line"></span><strong>01 / THE SIGNAL</strong><small>looking for a world to enter</small></div>
+      <div class="lyric-wrap"><span class="lyric-index" id="lyricIndex">L.000</span><p id="lyric" class="lyric">...</p><span class="lyric-progress"><i id="lyricProgress"></i></span></div>
+      <div class="stage-foot"><span>AN INDEPENDENT COMMUNITY FAN CONCEPT</span><span>1920 × 1080 · 16:9</span></div>
+    </section>
+
+    <div class="controls"><button id="play" type="button">播放</button><input id="seek" type="range" min="0" max="211.96" step="0.01" value="0" aria-label="播放进度"><span id="clock">00:00 / 03:32</span><span id="sceneName">BOOT / 连接</span></div>
+    <p class="hint">点击播放，或拖动进度条查看场景。空格控制播放；方向键以 1 秒为单位跳转。当前是视觉与时间线样片。</p>
+    <audio id="audio" preload="metadata" src="/audio/song.wav"></audio>
+  </main>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

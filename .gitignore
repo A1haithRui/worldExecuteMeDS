@@ -1,5 +1,7 @@
 # Locally supplied song and lyrics
 /MusicFile/
+/newProj_v1014/data/lyrics.json
+/newProj_v1014/audio/
 
 # Upstream checkouts still contain their own Git metadata.
 # Remove these two lines after their .git directories are removed locally.
