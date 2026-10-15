@@ -1,0 +1,55 @@
+{
+  "status": "Proposals only; full-song shot list is not final. No variant images generated.",
+  "timing_source": "local data/lyrics.json (not committed)",
+  "lyric_cues": [
+    {
+      "index": 50,
+      "start": 81.351,
+      "end": 82.833
+    },
+    {
+      "index": 51,
+      "start": 82.833,
+      "end": 84.268
+    },
+    {
+      "index": 52,
+      "start": 84.268,
+      "end": 85.078
+    },
+    {
+      "index": 56,
+      "start": 88.587,
+      "end": 90.197
+    },
+    {
+      "index": 57,
+      "start": 90.197,
+      "end": 92.015
+    }
+  ],
+  "gender_form": {
+    "window_seconds": [
+      88.587,
+      92.015
+    ],
+    "identity_lock": "Same face, eye/nose/mouth proportions, hair part/length, loop ahoge, fins, tail, hair ornament and collar; only subtly altered neck/shoulder silhouette and tailoring.",
+    "required_if_used": "One alternate-form bust aligned to v3 neck-knot and head anchor. Adult/faint echo derives from that form with silhouette/scale/opacity, not a separate illustration."
+  },
+  "cat_ear_transition": {
+    "window_seconds": [
+      81.351,
+      82.833
+    ],
+    "identity_lock": "Same v3 face and hair. Existing lateral fin silhouette temporarily rises into pointed feline ear-like fins; no extra pair of ears. Keep whale tail and hair clip.",
+    "required_if_used": "Local ear/fin edit only for a readable held closeup; no whole new character."
+  },
+  "cat_paw_action": {
+    "window_seconds": [
+      82.833,
+      85.078
+    ],
+    "identity_lock": "Same sailor cuffs and palette, short navy/seafoam paw forms with cyan pads; no new costume or feline tail.",
+    "required_if_used": "New local curled-paw/hand pose, as existing spread palm cannot produce bent joints by simple cropping. Produce only together with confirmed cat-ear shot."
+  }
+}

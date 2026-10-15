@@ -1,0 +1,38 @@
+{
+  "bust": {
+    "original": "G:/CODE/worldExecuteMe/newProj_v1014/assets/character/deepseek_bust_v3.png",
+    "snapshot": "sources/deepseek_bust_v3.png",
+    "sha256": "180b3bd6ed96a8bdc0dbf854ee41b5d46d87cbc0053b49381638af346e9cf418",
+    "size": [
+      1342,
+      1704
+    ]
+  },
+  "profile": {
+    "original": "G:/CODE/worldExecuteMe/newProj_v1014/assets/character/deepseek_profile_v3.png",
+    "snapshot": "sources/deepseek_profile_v3.png",
+    "sha256": "17f1de1fec854c7a9718563de01fd6ebd2773dd2c53129ebaff9f91501ded20d",
+    "size": [
+      1342,
+      1704
+    ]
+  },
+  "reach": {
+    "original": "G:/CODE/worldExecuteMe/newProj_v1014/assets/character/deepseek_reach_v3.png",
+    "snapshot": "sources/deepseek_reach_v3.png",
+    "sha256": "ffeb5d365cdbc12f5d120c9918ced96d599a4b992ef16be4efb9c2dce95bf627",
+    "size": [
+      1342,
+      1704
+    ]
+  },
+  "eye": {
+    "original": "G:/CODE/worldExecuteMe/newProj_v1014/assets/character/deepseek_eye_v3.png",
+    "snapshot": "sources/deepseek_eye_v3.png",
+    "sha256": "422861f803a36ed4c11ae7f45b2b0a9995acbe5a555aac5c40ebbf94e0ad6921",
+    "size": [
+      1510,
+      1510
+    ]
+  }
+}

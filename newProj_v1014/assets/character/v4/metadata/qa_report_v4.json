@@ -1,0 +1,139 @@
+{
+  "v3_unchanged": true,
+  "silhouette_alpha_identical_to_v3": true,
+  "lowlight_alpha_identical_to_v3": true,
+  "layer_reconstruction_max_premultiplied_error_255": 0.0,
+  "layer_reconstruction_max_alpha_error": 0,
+  "assets": [
+    {
+      "file": "deepseek_bust_v4_lowlight.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "content_bbox": [
+        128,
+        128,
+        1214,
+        1566
+      ],
+      "transparent_margins_px": [
+        128,
+        128,
+        128,
+        138
+      ],
+      "passed": true
+    },
+    {
+      "file": "deepseek_bust_v4_silhouette.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "content_bbox": [
+        128,
+        128,
+        1214,
+        1566
+      ],
+      "transparent_margins_px": [
+        128,
+        128,
+        128,
+        138
+      ],
+      "passed": true
+    },
+    {
+      "file": "deepseek_palm_v4_closeup_native.png",
+      "size": [
+        757,
+        732
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "content_bbox": [
+        128,
+        128,
+        629,
+        604
+      ],
+      "transparent_margins_px": [
+        128,
+        128,
+        128,
+        128
+      ],
+      "passed": true
+    },
+    {
+      "file": "deepseek_reach_v4_body_layer.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "content_bbox": [
+        128,
+        128,
+        1214,
+        1567
+      ],
+      "transparent_margins_px": [
+        128,
+        128,
+        128,
+        137
+      ],
+      "passed": true
+    },
+    {
+      "file": "deepseek_reach_v4_hand_layer.png",
+      "size": [
+        1342,
+        1704
+      ],
+      "mode": "RGBA",
+      "alpha_extrema": [
+        0,
+        254
+      ],
+      "content_bbox": [
+        136,
+        960,
+        637,
+        1436
+      ],
+      "transparent_margins_px": [
+        136,
+        960,
+        705,
+        268
+      ],
+      "passed": true
+    }
+  ],
+  "limits": [
+    "Hand layers retain existing pose and original native detail; no unseen wrist, palm side or occluded sleeve has been painted.",
+    "Body layer has a transparent hand-shaped gap, not a reconstructed background.",
+    "Native closeup is not a new high-resolution drawing. Large magnification needs a storyboard-specific review."
+  ]
+}

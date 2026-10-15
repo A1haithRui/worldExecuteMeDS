@@ -1,0 +1,39 @@
+{
+  "image_generation_used": false,
+  "generation_prompts": [],
+  "reason": "Existing v3 supports silhouette/lowlight recoloring and the original open-hand pose; no confirmed new pose or extreme magnification requires redraw yet.",
+  "recipe": {
+    "lowlight": "sRGB weighted luma 0.2126 R + 0.7152 G + 0.0722 B; map 0..255 to #040F19..#18313F; preserve alpha",
+    "silhouette": "Uniform #173749; preserve alpha",
+    "hand": "Pale-skin connected component in source ROI; fill closed crease holes, 0.6px alpha feather, copy original RGB. Body is complementary alpha-over layer.",
+    "native_closeup": "Crop isolated hand bbox and add 128px clear padding, no resampling"
+  },
+  "hand_mask": {
+    "source_roi": [
+      100,
+      900,
+      700,
+      1480
+    ],
+    "seed_in_roi": [
+      340,
+      200
+    ],
+    "skin_component_pixels": 71206,
+    "source_hand_bbox": [
+      136,
+      960,
+      637,
+      1436
+    ]
+  },
+  "closeup_mapping": {
+    "source_to_output_translation_px": [
+      -8,
+      -832
+    ],
+    "scale": 1,
+    "rotation_deg": 0,
+    "padding_px": 128
+  }
+}

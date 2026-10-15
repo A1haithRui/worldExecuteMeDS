@@ -13,6 +13,7 @@
 
 - `newProj_v1014/assets/character/deepseek_*_v3.png`：当前选定的四张鲸鱼娘角色成品图（透明 PNG）。
 - `newProj_v1014/assets/character/v3_sources/`：v3 的生成源图、提示词、制作记录与质量检查。
+- `newProj_v1014/assets/character/v4/`：由 v3 提取的低亮、剪影与独立手部素材，以及使用边界和定位记录。
 - `newProj_v1014/assets/character/v2_sources/`：前一版设计及标识来源记录，供追溯。
 - `MusicFile/`：本机自备音频，不纳入 Git。
 

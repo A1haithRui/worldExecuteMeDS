@@ -1,0 +1,312 @@
+{
+  "coordinate_convention": "Top-left origin; pixel x right, y down; ROI [left,top,right,bottom], right/bottom exclusive.",
+  "same_canvas_registration": "Lowlight and silhouette use v3 bust canvas without crop/scale/rotation. Hand and body use v3 reach canvas without crop/scale/rotation.",
+  "records": {
+    "bust": {
+      "source": "sources/deepseek_bust_v3.png",
+      "source_canvas": [
+        1342,
+        1704
+      ],
+      "manual_landmarks": {
+        "visible_eye": {
+          "xy_px": [
+            596,
+            526
+          ],
+          "normalized": [
+            0.44411326378539495,
+            0.3086854460093897
+          ]
+        },
+        "neck_knot": {
+          "xy_px": [
+            686,
+            827
+          ],
+          "normalized": [
+            0.511177347242921,
+            0.48532863849765256
+          ]
+        },
+        "headpiece_anchor": {
+          "xy_px": [
+            875,
+            430
+          ],
+          "normalized": [
+            0.6520119225037257,
+            0.25234741784037557
+          ]
+        }
+      },
+      "headpiece_reference_roi": [
+        753,
+        338,
+        998,
+        528
+      ],
+      "roi_note": "Inspection crop including adjacent hair, not a segmented accessory bbox.",
+      "landmark_note": "Manual shot-alignment estimates; visually checked, approx. 10–20px tolerance, not skeletal joints."
+    },
+    "profile": {
+      "source": "sources/deepseek_profile_v3.png",
+      "source_canvas": [
+        1342,
+        1704
+      ],
+      "manual_landmarks": {
+        "visible_eye": {
+          "xy_px": [
+            389,
+            598
+          ],
+          "normalized": [
+            0.28986587183308493,
+            0.35093896713615025
+          ]
+        },
+        "neck_knot": {
+          "xy_px": [
+            554,
+            864
+          ],
+          "normalized": [
+            0.4128166915052161,
+            0.5070422535211268
+          ]
+        },
+        "headpiece_anchor": {
+          "xy_px": [
+            651,
+            436
+          ],
+          "normalized": [
+            0.485096870342772,
+            0.25586854460093894
+          ]
+        }
+      },
+      "headpiece_reference_roi": [
+        538,
+        338,
+        778,
+        528
+      ],
+      "roi_note": "Inspection crop including adjacent hair, not a segmented accessory bbox.",
+      "landmark_note": "Manual shot-alignment estimates; visually checked, approx. 10–20px tolerance, not skeletal joints."
+    },
+    "reach": {
+      "source": "sources/deepseek_reach_v3.png",
+      "source_canvas": [
+        1342,
+        1704
+      ],
+      "manual_landmarks": {
+        "visible_eye": {
+          "xy_px": [
+            611,
+            527
+          ],
+          "normalized": [
+            0.455290611028316,
+            0.30927230046948356
+          ]
+        },
+        "neck_knot": {
+          "xy_px": [
+            733,
+            806
+          ],
+          "normalized": [
+            0.5461997019374069,
+            0.47300469483568075
+          ]
+        },
+        "headpiece_anchor": {
+          "xy_px": [
+            875,
+            413
+          ],
+          "normalized": [
+            0.6520119225037257,
+            0.24237089201877934
+          ]
+        },
+        "palm_interaction": {
+          "xy_px": [
+            440,
+            1128
+          ],
+          "normalized": [
+            0.32786885245901637,
+            0.6619718309859155
+          ]
+        },
+        "wrist": {
+          "xy_px": [
+            520,
+            1110
+          ],
+          "normalized": [
+            0.38748137108792846,
+            0.6514084507042254
+          ]
+        },
+        "thumb_tip": {
+          "xy_px": [
+            287,
+            965
+          ],
+          "normalized": [
+            0.21385991058122206,
+            0.5663145539906104
+          ]
+        },
+        "index_tip": {
+          "xy_px": [
+            142,
+            1245
+          ],
+          "normalized": [
+            0.10581222056631892,
+            0.7306338028169014
+          ]
+        },
+        "middle_tip": {
+          "xy_px": [
+            249,
+            1407
+          ],
+          "normalized": [
+            0.1855439642324888,
+            0.8257042253521126
+          ]
+        },
+        "ring_tip": {
+          "xy_px": [
+            425,
+            1425
+          ],
+          "normalized": [
+            0.3166915052160954,
+            0.8362676056338029
+          ]
+        },
+        "little_tip": {
+          "xy_px": [
+            631,
+            1345
+          ],
+          "normalized": [
+            0.470193740685544,
+            0.7893192488262911
+          ]
+        }
+      },
+      "headpiece_reference_roi": [
+        768,
+        318,
+        988,
+        508
+      ],
+      "roi_note": "Inspection crop including adjacent hair, not a segmented accessory bbox.",
+      "landmark_note": "Manual shot-alignment estimates; visually checked, approx. 10–20px tolerance, not skeletal joints."
+    },
+    "eye": {
+      "source": "sources/deepseek_eye_v3.png",
+      "source_canvas": [
+        1510,
+        1510
+      ],
+      "manual_landmarks": {
+        "visible_eye": {
+          "xy_px": [
+            820,
+            643
+          ],
+          "normalized": [
+            0.543046357615894,
+            0.42582781456953644
+          ]
+        },
+        "neck_knot": {
+          "xy_px": [
+            830,
+            1114
+          ],
+          "normalized": [
+            0.5496688741721855,
+            0.7377483443708609
+          ]
+        },
+        "headpiece_anchor": {
+          "xy_px": [
+            1167,
+            533
+          ],
+          "normalized": [
+            0.7728476821192053,
+            0.3529801324503311
+          ]
+        }
+      },
+      "headpiece_reference_roi": [
+        1018,
+        423,
+        1298,
+        658
+      ],
+      "roi_note": "Inspection crop including adjacent hair, not a segmented accessory bbox.",
+      "landmark_note": "Manual shot-alignment estimates; visually checked, approx. 10–20px tolerance, not skeletal joints."
+    },
+    "hand_closeup": {
+      "canvas": [
+        757,
+        732
+      ],
+      "source_hand_bbox": [
+        136,
+        960,
+        637,
+        1436
+      ],
+      "source_to_closeup_translation": [
+        -8,
+        -832
+      ],
+      "scale": 1,
+      "landmarks": {
+        "palm_interaction": [
+          432,
+          296
+        ],
+        "wrist": [
+          512,
+          278
+        ],
+        "thumb_tip": [
+          279,
+          133
+        ],
+        "index_tip": [
+          134,
+          413
+        ],
+        "middle_tip": [
+          241,
+          575
+        ],
+        "ring_tip": [
+          417,
+          593
+        ],
+        "little_tip": [
+          623,
+          513
+        ]
+      },
+      "palm_anchor_note": "Artwork interaction anchor; not a palm-crease anatomical measurement."
+    }
+  }
+}
