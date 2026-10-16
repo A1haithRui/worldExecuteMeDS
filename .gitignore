@@ -1,6 +1,7 @@
 # Locally supplied song and lyrics
 /MusicFile/
 /newProj_v1014/data/lyrics.json
+/newProj_v1014/data/audio-features-v1.json
 /newProj_v1014/audio/
 /newProj_v1014/docs/p0-*.png
 

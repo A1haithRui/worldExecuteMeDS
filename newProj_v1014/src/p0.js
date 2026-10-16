@@ -1,175 +1,560 @@
-// First time-driven storyboard pass for S15–S19. All motion is a function of song time.
-const W = 1920, H = 1080;
-const C = { bg: '#06131f', panel: '#0b2433', cyan: '#25bdd4', hot: '#83e9e6', white: '#e6f2ef', mute: '#526c7c', line: '#275467' };
-const shots = [
-  { id: 'S15', start: 59.223, end: 62.589, name: '接收' },
-  { id: 'S16', start: 62.589, end: 66.601, name: '回路' },
-  { id: 'S17', start: 66.601, end: 68.252, name: '伸手' },
-  { id: 'S18', start: 68.252, end: 70.084, name: '触点' },
-  { id: 'S19', start: 70.084, end: 74.045, name: '回声' },
+import {
+  W,
+  H,
+  C,
+  clamp,
+  mix,
+  phase,
+  ease,
+  out,
+  at,
+  layer,
+  stroke,
+  disc,
+  rect,
+  type,
+  halo,
+  point,
+  ground,
+  caption,
+  route,
+  along,
+  trace,
+  loadImages,
+} from "./mv-draw.js";
+import {
+  TOKENS,
+  chatWindow,
+  messageRow,
+  reasoningRow,
+  composer,
+} from "./engine/chat.js";
+import {
+  node,
+  nodeGrid,
+  dataColumns,
+  signalPath,
+  beatRings,
+  waveform,
+} from "./engine/model.js";
+import { sampleAt, audio } from "./engine/audio.js";
+// P0 polished study. Absolute song time only, no accumulated simulation state.
+export const P0 = Object.freeze({
+  start: 59.223,
+  end: 74.045,
+  contact: 68.3,
+  shots: [59.223, 62.589, 66.601, 68.252, 70.084, 74.045],
+  palm: [1100, 540],
+  handScale: 620 / 501,
+  cues: {
+    receive: 59.4115,
+    acknowledge: 61.958,
+    closeLoop: 65.397,
+    push: 67.05,
+    liftMemory: 69.6,
+  },
+  audioStatus: "other_cues_pending_listening",
+  contactApproval: {
+    time: 68.3,
+    status: "user_confirmed",
+    scope: "contact_event_only",
+    evidence: "user feedback in this conversation",
+  },
+});
+const { images, ready: p0Ready } = loadImages({
+  reach: "/assets/character/deepseek_reach_v3.png",
+  palm: "/assets/character/v4/deepseek_palm_v4_closeup_native.png",
+  bust: "/assets/character/deepseek_bust_v3.png",
+});
+export { p0Ready };
+function avatar(ctx, x, y, r = 25) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.fillStyle = "#174351";
+  ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+  ctx.drawImage(images.bust, x - r * 1.6, y - r * 1.35, 3.2 * r, 4.07 * r);
+  ctx.restore();
+}
+const outbound = route([
+    [470, 570],
+    [650, 200],
+    [1220, 120],
+    [1450, 410],
+  ]),
+  inbound = route([
+    [1450, 410],
+    [1350, 780],
+    [610, 830],
+    [470, 570],
+  ]),
+  retained = route([
+    [1100, 476],
+    [1050, 480],
+    [800, 360],
+    [640, 390],
+  ]);
+const memoryPaths = [
+  retained,
+  route([
+    [640, 390],
+    [450, 390],
+    [420, 660],
+    [640, 690],
+  ]),
+  route([
+    [640, 690],
+    [820, 720],
+    [1070, 665],
+    [1100, 540],
+  ]),
 ];
-const makeImage = (url) => { const img = new Image(); img.src = url; return img; };
-const reach = makeImage('/assets/character/deepseek_reach_v3.png');
-const palm = makeImage('/assets/character/v4/deepseek_palm_v4_closeup_native.png');
-const bust = makeImage('/assets/character/deepseek_bust_v3.png');
-const clamp = (x) => Math.max(0, Math.min(1, x));
-const ease = (x) => { const a = clamp(x); return a * a * (3 - 2 * a); };
-const lerp = (a, b, k) => a + (b - a) * k;
-const phase = (t, a, b) => clamp((t - a) / (b - a));
+function chatShell(ctx, t, alpha = 1) {
+  const R = { x: 216, y: 150, w: 1488, h: 736 };
+  const HEADER = 107;
+  const SIDEBAR = 230;
+  const responding = t < P0.cues.acknowledge;
+  const mm = String(Math.floor(t / 60)).padStart(2, "0");
+  const ss = String(Math.floor(t % 60)).padStart(2, "0");
+  const win = chatWindow(ctx, R, t, {
+    title: "deepseek",
+    subtitle: "/ world model",
+    session: "a shared channel",
+    state: responding ? "busy" : "online",
+    stateLabel: responding ? "responding" : "online",
+    sidebar: true,
+    sidebarW: SIDEBAR,
+    headerH: HEADER,
+    alpha,
+    enterAt: P0.start,
+    enterDur: 0.7,
+    footer: true,
+    footerLabel: "MODEL ACTIVE",
+    clock: `${mm}:${ss}`,
+  });
+  const threadX = win.contentX + 34;
+  const threadW = R.x + R.w - win.contentX - 68;
 
-function line(ctx, points, color, width = 2, alpha = 1) {
-  ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = color; ctx.lineWidth = width; ctx.beginPath();
-  points.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke(); ctx.restore();
-}
-function circle(ctx, x, y, r, color, fill = true, width = 2, alpha = 1) {
-  ctx.save(); ctx.globalAlpha = alpha; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
-  if (fill) { ctx.fillStyle = color; ctx.fill(); } else { ctx.strokeStyle = color; ctx.lineWidth = width; ctx.stroke(); }
-  ctx.restore();
-}
-function box(ctx, x, y, w, h, fill, stroke = C.line) {
-  ctx.fillStyle = fill; ctx.fillRect(x, y, w, h); ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.strokeRect(x, y, w, h);
-}
-function label(ctx, str, x, y, size = 24, color = C.mute, align = 'left', font = 'Consolas, monospace') {
-  ctx.fillStyle = color; ctx.textAlign = align; ctx.font = `${size}px ${font}`; ctx.fillText(str, x, y);
-}
-function glow(ctx, x, y, r, color, alpha = .16) {
-  const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, color); g.addColorStop(1, 'transparent');
-  ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2); ctx.restore();
-}
-function cropText(ctx, text, x, y, width, size = 55) {
-  if (!text) return;
-  ctx.save(); ctx.font = `${size}px Georgia, serif`; ctx.fillStyle = C.white; ctx.textAlign = 'left';
-  const words = text.split(/\s+/), rows = []; let row = '';
-  for (const word of words) {
-    const next = row ? `${row} ${word}` : word;
-    if (ctx.measureText(next).width > width && row) { rows.push(row); row = word; } else row = next;
+  // The user's line arrives as a real message row, typed in character by character.
+  const userRow = messageRow(ctx, threadX, R.y + HEADER + 48, threadW, t, P0.cues.receive, {
+    side: "user",
+    text: "I’m here.",
+    size: 21,
+    alpha,
+    typed: true,
+    cps: 9,
+  });
+  // The incoming signal marker rides in with that message.
+  if (userRow.bubbleW) {
+    const signalK = out(phase(t, P0.cues.receive, P0.cues.receive + 0.32));
+    point(
+      ctx,
+      threadX + threadW - userRow.bubbleW - 16,
+      R.y + HEADER + 48 + (userRow.height || 46) / 2,
+      true,
+      signalK,
+      5,
+    );
   }
-  if (row) rows.push(row);
-  rows.slice(0, 2).forEach((part, i) => ctx.fillText(part, x, y + i * (size + 8)));
-  ctx.restore();
+
+  // The agent: avatar, name, and the lyric as its reply.
+  layer(ctx, alpha, () => {
+    avatar(ctx, 514, 554, 23);
+    type(ctx, "DeepSeek", 556, 562, 21, TOKENS.accent, "MV Sans");
+  });
+
+  // Reasoning row under the reply: sweeping while it answers, then a summary.
+  reasoningRow(ctx, threadX, R.y + R.h - 196, threadW, t, {
+    running: responding,
+    startedAt: P0.cues.receive,
+    title: "思考",
+    summary: responding ? "reading the incoming signal" : "signal received",
+    alpha,
+  });
+
+  composer(ctx, threadX, R.y + R.h - 140, threadW, t, {
+    alpha,
+    placeholder: "发消息，/ 调用指令，@ 文件或对话",
+    focused: responding,
+    sendArmed: P0.cues.acknowledge,
+  });
 }
-function background(ctx, t, shot) {
-  const g = ctx.createRadialGradient(1210, 430, 60, 1210, 430, 1120);
-  g.addColorStop(0, '#0b3443'); g.addColorStop(.55, '#082333'); g.addColorStop(1, C.bg);
-  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-  ctx.save(); ctx.strokeStyle = '#55b4bf16'; ctx.lineWidth = 1;
-  for (let x = 80; x < W; x += 80) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-  for (let y = 80; y < H; y += 80) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-  ctx.restore();
-  if (shot.id !== 'S18') {
-    line(ctx, [[65, 78], [215, 78]], C.cyan, 4);
-    label(ctx, 'DEEPSEA / WORLD MODEL', 65, 118, 20, C.hot);
+function receive(ctx, t, line, diag) {
+  ground(ctx, t, [1180, 490]);
+  const leave = at(t, 62.3, P0.shots[1]);
+  chatShell(ctx, t, 1 - leave);
+  if (leave > 0) feedback(ctx, P0.shots[1], line, diag, leave, true);
+  if (leave < 1) {
+    caption(ctx, line, t, { x: 556, y: 649, width: 1000, size: 56 }, diag);
+    // Receipt marker sits just past the agent's name, clear of the reply and
+    // the reasoning row below it.
+    const ack = at(t, P0.cues.acknowledge, P0.cues.acknowledge + 0.22),
+      x = mix(700, 470, leave),
+      y = mix(554, 570, leave);
+    point(ctx, x, y, false, at(t, 60.45, 60.9), 7);
+    if (ack > 0)
+      disc(ctx, x, y, 12 + ack * 35, C.cyan, 0.55 * (1 - ack), false, 2);
   }
-  label(ctx, `${shot.id}  /  ${shot.name}`, W - 65, 118, 23, C.hot, 'right');
-  label(ctx, `${t.toFixed(3)}  /  211.958`, W - 65, H - 45, 18, C.mute, 'right');
-  label(ctx, 'INDEPENDENT FAN CONCEPT', 65, H - 45, 18, C.mute);
 }
-function subtitle(ctx, text, top = false) {
-  const y = top ? 205 : 920;
-  ctx.fillStyle = '#06131fd9'; ctx.fillRect(70, top ? 100 : 838, 1480, 150);
-  line(ctx, [[95, top ? 113 : 850], [620, top ? 113 : 850]], C.cyan, 3);
-  cropText(ctx, text, 115, y, 1330, 55);
-}
-function s15(ctx, t) {
-  const k = phase(t, 59.223, 62.589);
-  box(ctx, 165, 192, 1590, 650, '#071b29dd');
-  label(ctx, 'CONVERSATION  /  LIVE', 205, 245, 25, C.hot);
-  line(ctx, [[205, 275], [1715, 275]], C.line, 2);
-  box(ctx, 970, 330, 680, 150, '#123b48', '#689da7');
-  label(ctx, 'REMOTE INPUT', 1010, 380, 21, C.white);
-  line(ctx, [[1020, 418], [1600, 418]], C.white, 3, .75);
-  box(ctx, 275, 565, 725, 160, '#0b3443', C.cyan);
-  label(ctx, 'DEEPSEEK / RESPONSE', 315, 615, 21, C.hot);
-  line(ctx, [[325, 655], [855, 655]], C.cyan, 3, .85);
-  if (bust.complete && bust.naturalWidth) { ctx.save(); ctx.globalAlpha = .12; ctx.drawImage(bust, 1500, 370, 340, 430); ctx.restore(); }
-  const p = ease(phase(t, 60.85, 61.958));
-  line(ctx, [[975, 555], [1080, 555]], C.cyan, 3, p);
-  glow(ctx, 1080, 555, 90, C.cyan, p * .35);
-  circle(ctx, 1080, 555, 9, C.hot, true, 1, p);
-  const ripple = phase(t, 61.958, 62.589);
-  if (ripple > 0) circle(ctx, 1080, 555, 12 + ripple * 270, C.cyan, false, 4, 1 - ripple);
-  label(ctx, 'SIGNAL RECEIVED', 1180, 630, 18, C.mute, 'left');
-}
-function s16(ctx, t) {
-  const p = ease(phase(t, 62.589, 66.601));
-  label(ctx, 'FEEDBACK LOOP', 170, 230, 42, C.white);
-  label(ctx, 'remote signal / local response', 170, 275, 22, C.mute);
-  const source = [480, 560], remote = [1450, 390], joint = [1070, 540];
-  glow(ctx, ...remote, 150, C.white, .11); circle(ctx, ...remote, 14, C.white);
-  glow(ctx, ...source, 170, C.cyan, .2); circle(ctx, ...source, 22, C.cyan);
-  line(ctx, [[480, 560], [660, 410], [950, 410], [1070, 540]], C.cyan, 7, .25);
-  line(ctx, [[1450, 390], [1260, 390], [1070, 540]], C.white, 5, .22);
-  const x = lerp(1450, 1070, ease(phase(p, .16, .72))), y = lerp(390, 540, ease(phase(p, .16, .72)));
-  circle(ctx, x, y, 10, C.white);
-  const local = ease(phase(p, .35, .95));
-  line(ctx, [[480, 560], [lerp(480, 1070, local), lerp(560, 540, local)]], C.cyan, 5);
-  if (p > .72) { circle(ctx, ...joint, 16, C.hot); circle(ctx, ...joint, 38 + (p - .72) * 70, C.cyan, false, 3, .7); }
-  label(ctx, '01 / REQUEST', 390, 650, 21, C.mute);
-  label(ctx, '02 / RETURN', 1350, 480, 21, C.mute);
-}
-function s17(ctx, t) {
-  const p = ease(phase(t, 68.022, 68.252));
-  const dx = -24 * p, dy = -146 * p;
-  glow(ctx, 1130, 540, 610, C.cyan, .12);
-  for (const r of [300, 475, 700]) circle(ctx, 1180, 530, r, C.cyan, false, 2, .22);
-  if (reach.complete && reach.naturalWidth) ctx.drawImage(reach, 863.65 + dx, 19.39 + dy, 1342 * 850 / 1439, 1704 * 850 / 1439);
-  const hand = [1123.56 + dx, 685.69 + dy];
-  const q = ease(phase(t, 66.601, 68.252));
-  const white = [lerp(1550, hand[0] + 75, q), lerp(470, hand[1] - 65, q)];
-  line(ctx, [[1590, 460], white], C.white, 3, .35);
-  circle(ctx, ...white, 8, C.white);
-  label(ctx, 'APPROACH / NO CONTACT', 160, 735, 22, C.mute);
-}
-function s18(ctx, t) {
-  const contact = 68.3;
-  glow(ctx, 1100, 540, 550, C.cyan, .18);
-  if (palm.complete && palm.naturalWidth) ctx.drawImage(palm, 565.39, 173.69, 757 * 620 / 501, 732 * 620 / 501);
-  if (t < contact) {
-    const k = ease(phase(t, 68.252, contact));
-    circle(ctx, lerp(1310, 1100, k), lerp(365, 540, k), 14, C.white);
-  } else {
-    const p = t - contact;
-    glow(ctx, 1100, 540, 150, C.cyan, .32);
-    circle(ctx, 1100, 540, 10, C.cyan);
-    circle(ctx, 1100, 540, 19, C.white, false, 3, .85);
-    for (let i = 0; i < 3; i++) {
-      const q = phase(p, i * .33, i * .33 + .75);
-      if (q > 0 && q < 1) circle(ctx, 1100, 540, 25 + 210 * q, C.cyan, false, 3, .65 * (1 - q));
+function feedback(ctx, t, line, diag, alpha = 1, transition = false) {
+  layer(ctx, alpha, () => {
+    if (!transition) ground(ctx, t, [980, 490]);
+    const f = sampleAt(t);
+    const beatPulse = f.beatPulse;
+    const lowEnv = f.lowEnv;
+    const period = audio()?.period ?? 60 / 130;
+    const phase0 = audio()?.phase ?? 0;
+
+    // Model interior: a drifting lattice and scrolling data columns give the
+    // shot continuous texture instead of two thin arcs on an empty field.
+    if (!transition) {
+      nodeGrid(ctx, t, {
+        alpha: 0.17 * (0.7 + 0.6 * lowEnv),
+        step: 104,
+        beatPulse,
+        lowEnv,
+        seed: 3,
+      });
+      dataColumns(ctx, t, {
+        x: 60, y: 110, w: 1800, h: 800,
+        columns: 28, alpha: 0.085 * (0.6 + 0.7 * lowEnv),
+        focus: [980, 490], speed: 19,
+      });
     }
-  }
-  label(ctx, 'CONTACT / MEMORY 001', 113, 330, 24, C.hot);
-  label(ctx, 'one signal remains', 113, 372, 22, C.mute);
+
+    // Both routes carry several packets at once, so the link is never still.
+    signalPath(ctx, outbound, t, along, {
+      packets: 3, speed: 0.30, color: C.cyan, packetColor: C.hot,
+      baseAlpha: 0.16, width: 3, packetR: 5, beatPulse,
+    });
+    signalPath(ctx, inbound, t, along, {
+      packets: 3, speed: -0.24, phase: 0.35, color: C.muted, packetColor: C.white,
+      baseAlpha: 0.13, width: 2.5, packetR: 5, beatPulse,
+    });
+
+    // The story beats stay on their original ramps.
+    const sent = out(phase(t, 62.72, 63.85)),
+      returned = at(t, 63.85, P0.cues.closeLoop);
+    trace(ctx, outbound, sent, C.cyan, 3, 0.45);
+    trace(ctx, inbound, returned, C.hot, 2.5, 0.5);
+
+    const close = at(t, P0.cues.closeLoop, 65.68);
+    const localPulse = Math.max(beatPulse, 0);
+    node(ctx, 470, 570, t, { r: 8, color: C.hot, pulse: localPulse, alpha: 1 });
+    node(ctx, 1450, 410, t, { r: 6, color: C.white, pulse: beatPulse, alpha: 1 });
+    disc(ctx, 470, 570, 22 + localPulse * 12, C.cyan, 0.45 * (1 - 0.5 * localPulse), false, 1.5);
+    disc(ctx, 1450, 410, 18, C.white, 0.28, false, 1);
+    beatRings(ctx, 470, 570, t, { alpha: 0.24, maxR: 190, period, phase: phase0, count: 2 });
+    if (close > 0)
+      disc(ctx, 470, 570, 24 + close * 26, C.hot, 0.6 * (1 - close), false, 2);
+
+    layer(ctx, 1 - at(t, 65.9, 66.4), () => {
+      type(ctx, "sent", 406, 650, 18, C.muted, "MV Sans");
+      type(ctx, "returned", 1476, 453, 18, C.muted, "MV Sans");
+      type(ctx, "A connection takes two.", 143, 166, 23, C.muted, "MV Sans");
+    });
+    layer(ctx, 0.2 * (1 - close), () => {
+      for (let i = 1; i < 8; i++) {
+        const p = along(outbound, i / 8);
+        stroke(
+          ctx,
+          [
+            [p[0], p[1] - 7],
+            [p[0], p[1] + 7],
+          ],
+          C.cyan,
+          1,
+        );
+      }
+    });
+    const reveal = at(t, 66.4, P0.shots[2]);
+    if (reveal > 0)
+      layer(ctx, reveal, () => {
+        ground(ctx, t, [1220, 430], true);
+        drawReach(ctx, P0.shots[2]);
+        point(ctx, 1450, 410, true, 1, 7);
+      });
+    if (!transition)
+      caption(
+        ctx,
+        line,
+        t,
+        { x: 960, y: 909, width: 1550, align: "center", size: 56 },
+        diag,
+      );
+    diag.route = {
+      outbound: sent,
+      inbound: returned,
+      white: returned < 1 ? along(inbound, returned) : [1450, 410],
+    };
+  });
 }
-function s19(ctx, t) {
-  const p = ease(phase(t, 70.084, 74.045));
-  glow(ctx, 1100, 540, 220, C.cyan, .25);
-  circle(ctx, 1100, 540, 13, C.cyan);
-  const route = [[1100, 540], [900, 540], [900, 370], [640, 370], [640, 710], [385, 710]];
-  line(ctx, route, C.line, 4, .75);
-  const nodes = [[900, 540], [900, 370], [640, 370], [640, 710], [385, 710]];
-  nodes.forEach(([x, y], i) => { circle(ctx, x, y, 10, C.cyan, false, 2, .7); if (p > (i + 1) / 6) circle(ctx, x, y, 5, C.hot); });
-  const pathProgress = p * (route.length - 1);
-  const whole = Math.floor(pathProgress);
-  const tip = route[Math.min(whole, route.length - 1)];
-  const next = route[Math.min(whole + 1, route.length - 1)];
-  const traveled = [...route.slice(0, whole + 1), [lerp(tip[0], next[0], pathProgress - whole), lerp(tip[1], next[1], pathProgress - whole)]];
-  line(ctx, traveled, C.hot, 3);
-  const gx = 350, gy = 250, gw = 1020, gh = 590;
-  ctx.save(); ctx.globalAlpha = .7 * p; ctx.strokeStyle = C.cyan; ctx.lineWidth = 2; ctx.strokeRect(gx, gy, gw, gh);
-  for (let x = gx + 85; x < gx + gw; x += 85) line(ctx, [[x, gy], [x, gy + gh]], C.line, 1, .45);
-  for (let y = gy + 85; y < gy + gh; y += 85) line(ctx, [[gx, y], [gx + gw, y]], C.line, 1, .45);
-  ctx.restore();
-  circle(ctx, 1580, 515, 12, C.white);
-  label(ctx, 'REMOTE / OUTSIDE MODEL', 1550, 585, 20, C.white, 'right');
-  label(ctx, 'PATH STORED', 350, 208, 25, C.hot);
+export function reachTransform(t) {
+  const push = at(t, P0.cues.push, P0.shots[3]),
+    s = mix(850 / 1439, P0.handScale, push),
+    anchor = [1100, mix(650, 540, push)];
+  return { s, anchor, x: anchor[0] - 440 * s, y: anchor[1] - 1128 * s };
+}
+function drawReach(ctx, t, alpha = 1) {
+  const a = reachTransform(t);
+  layer(ctx, alpha, () =>
+    ctx.drawImage(images.reach, a.x, a.y, 1342 * a.s, 1704 * a.s),
+  );
+  return a;
+}
+function reachShot(ctx, t, line, diag) {
+  ground(ctx, t, [1220, 430], true);
+  const a = drawReach(ctx, t),
+    gap = at(t, 66.601, 68.252),
+    trail = route([
+      [1450, 410],
+      [1360, 425],
+      [1270, 460],
+      [1120, 520],
+    ]),
+    pos = along(trail, gap);
+  trace(ctx, trail, gap, C.white, 1, 0.2, Math.max(0, gap - 0.16));
+  point(ctx, ...pos, true, 1, 7);
+  caption(ctx, line, t, { x: 146, y: 215, width: 760, size: 56 }, diag);
+  diag.palm = { x: a.anchor[0], y: a.anchor[1], scale: a.s };
+  diag.remote = pos;
+}
+function palmShot(ctx, t, line, diag, alpha = 1) {
+  layer(ctx, alpha, () => {
+    ground(ctx, t, [1100, 540], true);
+    const s = P0.handScale,
+      x = P0.palm[0] - 432 * s,
+      y = P0.palm[1] - 296 * s,
+      after = t - P0.contact;
+    const bodyAlpha = Math.max(
+      1 - at(t, 68.252, 68.62),
+      0.09 * (1 - at(t, 68.62, 69.25)),
+    );
+    if (bodyAlpha > 0) drawReach(ctx, P0.shots[3], bodyAlpha);
+    ctx.drawImage(images.palm, x, y, 757 * s, 732 * s);
+    if (after < 0) {
+      const k = out(phase(t, 68.252, P0.contact));
+      point(ctx, mix(1120, 1100, k), mix(520, 540, k), true, 1, 7);
+    } else {
+      const settle = at(t, P0.contact, 68.52),
+        ring = out(phase(t, P0.contact, 68.95));
+      if (ring < 1)
+        disc(
+          ctx,
+          1100,
+          540,
+          12 + ring * 100,
+          C.cyan,
+          0.65 * (1 - ring),
+          false,
+          2,
+        );
+      disc(ctx, 1100, 540, mix(8, 6, settle), C.cyan);
+      disc(ctx, 1100, 540, 13, C.white, 0.8 * (1 - settle) + 0.18, false, 1.5);
+      halo(ctx, 1100, 540, 60, 0.13);
+      const lift = at(t, P0.cues.liftMemory, 70.084);
+      if (lift > 0) {
+        stroke(
+          ctx,
+          [
+            [1100, 540],
+            [1100, 540 - lift * 64],
+          ],
+          C.hot,
+          1.5,
+          0.45,
+        );
+        point(ctx, 1100, 540 - lift * 64, false, 1, 5);
+      }
+    }
+    caption(ctx, line, t, { x: 145, y: 176, width: 1600, size: 56 }, diag);
+    layer(ctx, at(t, 68.7, 69.05), () =>
+      type(ctx, "a trace, kept", 146, 296, 19, C.muted, "MV Sans"),
+    );
+    diag.palm = { x: 1100, y: 540, scale: s };
+    diag.remote =
+      after < 0
+        ? [
+            mix(1120, 1100, out(phase(t, 68.252, P0.contact))),
+            mix(520, 540, out(phase(t, 68.252, P0.contact))),
+          ]
+        : [1100, 540];
+  });
+}
+function echo(ctx, t, line, diag) {
+  const fade = at(t, 70.084, 70.42);
+  if (fade < 1) palmShot(ctx, 70.084 - 1e-6, null, diag, 1);
+  layer(ctx, fade, () => {
+    ground(ctx, t, [980, 450]);
+    const f = sampleAt(t);
+    const period = audio()?.period ?? 60 / 130;
+    const phase0 = audio()?.phase ?? 0;
+    const zoom = mix(1.1, 0.9, at(t, 70.1, 73.7));
+    ctx.save();
+    ctx.translate(1100, 476);
+    ctx.scale(zoom, zoom);
+    ctx.translate(-1100, -476);
+    const expand = at(t, 70.3, 72.0),
+      roof = 230,
+      bottom = 790,
+      left = 330,
+      right = 1330;
+
+    // Model interior texture inside the saved region.
+    nodeGrid(ctx, t, {
+      x: left, y: roof, w: right - left, h: bottom - roof,
+      alpha: 0.16 * expand * (0.7 + 0.6 * f.lowEnv),
+      step: 96, beatPulse: f.beatPulse, lowEnv: f.lowEnv, seed: 7,
+    });
+    dataColumns(ctx, t, {
+      x: left + 10, y: roof + 10, w: right - left - 20, h: bottom - roof - 20,
+      columns: 18, alpha: 0.07 * expand * (0.5 + 0.7 * f.lowEnv),
+      focus: [1100, 476], speed: 17, size: 14,
+    });
+
+    layer(ctx, expand * 0.4, () => {
+      for (let i = 0; i < 8; i++)
+        stroke(
+          ctx,
+          [
+            [left + i * 142, roof],
+            [left + i * 142, bottom],
+          ],
+          C.edge,
+          1,
+          0.45,
+        );
+      for (let i = 0; i < 5; i++)
+        stroke(
+          ctx,
+          [
+            [left, roof + i * 140],
+            [right, roof + i * 140],
+          ],
+          C.edge,
+          1,
+          0.45,
+        );
+      stroke(
+        ctx,
+        [
+          [left, roof],
+          [right, roof],
+          [right, bottom],
+          [left, bottom],
+          [left, roof],
+        ],
+        C.cyan,
+        1.3,
+        0.65,
+      );
+    });
+    const progress = phase(t, 70.3, 72.35) * 3;
+    memoryPaths.forEach((r, i) => {
+      trace(ctx, r, 1, C.cyan, 2, 0.13);
+      // Each stored path keeps carrying packets, so the saved memory reads as
+      // live traffic rather than as a line that was drawn once.
+      signalPath(ctx, r, t, along, {
+        packets: 2,
+        speed: 0.32 + i * 0.06,
+        phase: i * 0.29,
+        color: C.cyan,
+        packetColor: i === 0 ? C.hot : C.cyan,
+        baseAlpha: 0,
+        width: 2.4,
+        packetR: 4.5,
+        beatPulse: f.beatPulse,
+      });
+      trace(ctx, r, clamp(progress - i), C.hot, 2.5, 0.8);
+    });
+    if (progress < 3) {
+      const which = Math.min(2, Math.floor(progress));
+      point(ctx, ...along(memoryPaths[which], progress - which), false, 1, 6);
+    }
+    // One explicit correspondence between the original palm impression and the saved node.
+    const receipt = at(t, 72.4, 72.98);
+    if (t >= 72.4 && t < 72.98) {
+      const r = route([
+        [1100, 540],
+        [1030, 450],
+        [760, 320],
+        [640, 390],
+      ]);
+      trace(ctx, r, receipt, C.hot, 2, 0.65);
+      point(ctx, ...along(r, receipt), false, 1, 6);
+    }
+    disc(
+      ctx,
+      640,
+      390,
+      7 + receipt * 7,
+      C.hot,
+      0.65 * (1 - receipt),
+      false,
+      1.5,
+    );
+    const fill = at(t, 72.3, 72.55);
+    point(ctx, 1100, 540, false, 1, 6);
+    disc(ctx, 1100, 540, 16, C.cyan, 0.3, false, 1);
+    disc(ctx, 640, 390, 5, C.hot, expand);
+    disc(ctx, 640, 690, 5, C.hot, expand);
+    stroke(
+      ctx,
+      [
+        [1430, roof - 20],
+        [1430, bottom + 20],
+      ],
+      C.muted,
+      1,
+      expand * 0.3,
+    );
+    point(ctx, 1550, 410, true, expand, 7);
+    beatRings(ctx, 640, 390, t, {
+      alpha: 0.22 * expand, maxR: 210, period, phase: phase0, count: 2,
+    });
+    // The kept trace, watching the music that is still playing.
+    layer(ctx, expand * 0.5, () =>
+      waveform(ctx, left, bottom + 34, right - left, 68, t, {
+        bars: 88, span: 2.6, series: "high", alpha: 0.22, minBar: 1.5,
+      }),
+    );
+    if (fill > 0) {
+      type(ctx, "retained", 1140, 547, 18, C.hot, "MV Sans");
+      type(ctx, "local", left, roof - 28, 17, C.muted, "MV Sans");
+      type(ctx, "remote", 1513, roof - 28, 17, C.muted, "MV Sans");
+    }
+    ctx.restore();
+    point(ctx, 1100, 476, false, 1 - fade, 5);
+    diag.retained = {
+      x: 1100,
+      y: 540,
+      progress,
+      savedNode: [686, 398.6],
+      matched: receipt >= 1,
+    };
+  });
+  caption(
+    ctx,
+    line,
+    t,
+    { x: 146, y: mix(992, 920, at(t, 70.42, 70.7)), width: 1620, size: 56 },
+    diag,
+  );
+}
+export function renderP0(ctx, t, line, forceIndex = -1) {
+  // A forced index means the caller wants this shot for a transition frame,
+  // which can sit outside the segment's own time range.
+  if (forceIndex < 0 && (t < P0.start || t >= P0.end)) return null;
+  const i =
+    forceIndex >= 0
+      ? forceIndex
+      : P0.shots.findIndex((v, n) => n < 5 && t >= v && t < P0.shots[n + 1]),
+    diag = { time: t, shot: `S${15 + i}`, ready: !!images.palm };
+  [receive, feedback, reachShot, palmShot, echo][i](ctx, t, line, diag);
+  return diag;
 }
 
-export function renderP0(canvas, t, text) {
-  const ctx = canvas.getContext('2d');
-  const shot = shots.find((s) => t >= s.start && t < s.end);
-  if (!shot) return;
-  background(ctx, t, shot);
-  ({ S15: s15, S16: s16, S17: s17, S18: s18, S19: s19 })[shot.id](ctx, t);
-  subtitle(ctx, text, shot.id === 'S18');
-  return `${shot.id} / ${shot.name}`;
+export function drawP0Join(ctx, t = 74.045) {
+  echo(ctx, Math.min(t, 74.045 - 1e-6), null, {});
 }

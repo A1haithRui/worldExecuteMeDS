@@ -14,7 +14,7 @@
       <span class="draft">CONCEPT 01 / WORK IN PROGRESS</span>
     </header>
 
-    <section id="stage" class="stage mode-boot" aria-label="MV 预览画面">
+    <section id="stage" class="stage mode-boot loading" aria-label="MV 预览画面">
       <canvas id="storyboardCanvas" width="1920" height="1080" aria-label="分镜动态试片"></canvas>
       <div class="grid"></div><div class="beam"></div><div class="orb orb-one"></div><div class="orb orb-two"></div>
       <div class="scanline"></div>
@@ -38,8 +38,8 @@
       <div class="stage-foot"><span>AN INDEPENDENT COMMUNITY FAN CONCEPT</span><span>1920 × 1080 · 16:9</span></div>
     </section>
 
-    <div class="controls"><button id="play" type="button">播放</button><input id="seek" type="range" min="0" max="211.96" step="0.01" value="0" aria-label="播放进度"><span id="clock">00:00 / 03:32</span><span id="sceneName">BOOT / 连接</span></div>
-    <p class="hint">点击播放，或拖动进度条查看场景。空格控制播放；方向键以 1 秒为单位跳转。当前是视觉与时间线样片。</p>
+    <div class="controls"><button id="play" type="button">播放</button><button id="reviewP2" type="button">审片 0–29 秒</button><button id="reviewP0" type="button">审片 59–74 秒</button><button id="reviewP1" type="button">审片 74–95 秒</button><button id="reviewCombined" type="button">连续审片 59–95 秒</button><input id="seek" type="range" min="0" max="211.96" step="0.01" value="0" aria-label="播放进度"><span id="clock">00:00 / 03:32</span><span id="sceneName">BOOT / 连接</span></div>
+    <p class="hint">空格播放／暂停；方向键以 1 秒跳转。0–29.709 秒与 59.223–95.465 秒为制作样片，其余为概念稿。审片按钮在区间末尾停住，进度条可查看全曲。外观切换暂用轮廓预览后备。</p>
     <audio id="audio" preload="metadata" src="/audio/song.wav"></audio>
   </main>
   <script type="module" src="/src/main.js"></script>

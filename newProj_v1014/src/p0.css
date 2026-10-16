@@ -1,2 +1,96 @@
-#storyboardCanvas{display:none;position:absolute;inset:0;width:100%;height:100%;z-index:20}
-.stage.p0-draft #storyboardCanvas{display:block}
+@font-face {
+  font-family: "MV Serif";
+  src: url("/assets/fonts/source-serif-4-latin-600-normal.woff2")
+    format("woff2");
+  font-weight: 600;
+  font-display: block;
+}
+@font-face {
+  font-family: "MV Sans";
+  src: url("/assets/fonts/inter-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-display: block;
+}
+@font-face {
+  font-family: "MV Mono";
+  src: url("/assets/fonts/jetbrains-mono-latin-400-normal.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-display: block;
+}
+#storyboardCanvas {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+}
+.stage.p0-polished > :not(#storyboardCanvas) {
+  visibility: hidden;
+}
+.stage.p0-polished #storyboardCanvas {
+  display: block;
+}
+.stage.loading > * {
+  visibility: hidden !important;
+}
+.stage.loading::after {
+  content: "Preparing the channel…";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #06131f;
+  color: #83e9e6;
+  font:
+    16px Consolas,
+    monospace;
+  z-index: 30;
+}
+body.render-only {
+  margin: 0;
+  background: #06131f;
+  overflow: hidden;
+}
+body.render-only .app {
+  width: 1920px;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+body.render-only .page-head,
+body.render-only .controls,
+body.render-only .hint {
+  display: none;
+}
+body.render-only .stage {
+  width: 1920px;
+  height: 1080px;
+  aspect-ratio: auto;
+  border: 0;
+  box-shadow: none;
+}
+.controls #reviewP0 {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.controls {
+  flex-wrap: wrap;
+}
+.controls input {
+  min-width: 160px;
+}
+.controls #reviewP1,
+.controls #reviewCombined {
+  font-size: 12px;
+  white-space: nowrap;
+}
+@media (max-width: 700px) {
+  .controls #reviewP0 {
+    padding: 7px 8px;
+  }
+  .controls #clock {
+    font-size: 10px;
+  }
+}

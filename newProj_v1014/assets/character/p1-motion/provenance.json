@@ -1,0 +1,68 @@
+{
+  "source": "../deepseek_bust_v3.png",
+  "sha256": "180b3bd6ed96a8bdc0dbf854ee41b5d46d87cbc0053b49381638af346e9cf418",
+  "source_canvas": [
+    1342,
+    1704
+  ],
+  "source_landmarks": {
+    "visible_eye": [
+      596,
+      526
+    ],
+    "headpiece": [
+      875,
+      430
+    ],
+    "neck_knot": [
+      686,
+      827
+    ]
+  },
+  "manual_fin_points": {
+    "left": {
+      "rootA": [
+        438,
+        570
+      ],
+      "rootB": [
+        452,
+        624
+      ],
+      "tip": [
+        288,
+        620
+      ],
+      "hintTip": [
+        332,
+        475
+      ]
+    },
+    "right": {
+      "rootA": [
+        897,
+        548
+      ],
+      "rootB": [
+        903,
+        620
+      ],
+      "tip": [
+        1056,
+        592
+      ],
+      "hintTip": [
+        1040,
+        460
+      ]
+    }
+  },
+  "coordinate_note": "Visual manual estimates selected on native v3; not exact anatomical or skeletal coordinates.",
+  "full_colour_affine_study": "rejected: seams near right headpiece; folded left outline. Study PNGs and RGBA cutouts remain local under out/p1-polish/fin-study-initial/.",
+  "production_fallback": "A transparent Canvas derived from v4 silhouette: old-fin polygons removed, monochrome bridges join roots, two open pointed contours substituted for 82.500–82.780 only. No face deformation, no full-colour cat variant, no cat paws.",
+  "rgba_note": "Canvas default transparent backing; compositing preserves transparent background. No preview JPG used as a production layer.",
+  "alternate_asset_inventory": "No alternate bust supplied in project assets at production time. S26/S27 use explicitly labelled outline preview.",
+  "image_generation_used": false,
+  "source_files_modified": false,
+  "implementation": "../../../src/p1.js"
+}

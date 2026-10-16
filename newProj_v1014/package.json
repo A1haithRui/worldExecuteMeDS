@@ -4,6 +4,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "preview": "node server.mjs"
+    "preview": "node server.mjs",
+    "export:p0": "node tools/export-p0.mjs",
+    "check:p0": "node tools/export-p0.mjs --mode stills",
+    "check:p1": "node tools/export-p0.mjs --preset p1 --mode stills",
+    "export:p1": "node tools/export-p0.mjs --preset p1",
+    "export:p0-p1": "node tools/export-p0.mjs --preset combined",
+    "check:p2": "node tools/export-p0.mjs --preset p2 --mode stills",
+    "export:p2": "node tools/export-p0.mjs --preset p2",
+    "check:engine": "node tools/check-engine.mjs",
+    "motion": "node tools/measure-shot-motion.mjs",
+    "audio:features": "python tools/build-audio-features.py --spectrum"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.63.0",
+    "ffmpeg-static": "^5.3.0"
   }
 }
