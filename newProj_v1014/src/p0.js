@@ -127,7 +127,9 @@ function chatShell(ctx, t, alpha = 1) {
     sidebarW: SIDEBAR,
     headerH: HEADER,
     alpha,
-    enterAt: P0.start,
+    // Starts lifting a little before the segment boundary so the cut from S14
+    // lands on an almost-formed window instead of on near-black.
+    enterAt: P0.start - 0.55,
     enterDur: 0.7,
     footer: true,
     footerLabel: "MODEL ACTIVE",

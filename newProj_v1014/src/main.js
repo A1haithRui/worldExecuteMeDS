@@ -2,6 +2,10 @@ import { p0Ready, P0 } from "./p0.js";
 import { p1Ready, P1, getP1DerivedLayer } from "./p1.js";
 import { p2Ready, P2 } from "./p2.js";
 import { p3Ready, P3 } from "./p3.js";
+import { p4Ready, P4 } from "./p4.js";
+import { p5Ready, P5 } from "./p5.js";
+import { p6Ready, P6 } from "./p6.js";
+import { p7Ready, P7 } from "./p7.js";
 import { drawCaption } from "./mv-draw.js";
 import { createStage, shakeAt } from "./engine/stage.js";
 import { setAudioFeatures, sampleAt, audio as songAudio } from "./engine/audio.js";
@@ -9,7 +13,7 @@ import { drawAmbient, ambientFor } from "./engine/ambient.js";
 import { smooth, mix, clamp } from "./engine/motion.js";
 import {
   ALL_SHOTS, POLISHED_RANGES, SEGMENT_RENDER, SHOT_CAMERA, SHOT_TRANSITIONS,
-  AMBIENT_BY_SHOT, AMBIENT_FOCUS, inPolished,
+  AMBIENT_BY_SHOT, AMBIENT_FOCUS, inPolished, SEGMENTS,
 } from "./segments.js";
 
 // Per-shot camera. A slow push or pull keeps a still plate alive without
@@ -224,6 +228,9 @@ function renderShot(ctx, entry, t, line) {
   return SEGMENT_RENDER[entry.seg](ctx, t, line, entry.idx);
 }
 
+// ?amb=0 disables the ambient motion layer, for A/B measurement.
+const ambientScale = params.has("amb") ? Number(params.get("amb")) : 1;
+
 function ambientInto(ctx, t, diag) {
   if (ambientScale <= 0) return;
   const f = sampleAt(t);
@@ -279,17 +286,27 @@ function paint(t) {
   let p0Scene = null;
   let appliedGrade = null;
   if (plan) {
+    // Layer A must always hold the OUTGOING shot and layer B the INCOMING one,
+    // because the transition library composites from -> to. A transition that
+    // starts on the cut (align "start") is evaluated while the current shot is
+    // already the incoming one, so the two layers swap.
+    const startsOnCut = plan.spec?.align === "start";
+    const aEntry = startsOnCut ? plan.other : plan.cur;
+    const bEntry = startsOnCut ? plan.cur : plan.other;
+
     const ctx = mvStage.begin();
-    p0Scene = renderShot(ctx, plan.cur, t, line);
-    ambientInto(ctx, t, p0Scene);
+    const aScene = renderShot(ctx, aEntry, t, startsOnCut ? null : line);
+    ambientInto(ctx, t, aScene);
+    p0Scene = aScene;
 
     if (plan.other) {
       // The partner layer keeps its own shot alive through the overlap, so a
-      // wipe shows motion on both sides rather than a frozen frame. It draws no
-      // caption: the lyric belongs to the line that is current, once.
+      // wipe shows motion on both sides rather than a frozen frame. Only the
+      // shot that owns the frame draws a caption: the lyric appears once.
       const ctxB = mvStage.beginIncoming();
-      const otherScene = renderShot(ctxB, plan.other, t, null);
-      ambientInto(ctxB, t, otherScene);
+      const bScene = renderShot(ctxB, bEntry, t, startsOnCut ? line : null);
+      ambientInto(ctxB, t, bScene);
+      if (startsOnCut) p0Scene = bScene;
       mvStage.setTransition({
         ...plan.spec,
         k: plan.k,
@@ -370,6 +387,18 @@ window.p0Config = P0;
 window.p1Config = P1;
 window.p2Config = P2;
 window.p3Config = P3;
+window.p4Config = P4;
+window.p5Config = P5;
+window.p6Config = P6;
+window.p7Config = P7;
+// The whole registry, so offline tools do not have to hardcode segment ids.
+window.mvSegments = SEGMENTS.map((s) => ({
+  id: s.id,
+  base: s.base,
+  start: s.config.start,
+  end: s.config.end,
+  shots: s.config.shots,
+}));
 window.exportP1DerivedLayer = () => getP1DerivedLayer().toDataURL('image/png');
 
 $("play").addEventListener("click", async () => {
@@ -392,6 +421,10 @@ async function review(from, end) {
 }
 $("reviewP2").addEventListener("click", () => review(P2.start, P2.end));
 $("reviewP3").addEventListener("click", () => review(P3.start, P3.end));
+$("reviewP4").addEventListener("click", () => review(P4.start, P4.end));
+$("reviewP5").addEventListener("click", () => review(P5.start, P5.end));
+$("reviewP6").addEventListener("click", () => review(P6.start, P6.end));
+$("reviewP7").addEventListener("click", () => review(P7.start, P7.end));
 $("reviewP0").addEventListener("click", () => review(P0.start, P0.end));
 $("reviewP1").addEventListener("click", () => review(P1.start, P1.end));
 $("reviewCombined").addEventListener("click", () => review(P0.start, P1.end));
@@ -425,6 +458,10 @@ window.readyPromise = Promise.all([
   p1Ready,
   p2Ready,
   p3Ready,
+  p4Ready,
+  p5Ready,
+  p6Ready,
+  p7Ready,
   conceptReady,
   lyricsReady,
   featuresReady,

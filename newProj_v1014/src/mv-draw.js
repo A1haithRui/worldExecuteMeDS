@@ -11,6 +11,10 @@ const W = 1920,
     white: "#e6f2ef",
     muted: "#526c7c",
     edge: "#285363",
+    // Fault red. The storyboard allows it only on out-of-bounds ports and on
+    //局部 fault edges from S36 onward -- never as a full-screen wash.
+    danger: "#e75d69",
+    dangerDim: "#8f3b45",
   };
 const clamp = (x) => Math.max(0, Math.min(1, x)),
   mix = (a, b, k) => a + (b - a) * k,
@@ -225,10 +229,26 @@ function bezier(a, b, c, d, u) {
       u * u * u * d[1],
   ];
 }
+// Sample a curve into a polyline with cumulative arc length.
+// Accepts 4 control points (cubic) or 3 (quadratic). Anything else is a bug:
+// the cubic evaluator would silently receive `undefined` and the whole route
+// would become NaN, which then blows up deep inside a gradient or a path.
 function route(control) {
-  const pts = Array.from({ length: 161 }, (_, i) =>
-      bezier(...control, i / 160),
-    ),
+  let evalAt;
+  if (control.length === 4) {
+    evalAt = (u) => bezier(control[0], control[1], control[2], control[3], u);
+  } else if (control.length === 3) {
+    evalAt = (u) => {
+      const v = 1 - u;
+      return [
+        v * v * control[0][0] + 2 * v * u * control[1][0] + u * u * control[2][0],
+        v * v * control[0][1] + 2 * v * u * control[1][1] + u * u * control[2][1],
+      ];
+    };
+  } else {
+    throw new Error(`route() needs 3 or 4 control points, got ${control.length}`);
+  }
+  const pts = Array.from({ length: 161 }, (_, i) => evalAt(i / 160)),
     dist = [0];
   for (let i = 1; i < pts.length; i++)
     dist.push(
@@ -236,6 +256,38 @@ function route(control) {
         Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]),
     );
   return { pts, dist, length: dist.at(-1) };
+}
+
+// A polyline resampled to the same 161-point form as route(), so trace / along /
+// signalPath work on it unchanged. `closed` joins the last point back to the
+// first, which is what most of the reconnect and loop shots need.
+function polyline(points, closed = false) {
+  const src = points.map((p) => [p[0], p[1]]);
+  if (src.length < 2) throw new Error("polyline() needs at least 2 points");
+  if (closed) src.push([src[0][0], src[0][1]]);
+  const seg = [0];
+  for (let i = 1; i < src.length; i++)
+    seg.push(
+      seg[i - 1] + Math.hypot(src[i][0] - src[i - 1][0], src[i][1] - src[i - 1][1]),
+    );
+  const total = seg[seg.length - 1] || 1e-9;
+  const pts = [];
+  for (let i = 0; i < 161; i++) {
+    const d = (i / 160) * total;
+    let j = 1;
+    while (j < seg.length - 1 && seg[j] < d) j++;
+    const k = (d - seg[j - 1]) / (seg[j] - seg[j - 1] || 1e-9);
+    pts.push([
+      src[j - 1][0] + (src[j][0] - src[j - 1][0]) * k,
+      src[j - 1][1] + (src[j][1] - src[j - 1][1]) * k,
+    ]);
+  }
+  const dist = [0];
+  for (let i = 1; i < pts.length; i++)
+    dist.push(
+      dist[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]),
+    );
+  return { pts, dist, length: dist[dist.length - 1] };
 }
 function along(r, p) {
   const d = clamp(p) * r.length;
@@ -294,6 +346,7 @@ export {
   caption,
   drawCaption,
   route,
+  polyline,
   along,
   trace,
 };

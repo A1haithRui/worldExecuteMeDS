@@ -1,6 +1,6 @@
 # DeepSeek 主题《world.execute(me);》MV 工作目录
 
-目前是可播放的**概念样片**：用 v3 鲸鱼娘角色、深海蓝青配色和聊天界面，把本机音频与歌词时间线接入独立的浏览器预览。全曲分镜已完成第一版，其中 59.223–74.045 秒已接入按歌曲时间绘制的动态试片；其余段落仍沿用早期概念画面，尚未导出正式视频。
+目前是可播放的**全曲动态草片**：全曲56镜覆盖0–211.957596秒，使用v3鲸鱼娘、深海蓝青配色、聊天界面和模型内部图形，支持本机音频、歌词时间线及1080p60离线导出。2026-10-17的[独立验收](docs/dsh-review-2026-10-17.md)已确认工程与视频可运行，仍有镜内事件和片尾连续性需要回修，尚未作为最终成片验收。
 
 ![当前浏览器样片](docs/preview.png)
 
@@ -25,9 +25,9 @@
 
 全曲 56 镜的设计稿见 [`docs/storyboard-v1.md`](docs/storyboard-v1.md)，对应的程序数据在 `data/storyboard-v1.json`；角色补图条件见 [`docs/character-shot-requests-v1.md`](docs/character-shot-requests-v1.md)。镜头切点仍待人工审听。
 
-首段 S15–S19（59.223–74.045 秒）已完成一轮精修，复用现有角色与掌心素材，重做消息、回路、向掌心推进、一次接触和保存路径。点击“审片 59–74 秒”播放本段；其他段仍为概念稿。带声音的本机视频为 `out/p0-polished-59.223-74.045-1080p60.mp4`，制作与实际验证见 [p0-polish-notes.md](docs/p0-polish-notes.md)。音乐切点仍待人工审听。
+首段 S15–S19（59.223–74.045 秒）复用现有角色与掌心素材，包含消息、回路、向掌心推进、一次接触和保存路径。点击“审片 59–74 秒”播放本段；早期精修记录见 [p0-polish-notes.md](docs/p0-polish-notes.md)。用户已确认68.300秒触碰落点，其他切点仍待人工审听。
 
-续段 S20–S27（74.045–95.465 秒）已完成制作版，含资源交换、短促尖鳍轮廓后备、外观轮廓预览与两片值班区接力。用户已确认68.300秒触碰落点；其他新事件仍待审听。页面提供“审片74–95秒”和“连续审片59–95秒”。运行 `npm run export:p1` / `npm run export:p0-p1` 输出独立与连续的1080p60带声音MP4；`npm run check:p1`检查关键帧、字幕和反向跳转。实际制作与验证见 [p1-production-notes.md](docs/p1-production-notes.md)，补绘要求见 [p1-asset-request.md](docs/p1-asset-request.md)。95.465秒之后仍是概念稿；旧标签页请刷新。
+续段 S20–S27（74.045–95.465 秒）含资源交换、短促尖鳍轮廓后备、外观轮廓预览与两片值班区接力。页面提供“审片74–95秒”和“连续审片59–95秒”。运行 `npm run export:p1` / `npm run export:p0-p1` 输出独立与连续的1080p60带声音MP4；`npm run check:p1`检查关键帧、字幕和反向跳转。早期制作与验证见 [p1-production-notes.md](docs/p1-production-notes.md)，两项素材缺口仍见 [p1-asset-request.md](docs/p1-asset-request.md)。旧标签页请刷新。
 
 运行 `npm run check:p0` 输出本地关键帧和确定性检查，`npm run export:p0` 离线导出1080p60、H.264/AAC视频。导出优先复用本项目或相邻参考工程已有的Playwright/ffmpeg依赖，独立安装可执行 `npm install`。本地字体与OFL许可在 `assets/fonts/`。音频、歌词、截图和视频继续留在Git之外。
 
@@ -50,10 +50,9 @@
 
 ## 目前可看的段落
 
-- **0–29.709 秒（S01–S06）**：第二段样板。通道从黑暗中打开、界面点亮、参数填入、两个端口建立、角色显影、第一句消息发出。`npm run export:p2` 导出，或 `npm run check:p2` 做关键帧与字幕审计。
-- **59.223–95.465 秒（S15–S27）**：第一段样板，已连续精修多轮。
+**全曲 0–211.958 秒（S01–S56）均已绘制**，八段首尾相接，见 [docs/engine-v2.md](docs/engine-v2.md)。概念稿的 DOM 轮播保留作对照，已不参与成片。
 
-其余段落仍是概念稿。
+各段审片按钮在浏览器控制条上；`npm run export:full` 导出全曲1080p60带声音草片，本机文件为 `out/world-execute-me-deepseek-1080p60.mp4`。闪帧检查目前需显式传视频，例如 `npm run check:flash -- out/world-execute-me-deepseek-1080p60.mp4`；工具的媒体探测及判据局限见验收记录。
 
 ## 参考与后续
 

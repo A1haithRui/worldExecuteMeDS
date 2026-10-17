@@ -47,20 +47,19 @@ try {
 
   const report = await page.evaluate(
     async ({ preset, fps, probeW, staticThreshold }) => {
-      const p0 = window.p0Config;
-      const p1 = window.p1Config;
-      const p2 = window.p2Config;
+      const segments = window.mvSegments || [];
       const ranges = [];
-      const push = (idStart, shots) => {
+      const push = (idBase, shots) => {
         for (let i = 0; i < shots.length - 1; i++) {
-          ranges.push({ shot: `S${String(idStart + i).padStart(2, "0")}`, start: shots[i], end: shots[i + 1] });
+          ranges.push({ shot: `S${String(idBase + i).padStart(2, "0")}`, start: shots[i], end: shots[i + 1] });
         }
       };
-      const want =
-        { p2: ["p2"], p0: ["p0"], p1: ["p1"] }[preset] || ["p2", "p0", "p1"];
-      if (want.includes("p2") && p2) push(1, p2.shots);
-      if (want.includes("p0")) push(15, p0.shots);
-      if (want.includes("p1")) push(20, p1.shots);
+      // Segments come from the page's own registry, so a new segment needs no
+      // change here.
+      const want = preset === "combined" ? segments.map((s) => s.id) : [preset];
+      for (const s of segments) {
+        if (want.includes(s.id)) push(s.base, s.shots);
+      }
 
       const probeH = Math.max(1, Math.round((probeW * 9) / 16));
       const probe = document.createElement("canvas");
