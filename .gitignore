@@ -10,6 +10,13 @@
 /world-execute-me-dsh-pv/
 /world-execute-me-lyric-mv/
 
+# Derived media from the reference film: for local study only, never
+# redistributed. The study tooling, page and shot metadata stay in Git.
+/claude-version-study/shots/
+/claude-version-study/thumbs/
+/claude-version-study/film/
+/claude-version-study/*.png
+
 *.mp3
 *.wav
 *.flac

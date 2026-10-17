@@ -6,12 +6,15 @@
 | --- | --- | --- | --- |
 | [`world-execute-me-dsh-pv/`](world-execute-me-dsh-pv/) | DeepSeek Harness 风格 PV 参考 | [MisakaZentai/world-execute-me-dsh-pv](https://github.com/MisakaZentai/world-execute-me-dsh-pv) | `a598092a1b1db91fa43961a81269353d13419f6f` |
 | [`world-execute-me-lyric-mv/`](world-execute-me-lyric-mv/) | Claude 歌词 MV 的浏览器渲染、分镜及角色表现参考 | [Nyankomintsu/world-execute-me-lyric-mv](https://github.com/Nyankomintsu/world-execute-me-lyric-mv) | `2073b0c88c6fc837482478402a44f101b3b57d6f` |
+| [`claude-version-study/`](claude-version-study/) | 对上面那份参考片的分镜解剖：87 镜逐镜切片 + 可交互页面 + [分析](claude-version-study/ANALYSIS.md) | 同上 | 同上 |
 
 上游项目的版权和素材说明仍在各自目录的 `LICENSE`、`NOTICE.md`、`CREDITS.md` 及 README 中；在复用代码或素材时应查看相应说明。这个工作区及将来的成片不代表上述作者或 DeepSeek 官方制作、合作或授权。
 
 ## 当前进度
 
-2026-10-17：`newProj_v1014/` 已完成全曲56镜的动态草片和本机1080p60导出。独立复核通过全曲镜头覆盖、边界渲染与音轨抽测，尚有重连计数、最后呼叫起点和片尾衰减等回修项，见[验收记录](newProj_v1014/docs/dsh-review-2026-10-17.md)。当前版本是可审片的全曲草稿，尚未最终验收。
+2026-10-17：`newProj_v1014/` 全曲 56 镜已接通并导出 1080p60，四条时间驱动缺陷（最后一次呼叫起点、片尾暗环复活、第 5–12 次呼叫未累积、S29 漂移时间反向）已修复，并新增"反向时间窗口"自动守卫；存档标签 `baseline-v1014-fixround1`。审片用 [`newProj_v1014/review/index.html`](newProj_v1014/review/index.html)（双击即开，67 个检查点）。尚未完成：全曲人工审听、逐镜导演精修、两处素材补充。
+
+同日另做了 [`claude-version-study/`](claude-version-study/)：把参考片 87 个镜头逐镜切出来、做成可交互审查页，并写出[解剖结论](claude-version-study/ANALYSIS.md)——其中最有用的两条是"参考片 87 个边界里只有 13 个用成形转场（我们 55 个边界配了 40 条）"，以及"我们的全片闪帧最大跳变 9.93%，阈值 10%，压在线上且没有警告页"。
 
 《化身孤岛的鲸》临时探索支线已由用户取消，后续工作集中在本主线。
 
