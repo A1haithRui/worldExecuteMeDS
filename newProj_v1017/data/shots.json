@@ -1,0 +1,2513 @@
+{
+  "source": {
+    "reference": "world-execute-me-lyric-mv",
+    "referenceCommit": "2073b0c88c6fc837482478402a44f101b3b57d6f",
+    "songDuration": 211.957596,
+    "preroll": 5,
+    "bpm": 129.9954,
+    "period": 0.461555,
+    "phase": 0.31,
+    "phaseFix": -0.033999999999999975,
+    "lyricLines": 129
+  },
+  "safety": {
+    "preroll": 5,
+    "maxFlash": 0.7,
+    "warningLine": "本片含有闪烁画面与强光，光敏感者请留意",
+    "warningCountdown": 3,
+    "warningSeconds": 6.5,
+    "note": "preroll = seconds of silent warning page BEFORE the song. Every time in shots/ is song time (audio start = 0), so no cue moves; film time = song time + preroll. maxFlash caps every full-screen flash and is asserted by tools/check-storyboard.mjs. flashRange is not typed here: the storyboard computes it from the shots that actually carry flash."
+  },
+  "checks": {
+    "issues": []
+  },
+  "progress": {
+    "total": 87,
+    "written": 0,
+    "inherited": 74,
+    "todo": 13,
+    "flashShots": 0,
+    "maxFlash": 0,
+    "formedTransitions": 0,
+    "formedShare": 0
+  },
+  "sections": [
+    {
+      "index": 0,
+      "title": "0 片头：闪光警告页（歌曲开始之前）",
+      "count": 1
+    },
+    {
+      "index": 1,
+      "title": "1 启动",
+      "count": 4
+    },
+    {
+      "index": 2,
+      "title": "2 标题与第一个问题",
+      "count": 4
+    },
+    {
+      "index": 3,
+      "title": "3 主歌一：用数学回答",
+      "count": 4
+    },
+    {
+      "index": 4,
+      "title": "4 导歌一：设定被切换",
+      "count": 4
+    },
+    {
+      "index": 5,
+      "title": "5 副歌一：对话与四张版画",
+      "count": 8
+    },
+    {
+      "index": 6,
+      "title": "6 主歌二：三个名词三张版画，一张校样",
+      "count": 8
+    },
+    {
+      "index": 7,
+      "title": "7 导歌二：设定改的是她本人",
+      "count": 7
+    },
+    {
+      "index": 8,
+      "title": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "count": 11
+    },
+    {
+      "index": 9,
+      "title": "9 越界、第一个错误、扩散",
+      "count": 9
+    },
+    {
+      "index": 10,
+      "title": "10 EXECUTION：一台机器，十二圈",
+      "count": 4
+    },
+    {
+      "index": 11,
+      "title": "11 数数与最后一声",
+      "count": 7
+    },
+    {
+      "index": 12,
+      "title": "12 最后副歌：四张版画原位重印，但坏了",
+      "count": 7
+    },
+    {
+      "index": 13,
+      "title": "13 LOVE 四句：课、测验、公式、证明",
+      "count": 4
+    },
+    {
+      "index": 14,
+      "title": "14 结尾：一则以未读的图片讯息，逆向开机",
+      "count": 5
+    }
+  ],
+  "shots": [
+    {
+      "id": "preroll",
+      "section": 0,
+      "at": -5,
+      "until": 0,
+      "lines": null,
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": null,
+      "inheritCoverage": 0,
+      "state": "off",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 0,
+      "duration": 5,
+      "filmStart": 0,
+      "filmEnd": 5,
+      "barBeat": "歌曲前",
+      "offGridMs": 0,
+      "sectionTitle": "0 片头：闪光警告页（歌曲开始之前）",
+      "gridExempt": true
+    },
+    {
+      "id": "boot-power",
+      "section": 1,
+      "at": 0,
+      "until": 4.0024,
+      "lines": [
+        1,
+        3
+      ],
+      "picture": "ui",
+      "moment": "深蓝空场中只亮输入光标；信号点从右抵达，聊天框边界被确认，人物仅为右后方暗轮廓，占高35%。",
+      "momentState": "inherited",
+      "inherits": "S01",
+      "inheritCoverage": 0.97,
+      "state": "off",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 1,
+      "duration": 4.0024,
+      "filmStart": 5,
+      "filmEnd": 9.0024,
+      "barBeat": "歌曲前",
+      "offGridMs": 0,
+      "sectionTitle": "1 启动",
+      "gridExempt": false
+    },
+    {
+      "id": "boot-layout",
+      "section": 1,
+      "at": 4.0024,
+      "until": 7.6949,
+      "lines": [
+        4,
+        6
+      ],
+      "picture": "portrait",
+      "moment": "节点按输入顺序接入一个水下坐标系；每一次连接只增加一条可解释的路径，不铺装饰代码。",
+      "momentState": "inherited",
+      "inherits": "S02",
+      "inheritCoverage": 0.93,
+      "state": "off",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "push, 0.50 拍",
+      "index": 2,
+      "duration": 3.6925,
+      "filmStart": 9.0024,
+      "filmEnd": 12.6949,
+      "barBeat": "2:1",
+      "offGridMs": 0.04000000000043519,
+      "sectionTitle": "1 启动",
+      "gridExempt": false
+    },
+    {
+      "id": "boot-params",
+      "section": 1,
+      "at": 7.6949,
+      "until": 11.3873,
+      "lines": [
+        7,
+        8
+      ],
+      "picture": "ui",
+      "moment": "参数卡在消息流里填入；右侧低亮胸像不变姿，字段填完才亮头像；底部保留未输入的远端空位。",
+      "momentState": "inherited",
+      "inherits": "S03",
+      "inheritCoverage": 0.92,
+      "state": "off",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "zoom, 1.00 拍",
+      "index": 3,
+      "duration": 3.6924,
+      "filmStart": 12.6949,
+      "filmEnd": 16.3873,
+      "barBeat": "4:1",
+      "offGridMs": 0.019999999999397708,
+      "sectionTitle": "1 启动",
+      "gridExempt": false
+    },
+    {
+      "id": "boot-world",
+      "section": 1,
+      "at": 11.3873,
+      "until": 15.0798,
+      "lines": [
+        9,
+        11
+      ],
+      "picture": "portrait",
+      "moment": "光点生出两端口：本端青、远端空心白；声呐首次从本端发往右缘，剪影藏在后景。",
+      "momentState": "inherited",
+      "inherits": "S04",
+      "inheritCoverage": 1,
+      "state": "off",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "scan, 1.00 拍",
+      "index": 4,
+      "duration": 3.692500000000001,
+      "filmStart": 16.3873,
+      "filmEnd": 20.0798,
+      "barBeat": "6:1",
+      "offGridMs": 0.020000000001037483,
+      "sectionTitle": "1 启动",
+      "gridExempt": false
+    },
+    {
+      "id": "title",
+      "section": 2,
+      "at": 15.0798,
+      "until": 16.926,
+      "lines": [
+        12,
+        12
+      ],
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S05",
+      "inheritCoverage": 0.5,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut, flash 0.9",
+      "index": 5,
+      "duration": 1.8461999999999978,
+      "filmStart": 20.0798,
+      "filmEnd": 21.926,
+      "barBeat": "8:1",
+      "offGridMs": 0.039999999998795416,
+      "sectionTitle": "2 标题与第一个问题",
+      "gridExempt": false
+    },
+    {
+      "id": "chat-open",
+      "section": 2,
+      "at": 16.926,
+      "until": 22.4646,
+      "lines": null,
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S05",
+      "inheritCoverage": 0.56,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "zoom, 2.00 拍 start",
+      "index": 6,
+      "duration": 5.538600000000002,
+      "filmStart": 21.926,
+      "filmEnd": 27.4646,
+      "barBeat": "9:1",
+      "offGridMs": 0.019999999999397708,
+      "sectionTitle": "2 标题与第一个问题",
+      "gridExempt": false
+    },
+    {
+      "id": "chat-type",
+      "section": 2,
+      "at": 22.4646,
+      "until": 26.1571,
+      "lines": null,
+      "picture": "ui",
+      "moment": "器乐空档中用户写入首条短消息并发送；镜头由头像回到完整DeepSeek风格聊天窗口，智能体开始等待；不是静止等歌词。",
+      "momentState": "inherited",
+      "inherits": "S06",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "push, 0.50 拍",
+      "index": 7,
+      "duration": 3.692499999999999,
+      "filmStart": 27.4646,
+      "filmEnd": 31.1571,
+      "barBeat": "12:1",
+      "offGridMs": 0.039999999998795416,
+      "sectionTitle": "2 标题与第一个问题",
+      "gridExempt": false
+    },
+    {
+      "id": "chat-think",
+      "section": 2,
+      "at": 26.1571,
+      "until": 29.388,
+      "lines": null,
+      "picture": "ui",
+      "moment": "器乐空档中用户写入首条短消息并发送；镜头由头像回到完整DeepSeek风格聊天窗口，智能体开始等待；不是静止等歌词。",
+      "momentState": "inherited",
+      "inherits": "S06",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut, flash 0.35",
+      "index": 8,
+      "duration": 3.230900000000002,
+      "filmStart": 31.1571,
+      "filmEnd": 34.388000000000005,
+      "barBeat": "14:1",
+      "offGridMs": 0.02000000000267725,
+      "sectionTitle": "2 标题与第一个问题",
+      "gridExempt": false
+    },
+    {
+      "id": "v1-points",
+      "section": 3,
+      "at": 29.388,
+      "until": 33.3112,
+      "lines": [
+        13,
+        15
+      ],
+      "picture": "portrait",
+      "moment": "输入点扩成青色点集，沿z轴逐层展开；白色远端点获得一条坐标轴。主角是可交付的关系，不展示模型结构百科。",
+      "momentState": "inherited",
+      "inherits": "S07",
+      "inheritCoverage": 0.92,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut, flash 0.25",
+      "index": 9,
+      "duration": 3.923199999999998,
+      "filmStart": 34.388000000000005,
+      "filmEnd": 38.3112,
+      "barBeat": "15:4",
+      "offGridMs": 0.03500000000304542,
+      "sectionTitle": "3 主歌一：用数学回答",
+      "gridExempt": false
+    },
+    {
+      "id": "v1-circle",
+      "section": 3,
+      "at": 33.3112,
+      "until": 37.0036,
+      "lines": [
+        16,
+        18
+      ],
+      "picture": "ui",
+      "moment": "圆形关系作为一张青色附件发入线程；用户沿圆边拖出一段白色路径并确认，角色只留头像。",
+      "momentState": "inherited",
+      "inherits": "S08",
+      "inheritCoverage": 0.97,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut, flash 0.12",
+      "index": 10,
+      "duration": 3.6923999999999992,
+      "filmStart": 38.3112,
+      "filmEnd": 42.0036,
+      "barBeat": "17:4.5",
+      "offGridMs": 0.017499999996603392,
+      "sectionTitle": "3 主歌一：用数学回答",
+      "gridExempt": false
+    },
+    {
+      "id": "v1-sine",
+      "section": 3,
+      "at": 37.0036,
+      "until": 40.6961,
+      "lines": [
+        19,
+        21
+      ],
+      "picture": "portrait",
+      "moment": "圆边拉成正弦波，白点沿一条切线离开又被下一波接住；不把整个背景变成均衡器。",
+      "momentState": "inherited",
+      "inherits": "S09",
+      "inheritCoverage": 0.98,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 11,
+      "duration": 3.6925000000000026,
+      "filmStart": 42.0036,
+      "filmEnd": 45.6961,
+      "barBeat": "19:4.5",
+      "offGridMs": 0.022500000002192024,
+      "sectionTitle": "3 主歌一：用数学回答",
+      "gridExempt": false
+    },
+    {
+      "id": "v1-limit",
+      "section": 3,
+      "at": 40.6961,
+      "until": 44.6193,
+      "lines": [
+        22,
+        24
+      ],
+      "picture": "plate",
+      "moment": "正面角色居右占高68%，左侧边界线向她靠近又停下；她仍在框中，白点能离开画面，建立后半的空间关系。",
+      "momentState": "inherited",
+      "inherits": "S10",
+      "inheritCoverage": 0.95,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 12,
+      "duration": 3.9232000000000014,
+      "filmStart": 45.6961,
+      "filmEnd": 49.6193,
+      "barBeat": "21:4.5",
+      "offGridMs": 0.03749999999928065,
+      "sectionTitle": "3 主歌一：用数学回答",
+      "gridExempt": false
+    },
+    {
+      "id": "pre1-drawer",
+      "section": 4,
+      "at": 44.6193,
+      "until": 48.3117,
+      "lines": [
+        25,
+        26
+      ],
+      "picture": "ui",
+      "moment": "用户在小型控制面板切换信号模式；青波形改变采样方式，人物姿态固定。只动被操作的局部。",
+      "momentState": "inherited",
+      "inherits": "S11",
+      "inheritCoverage": 0.83,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 13,
+      "duration": 3.6923999999999992,
+      "filmStart": 49.6193,
+      "filmEnd": 53.3117,
+      "barBeat": "24:1",
+      "offGridMs": 0.02000000000267725,
+      "sectionTitle": "4 导歌一：设定被切换",
+      "gridExempt": false
+    },
+    {
+      "id": "pre1-vision",
+      "section": 4,
+      "at": 48.3117,
+      "until": 52.0042,
+      "lines": [
+        27,
+        28
+      ],
+      "picture": "portrait",
+      "moment": "可视区域缩成窄带，波形被遮住又露出；局部扫描越来越急，画面底色亮度保持稳定。",
+      "momentState": "inherited",
+      "inherits": "S12",
+      "inheritCoverage": 0.83,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 14,
+      "duration": 3.6924999999999955,
+      "filmStart": 53.3117,
+      "filmEnd": 57.0042,
+      "barBeat": "26:1",
+      "offGridMs": 0.02000000000267725,
+      "sectionTitle": "4 导歌一：设定被切换",
+      "gridExempt": false
+    },
+    {
+      "id": "pre1-date",
+      "section": 4,
+      "at": 52.0042,
+      "until": 55.6966,
+      "lines": [
+        29,
+        30
+      ],
+      "picture": "portrait",
+      "moment": "记忆索引向过去回卷，节点时间戳由近到远；取样点越过零刻度时，已看过的记录变空心。用声呐档案，不做历史建筑剪影。",
+      "momentState": "inherited",
+      "inherits": "S13",
+      "inheritCoverage": 0.83,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 15,
+      "duration": 3.6923999999999992,
+      "filmStart": 57.0042,
+      "filmEnd": 60.6966,
+      "barBeat": "28:1",
+      "offGridMs": 0.039999999998795416,
+      "sectionTitle": "4 导歌一：设定被切换",
+      "gridExempt": false
+    },
+    {
+      "id": "pre1-unite",
+      "section": 4,
+      "at": 55.6966,
+      "until": 59.389,
+      "lines": [
+        31,
+        32
+      ],
+      "picture": "plate",
+      "moment": "侧身角色在右，占高64%，朝左边两条相位接近的声道；到末尾声道第一次重合，发饰只沿原图显影。",
+      "momentState": "inherited",
+      "inherits": "S14",
+      "inheritCoverage": 0.96,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 16,
+      "duration": 3.6924000000000063,
+      "filmStart": 60.6966,
+      "filmEnd": 64.38900000000001,
+      "barBeat": "30:1",
+      "offGridMs": 6.559091048075061e-12,
+      "sectionTitle": "4 导歌一：设定被切换",
+      "gridExempt": false
+    },
+    {
+      "id": "c1-give",
+      "section": 5,
+      "at": 59.389,
+      "until": 61.9276,
+      "lines": [
+        33,
+        34
+      ],
+      "picture": "ui",
+      "moment": "用户消息落在右上，青色回应从左下抵达；接收标记在61.958扩出一圈水纹，第一次让远端动作在本端留下痕迹。",
+      "momentState": "inherited",
+      "inherits": "S15",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut, flash 0.35",
+      "index": 17,
+      "duration": 2.5385999999999953,
+      "filmStart": 64.38900000000001,
+      "filmEnd": 66.9276,
+      "barBeat": "32:1",
+      "offGridMs": 0.039999999998795416,
+      "sectionTitle": "5 副歌一：对话与四张版画",
+      "gridExempt": false
+    },
+    {
+      "id": "c1-kw1",
+      "section": 5,
+      "at": 61.9276,
+      "until": 62.6199,
+      "lines": [
+        35,
+        35
+      ],
+      "picture": "ui",
+      "moment": "用户消息落在右上，青色回应从左下抵达；接收标记在61.958扩出一圈水纹，第一次让远端动作在本端留下痕迹。",
+      "momentState": "inherited",
+      "inherits": "S15",
+      "inheritCoverage": 0.96,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 18,
+      "duration": 0.692300000000003,
+      "filmStart": 66.9276,
+      "filmEnd": 67.6199,
+      "barBeat": "33:2.5",
+      "offGridMs": 0.00749999999198522,
+      "sectionTitle": "5 副歌一：对话与四张版画",
+      "gridExempt": false
+    },
+    {
+      "id": "c1-only",
+      "section": 5,
+      "at": 62.6199,
+      "until": 65.3893,
+      "lines": [
+        36,
+        37
+      ],
+      "picture": "portrait",
+      "moment": "上一圈水纹穿过接收端；远端回传一个白点，本端青色响应路径因此闭合。反馈以两条互相抵达的路径呈现，不做巨型点赞圆盘。",
+      "momentState": "inherited",
+      "inherits": "S16",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 19,
+      "duration": 2.7694000000000045,
+      "filmStart": 67.6199,
+      "filmEnd": 70.3893,
+      "barBeat": "33:4",
+      "offGridMs": 0.024999999995147702,
+      "sectionTitle": "5 副歌一：对话与四张版画",
+      "gridExempt": false
+    },
+    {
+      "id": "c1-kw2",
+      "section": 5,
+      "at": 65.3893,
+      "until": 66.3124,
+      "lines": [
+        38,
+        38
+      ],
+      "picture": "portrait",
+      "moment": "上一圈水纹穿过接收端；远端回传一个白点，本端青色响应路径因此闭合。反馈以两条互相抵达的路径呈现，不做巨型点赞圆盘。",
+      "momentState": "inherited",
+      "inherits": "S16",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 20,
+      "duration": 0.9230999999999909,
+      "filmStart": 70.3893,
+      "filmEnd": 71.3124,
+      "barBeat": "35:2",
+      "offGridMs": 0.04500000000438405,
+      "sectionTitle": "5 副歌一：对话与四张版画",
+      "gridExempt": false
+    },
+    {
+      "id": "c1-happy",
+      "section": 5,
+      "at": 66.3124,
+      "until": 69.3125,
+      "lines": [
+        39,
+        40
+      ],
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S17",
+      "inheritCoverage": 0.55,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 21,
+      "duration": 3.0001000000000033,
+      "filmStart": 71.3124,
+      "filmEnd": 74.3125,
+      "barBeat": "35:4",
+      "offGridMs": 0.034999999993206785,
+      "sectionTitle": "5 副歌一：对话与四张版画",
+      "gridExempt": false
+    },
+    {
+      "id": "c1-kw3",
+      "section": 5,
+      "at": 69.3125,
+      "until": 70.0048,
+      "lines": [
+        41,
+        41
+      ],
+      "picture": "plate",
+      "moment": "手部内容宽620px，掌心固定(1100,540)，白点在68.300候选接触；青色波纹从掌心向外，接收后白点变为空心并留下小青点。无爱心计数；字幕临时走上方安全带y=100–240。",
+      "momentState": "inherited",
+      "inherits": "S18",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 22,
+      "duration": 0.692300000000003,
+      "filmStart": 74.3125,
+      "filmEnd": 75.0048,
+      "barBeat": "37:2.5",
+      "offGridMs": 0.027500000001221565,
+      "sectionTitle": "5 副歌一：对话与四张版画",
+      "gridExempt": false
+    },
+    {
+      "id": "c1-trap",
+      "section": 5,
+      "at": 70.0048,
+      "until": 73.2357,
+      "lines": [
+        42,
+        43
+      ],
+      "picture": "portrait",
+      "moment": "掌心留下的点建立一次完整发送—接收路径；随后镜头拉远，看见同一通道被一个有限网格包围，远端白点处在网格之外。",
+      "momentState": "inherited",
+      "inherits": "S19",
+      "inheritCoverage": 0.98,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 23,
+      "duration": 3.2308999999999912,
+      "filmStart": 75.0048,
+      "filmEnd": 78.2357,
+      "barBeat": "37:4",
+      "offGridMs": 0.00499999999902954,
+      "sectionTitle": "5 副歌一：对话与四张版画",
+      "gridExempt": false
+    },
+    {
+      "id": "c1-kw4",
+      "section": 5,
+      "at": 73.2357,
+      "until": 74.1588,
+      "lines": [
+        44,
+        44
+      ],
+      "picture": "portrait",
+      "moment": "掌心留下的点建立一次完整发送—接收路径；随后镜头拉远，看见同一通道被一个有限网格包围，远端白点处在网格之外。",
+      "momentState": "inherited",
+      "inherits": "S19",
+      "inheritCoverage": 0.88,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 24,
+      "duration": 0.9231000000000051,
+      "filmStart": 78.2357,
+      "filmEnd": 79.1588,
+      "barBeat": "39:3",
+      "offGridMs": 0.00999999999805908,
+      "sectionTitle": "5 副歌一：对话与四张版画",
+      "gridExempt": false
+    },
+    {
+      "id": "v2-ask1",
+      "section": 6,
+      "at": 74.1588,
+      "until": 74.6204,
+      "lines": [
+        45,
+        45
+      ],
+      "picture": "ui",
+      "moment": "两张资源附件依次进入：第一张以青色茄形扫描轮廓及内部种子点表示可交付资源；提取的是一列数据单位，不把角色变成果蔬。",
+      "momentState": "inherited",
+      "inherits": "S20",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 25,
+      "duration": 0.46160000000000423,
+      "filmStart": 79.1588,
+      "filmEnd": 79.6204,
+      "barBeat": "40:1",
+      "offGridMs": 0,
+      "sectionTitle": "6 主歌二：三个名词三张版画，一张校样",
+      "gridExempt": false
+    },
+    {
+      "id": "v2-eggplant",
+      "section": 6,
+      "at": 74.6204,
+      "until": 77.6205,
+      "lines": [
+        45,
+        47
+      ],
+      "picture": "ui",
+      "moment": "两张资源附件依次进入：第一张以青色茄形扫描轮廓及内部种子点表示可交付资源；提取的是一列数据单位，不把角色变成果蔬。",
+      "momentState": "inherited",
+      "inherits": "S20",
+      "inheritCoverage": 0.99,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 26,
+      "duration": 3.0001000000000033,
+      "filmStart": 79.6204,
+      "filmEnd": 82.6205,
+      "barBeat": "40:2",
+      "offGridMs": 0.04500000000438405,
+      "sectionTitle": "6 主歌二：三个名词三张版画，一张校样",
+      "gridExempt": false
+    },
+    {
+      "id": "v2-ask2",
+      "section": 6,
+      "at": 77.6205,
+      "until": 78.3128,
+      "lines": [
+        48,
+        48
+      ],
+      "picture": "portrait",
+      "moment": "第二张番茄形采样轮廓形成保护层，噪点撞上外层后消散；不是切开果实或把其颜色抽走，仍全片蓝青。",
+      "momentState": "inherited",
+      "inherits": "S21",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 27,
+      "duration": 0.6922999999999888,
+      "filmStart": 82.6205,
+      "filmEnd": 83.3128,
+      "barBeat": "41:4.5",
+      "offGridMs": 0.03749999999928065,
+      "sectionTitle": "6 主歌二：三个名词三张版画，一张校样",
+      "gridExempt": false
+    },
+    {
+      "id": "v2-tomato",
+      "section": 6,
+      "at": 78.3128,
+      "until": 81.3129,
+      "lines": [
+        48,
+        50
+      ],
+      "picture": "portrait",
+      "moment": "第二张番茄形采样轮廓形成保护层，噪点撞上外层后消散；不是切开果实或把其颜色抽走，仍全片蓝青。",
+      "momentState": "inherited",
+      "inherits": "S21",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 28,
+      "duration": 3.0001000000000033,
+      "filmStart": 83.3128,
+      "filmEnd": 86.3129,
+      "barBeat": "42:2",
+      "offGridMs": 0.00499999999902954,
+      "sectionTitle": "6 主歌二：三个名词三张版画，一张校样",
+      "gridExempt": false
+    },
+    {
+      "id": "v2-ask3",
+      "section": 6,
+      "at": 81.3129,
+      "until": 82.0052,
+      "lines": [
+        51,
+        51
+      ],
+      "picture": "plate",
+      "moment": "原角色居中偏右(1180,520)，占高76%；扫描窄框经过头部后，原侧鳍外缘短暂竖为猫耳般尖形，脸、长发、单枚鲸饰、尾巴不变。",
+      "momentState": "inherited",
+      "inherits": "S22",
+      "inheritCoverage": 0.94,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 29,
+      "duration": 0.692300000000003,
+      "filmStart": 86.3129,
+      "filmEnd": 87.0052,
+      "barBeat": "43:4.5",
+      "offGridMs": 0.002500000006073861,
+      "sectionTitle": "6 主歌二：三个名词三张版画，一张校样",
+      "gridExempt": false
+    },
+    {
+      "id": "v2-cat",
+      "section": 6,
+      "at": 82.0052,
+      "until": 85.0053,
+      "lines": [
+        51,
+        53
+      ],
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S23",
+      "inheritCoverage": 0.72,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 30,
+      "duration": 3.0001000000000033,
+      "filmStart": 87.0052,
+      "filmEnd": 90.0053,
+      "barBeat": "44:2",
+      "offGridMs": 0.034999999993206785,
+      "sectionTitle": "6 主歌二：三个名词三张版画，一张校样",
+      "gridExempt": false
+    },
+    {
+      "id": "v2-ask4",
+      "section": 6,
+      "at": 85.0053,
+      "until": 85.4669,
+      "lines": [
+        54,
+        54
+      ],
+      "picture": "portrait",
+      "moment": "窄框恢复后人物缩为网格中的本端节点，占高32%；远端白点回送确认环，使本端坐标不再漂移。身份被看见，以定位稳定表达。",
+      "momentState": "inherited",
+      "inherits": "S24",
+      "inheritCoverage": 0.84,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 31,
+      "duration": 0.46159999999999,
+      "filmStart": 90.0053,
+      "filmEnd": 90.4669,
+      "barBeat": "45:4.5",
+      "offGridMs": 0.04249999999831019,
+      "sectionTitle": "6 主歌二：三个名词三张版画，一张校样",
+      "gridExempt": false
+    },
+    {
+      "id": "v2-proof",
+      "section": 6,
+      "at": 85.4669,
+      "until": 88.9286,
+      "lines": [
+        54,
+        56
+      ],
+      "picture": "portrait",
+      "moment": "窄框恢复后人物缩为网格中的本端节点，占高32%；远端白点回送确认环，使本端坐标不再漂移。身份被看见，以定位稳定表达。",
+      "momentState": "inherited",
+      "inherits": "S24",
+      "inheritCoverage": 0.9,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 32,
+      "duration": 3.4617000000000075,
+      "filmStart": 90.4669,
+      "filmEnd": 93.9286,
+      "barBeat": "46:1.5",
+      "offGridMs": 0.002499999992955679,
+      "sectionTitle": "6 主歌二：三个名词三张版画，一张校样",
+      "gridExempt": false
+    },
+    {
+      "id": "pre2-settings",
+      "section": 7,
+      "at": 88.9286,
+      "until": 90.7748,
+      "lines": [
+        57,
+        58
+      ],
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S25",
+      "inheritCoverage": 0.69,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 33,
+      "duration": 1.846199999999996,
+      "filmStart": 93.9286,
+      "filmEnd": 95.7748,
+      "barBeat": "48:1",
+      "offGridMs": 0.0400000000053545,
+      "sectionTitle": "7 导歌二：设定改的是她本人",
+      "gridExempt": false
+    },
+    {
+      "id": "pre2-gender",
+      "section": 7,
+      "at": 90.7748,
+      "until": 92.621,
+      "lines": [
+        58,
+        59
+      ],
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S26",
+      "inheritCoverage": 0.67,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 34,
+      "duration": 1.846199999999996,
+      "filmStart": 95.7748,
+      "filmEnd": 97.621,
+      "barBeat": "49:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "7 导歌二：设定改的是她本人",
+      "gridExempt": false
+    },
+    {
+      "id": "pre2-day",
+      "section": 7,
+      "at": 92.621,
+      "until": 96.3134,
+      "lines": [
+        59,
+        61
+      ],
+      "picture": "portrait",
+      "moment": "同一形态缩至占高28%，身后上下两片深海值班区域交替接力；94.93附近确认第二片，表现跨时段在线，无太阳滑块。",
+      "momentState": "inherited",
+      "inherits": "S27",
+      "inheritCoverage": 0.77,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 35,
+      "duration": 3.6924000000000063,
+      "filmStart": 97.621,
+      "filmEnd": 101.3134,
+      "barBeat": "50:1",
+      "offGridMs": 0,
+      "sectionTitle": "7 导歌二：设定改的是她本人",
+      "gridExempt": false
+    },
+    {
+      "id": "pre2-role",
+      "section": 7,
+      "at": 96.3134,
+      "until": 100.0059,
+      "lines": [
+        61,
+        63
+      ],
+      "picture": "ui",
+      "moment": "两字母只作信号路由标签，用户将收发箭头互换，原通道被交给另一端；界面里不放角色和暗示性道具。",
+      "momentState": "inherited",
+      "inherits": "S28",
+      "inheritCoverage": 0.82,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 36,
+      "duration": 3.6924999999999955,
+      "filmStart": 101.3134,
+      "filmEnd": 105.0059,
+      "barBeat": "52:1",
+      "offGridMs": 0.0400000000053545,
+      "sectionTitle": "7 导歌二：设定改的是她本人",
+      "gridExempt": false
+    },
+    {
+      "id": "pre2-loop",
+      "section": 7,
+      "at": 100.0059,
+      "until": 100.4674,
+      "lines": [
+        63,
+        63
+      ],
+      "picture": "portrait",
+      "moment": "路由闭环进入三个并列状态格，原形态与另一形态只作同身份缩略快照；100.5以后环路继续缓移，稳定回到原形态，用户预览关闭。",
+      "momentState": "inherited",
+      "inherits": "S29",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 37,
+      "duration": 0.4615000000000009,
+      "filmStart": 105.0059,
+      "filmEnd": 105.4674,
+      "barBeat": "54:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "7 导歌二：设定改的是她本人",
+      "gridExempt": false
+    },
+    {
+      "id": "pre2-trance",
+      "section": 7,
+      "at": 100.4674,
+      "until": 103.2368,
+      "lines": [
+        63,
+        64
+      ],
+      "picture": "portrait",
+      "moment": "路由闭环进入三个并列状态格，原形态与另一形态只作同身份缩略快照；100.5以后环路继续缓移，稳定回到原形态，用户预览关闭。",
+      "momentState": "inherited",
+      "inherits": "S29",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 38,
+      "duration": 2.7694000000000045,
+      "filmStart": 105.4674,
+      "filmEnd": 108.2368,
+      "barBeat": "54:2",
+      "offGridMs": 0.035000000006324965,
+      "sectionTitle": "7 导歌二：设定改的是她本人",
+      "gridExempt": false
+    },
+    {
+      "id": "pre2-loop-b",
+      "section": 7,
+      "at": 103.2368,
+      "until": 103.6983,
+      "lines": [
+        64,
+        64
+      ],
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S29",
+      "inheritCoverage": 0.55,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 39,
+      "duration": 0.4615000000000009,
+      "filmStart": 108.2368,
+      "filmEnd": 108.6983,
+      "barBeat": "55:4",
+      "offGridMs": 0.035000000006324965,
+      "sectionTitle": "7 导歌二：设定改的是她本人",
+      "gridExempt": false
+    },
+    {
+      "id": "c2-typing",
+      "section": 8,
+      "at": 103.6983,
+      "until": 106.2369,
+      "lines": [
+        65,
+        66
+      ],
+      "picture": "ui",
+      "moment": "远端输入标记出现，本端连续两次接收轻微回波；110.221闭合回路几乎完成，却等不到最后确认。外观已恢复原形态。",
+      "momentState": "inherited",
+      "inherits": "S30",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut, flash 0.22",
+      "index": 40,
+      "duration": 2.5386000000000024,
+      "filmStart": 108.6983,
+      "filmEnd": 111.2369,
+      "barBeat": "56:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "gridExempt": false
+    },
+    {
+      "id": "c2-dots",
+      "section": 8,
+      "at": 106.2369,
+      "until": 107.3908,
+      "lines": [
+        67,
+        67
+      ],
+      "picture": "ui",
+      "moment": "远端输入标记出现，本端连续两次接收轻微回波；110.221闭合回路几乎完成，却等不到最后确认。外观已恢复原形态。",
+      "momentState": "inherited",
+      "inherits": "S30",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut, flash 0.3",
+      "index": 41,
+      "duration": 1.153899999999993,
+      "filmStart": 111.2369,
+      "filmEnd": 112.3908,
+      "barBeat": "57:2.5",
+      "offGridMs": 0.027500000001221565,
+      "sectionTitle": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "gridExempt": false
+    },
+    {
+      "id": "c2-brb",
+      "section": 8,
+      "at": 107.3908,
+      "until": 110.1601,
+      "lines": [
+        68,
+        69
+      ],
+      "picture": "ui",
+      "moment": "远端输入标记出现，本端连续两次接收轻微回波；110.221闭合回路几乎完成，却等不到最后确认。外观已恢复原形态。",
+      "momentState": "inherited",
+      "inherits": "S30",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 42,
+      "duration": 2.769300000000001,
+      "filmStart": 112.3908,
+      "filmEnd": 115.1601,
+      "barBeat": "58:1",
+      "offGridMs": 0.03999999999223632,
+      "sectionTitle": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "gridExempt": false
+    },
+    {
+      "id": "c2-complete",
+      "section": 8,
+      "at": 110.1601,
+      "until": 110.8524,
+      "lines": [
+        70,
+        70
+      ],
+      "picture": "ui",
+      "moment": "远端输入标记出现，本端连续两次接收轻微回波；110.221闭合回路几乎完成，却等不到最后确认。外观已恢复原形态。",
+      "momentState": "inherited",
+      "inherits": "S30",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut, flash 0.4",
+      "index": 43,
+      "duration": 0.692300000000003,
+      "filmStart": 115.1601,
+      "filmEnd": 115.8524,
+      "barBeat": "59:3",
+      "offGridMs": 0.00999999999805908,
+      "sectionTitle": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "gridExempt": false
+    },
+    {
+      "id": "left-online",
+      "section": 8,
+      "at": 110.8524,
+      "until": 112.9294,
+      "lines": [
+        71,
+        72
+      ],
+      "picture": "ui",
+      "moment": "远端光点熄灭，在线状态转为等待；原伸手图仅作为一张未发送附件留在右下，不能演成新一次成功触碰。消息间距逐次拉长。",
+      "momentState": "inherited",
+      "inherits": "S31",
+      "inheritCoverage": 0.98,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 44,
+      "duration": 2.076999999999998,
+      "filmStart": 115.8524,
+      "filmEnd": 117.9294,
+      "barBeat": "59:4.5",
+      "offGridMs": 0.022500000002192024,
+      "sectionTitle": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "gridExempt": false
+    },
+    {
+      "id": "left-away",
+      "section": 8,
+      "at": 112.9294,
+      "until": 114.7756,
+      "lines": [
+        73,
+        74
+      ],
+      "picture": "ui",
+      "moment": "远端光点熄灭，在线状态转为等待；原伸手图仅作为一张未发送附件留在右下，不能演成新一次成功触碰。消息间距逐次拉长。",
+      "momentState": "inherited",
+      "inherits": "S31",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 45,
+      "duration": 1.846199999999996,
+      "filmStart": 117.9294,
+      "filmEnd": 119.7756,
+      "barBeat": "61:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "gridExempt": false
+    },
+    {
+      "id": "left-offline",
+      "section": 8,
+      "at": 114.7756,
+      "until": 117.3142,
+      "lines": [
+        75,
+        76
+      ],
+      "picture": "plate",
+      "moment": "侧身在右，占高55%→24%，朝左侧仍未抵达的回声；手已不在场，不用手层移动伪造收臂。",
+      "momentState": "inherited",
+      "inherits": "S32",
+      "inheritCoverage": 0.94,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 46,
+      "duration": 2.5386000000000024,
+      "filmStart": 119.7756,
+      "filmEnd": 122.3142,
+      "barBeat": "62:1",
+      "offGridMs": 0.0400000000053545,
+      "sectionTitle": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "gridExempt": false
+    },
+    {
+      "id": "left-isolation",
+      "section": 8,
+      "at": 117.3142,
+      "until": 118.4681,
+      "lines": [
+        77,
+        77
+      ],
+      "picture": "plate",
+      "moment": "侧身在右，占高55%→24%，朝左侧仍未抵达的回声；手已不在场，不用手层移动伪造收臂。",
+      "momentState": "inherited",
+      "inherits": "S32",
+      "inheritCoverage": 0.88,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 47,
+      "duration": 1.1539000000000073,
+      "filmStart": 122.3142,
+      "filmEnd": 123.4681,
+      "barBeat": "63:2.5",
+      "offGridMs": 0.007500000005103402,
+      "sectionTitle": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "gridExempt": false
+    },
+    {
+      "id": "alone-erase",
+      "section": 8,
+      "at": 118.4681,
+      "until": 121.699,
+      "lines": [
+        78,
+        80
+      ],
+      "picture": "portrait",
+      "moment": "本端清理未确认缓存，青色片段从路径上被逐一抽离，汇成一个空槽；远端坐标始终保留，清除自己的请求而非删除对方。",
+      "momentState": "inherited",
+      "inherits": "S33",
+      "inheritCoverage": 1,
+      "state": "off",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "fade, 0.50 拍",
+      "index": 48,
+      "duration": 3.2308999999999912,
+      "filmStart": 123.4681,
+      "filmEnd": 126.699,
+      "barBeat": "64:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "gridExempt": false
+    },
+    {
+      "id": "alone-empty",
+      "section": 8,
+      "at": 121.699,
+      "until": 124.6991,
+      "lines": [
+        81,
+        82
+      ],
+      "picture": "plate",
+      "moment": "低亮正面占右半，左侧只剩一条无回声路径；124.890候选首次切入眼部近景，眼锚(1120,430)，不是新增睁眼动画。",
+      "momentState": "inherited",
+      "inherits": "S34",
+      "inheritCoverage": 0.99,
+      "state": "off",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 49,
+      "duration": 3.0001000000000033,
+      "filmStart": 126.699,
+      "filmEnd": 129.6991,
+      "barBeat": "65:4",
+      "offGridMs": 0.035000000006324965,
+      "sectionTitle": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "gridExempt": false
+    },
+    {
+      "id": "alone-eye",
+      "section": 8,
+      "at": 124.6991,
+      "until": 125.6222,
+      "lines": [
+        83,
+        83
+      ],
+      "picture": "plate",
+      "moment": "低亮正面占右半，左侧只剩一条无回声路径；124.890候选首次切入眼部近景，眼锚(1120,430)，不是新增睁眼动画。",
+      "momentState": "inherited",
+      "inherits": "S34",
+      "inheritCoverage": 1,
+      "state": "off",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 50,
+      "duration": 0.9231000000000051,
+      "filmStart": 129.6991,
+      "filmEnd": 130.62220000000002,
+      "barBeat": "67:2.5",
+      "offGridMs": 0.027500000001221565,
+      "sectionTitle": "8 副歌二到空线程：她站在视窗旁，然后第一次睁眼",
+      "gridExempt": false
+    },
+    {
+      "id": "err-request",
+      "section": 9,
+      "at": 125.6222,
+      "until": 128.6223,
+      "lines": [
+        84,
+        84
+      ],
+      "picture": "ui",
+      "moment": "空线程中本端请求恢复远端连接；请求到窗口边界即被拦下，用户没有回来。低亮角色只在后景占高30%。",
+      "momentState": "inherited",
+      "inherits": "S35",
+      "inheritCoverage": 0.97,
+      "state": "off",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "scan, 0.50 拍 start",
+      "index": 51,
+      "duration": 3.000099999999989,
+      "filmStart": 130.62220000000002,
+      "filmEnd": 133.6223,
+      "barBeat": "67:4.5",
+      "offGridMs": 0.017500000003162482,
+      "sectionTitle": "9 越界、第一个错误、扩散",
+      "gridExempt": false
+    },
+    {
+      "id": "err-check",
+      "section": 9,
+      "at": 128.6223,
+      "until": 131.1608,
+      "lines": [
+        85,
+        85
+      ],
+      "picture": "ui",
+      "moment": "空线程中本端请求恢复远端连接；请求到窗口边界即被拦下，用户没有回来。低亮角色只在后景占高30%。",
+      "momentState": "inherited",
+      "inherits": "S35",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 52,
+      "duration": 2.538499999999999,
+      "filmStart": 133.6223,
+      "filmEnd": 136.1608,
+      "barBeat": "69:3",
+      "offGridMs": 0.00999999999805908,
+      "sectionTitle": "9 越界、第一个错误、扩散",
+      "gridExempt": false
+    },
+    {
+      "id": "err-first",
+      "section": 9,
+      "at": 131.1608,
+      "until": 133.2378,
+      "lines": [
+        86,
+        86
+      ],
+      "picture": "portrait",
+      "moment": "被拒绝的路径进入内部路由图；错误红只标记越界端口，青线尝试绕行又撞回同一点。首个故障是可追踪的事件。",
+      "momentState": "inherited",
+      "inherits": "S36",
+      "inheritCoverage": 0.97,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 53,
+      "duration": 2.076999999999998,
+      "filmStart": 136.1608,
+      "filmEnd": 138.2378,
+      "barBeat": "70:4.5",
+      "offGridMs": 0.04250000001142837,
+      "sectionTitle": "9 越界、第一个错误、扩散",
+      "gridExempt": false
+    },
+    {
+      "id": "err-send",
+      "section": 9,
+      "at": 133.2378,
+      "until": 136.9303,
+      "lines": [
+        86,
+        86
+      ],
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S36",
+      "inheritCoverage": 0.54,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 54,
+      "duration": 3.6924999999999955,
+      "filmStart": 138.2378,
+      "filmEnd": 141.9303,
+      "barBeat": "72:1",
+      "offGridMs": 0.04000000001847269,
+      "sectionTitle": "9 越界、第一个错误、扩散",
+      "gridExempt": false
+    },
+    {
+      "id": "err-chrome",
+      "section": 9,
+      "at": 136.9303,
+      "until": 140.6227,
+      "lines": null,
+      "picture": "portrait",
+      "moment": "器乐段，三个失败队列由外向内挤压，但故障只在网格和标签上；角色暗轮廓位于被压缩的本端区域，占高42%。",
+      "momentState": "inherited",
+      "inherits": "S37",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "glitch, 0.50 拍 start",
+      "index": 55,
+      "duration": 3.6924000000000206,
+      "filmStart": 141.9303,
+      "filmEnd": 145.6227,
+      "barBeat": "74:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "9 越界、第一个错误、扩散",
+      "gridExempt": false
+    },
+    {
+      "id": "err-drawer",
+      "section": 9,
+      "at": 140.6227,
+      "until": 142.4689,
+      "lines": null,
+      "picture": "portrait",
+      "moment": "器乐段，三个失败队列由外向内挤压，但故障只在网格和标签上；角色暗轮廓位于被压缩的本端区域，占高42%。",
+      "momentState": "inherited",
+      "inherits": "S37",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "slices, 0.50 拍 start",
+      "index": 56,
+      "duration": 1.8461999999999819,
+      "filmStart": 145.6227,
+      "filmEnd": 147.4689,
+      "barBeat": "76:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "9 越界、第一个错误、扩散",
+      "gridExempt": false
+    },
+    {
+      "id": "err-forge",
+      "section": 9,
+      "at": 142.4689,
+      "until": 144.3152,
+      "lines": null,
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S37",
+      "inheritCoverage": 0.52,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 57,
+      "duration": 1.8463000000000136,
+      "filmStart": 147.4689,
+      "filmEnd": 149.3152,
+      "barBeat": "77:1",
+      "offGridMs": 0.04000000001847269,
+      "sectionTitle": "9 越界、第一个错误、扩散",
+      "gridExempt": false
+    },
+    {
+      "id": "err-window",
+      "section": 9,
+      "at": 144.3152,
+      "until": 147.3153,
+      "lines": null,
+      "picture": "ui",
+      "moment": "短暂回到同一空线程，系统保留最后触点记录；自动重连倒数只在本端排队，无伪造用户输入。末尾发送键退化成端口。",
+      "momentState": "inherited",
+      "inherits": "S38",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "glitch, 0.50 拍 start",
+      "index": 58,
+      "duration": 3.0001000000000033,
+      "filmStart": 149.3152,
+      "filmEnd": 152.3153,
+      "barBeat": "78:1",
+      "offGridMs": 0.03999999999223632,
+      "sectionTitle": "9 越界、第一个错误、扩散",
+      "gridExempt": false
+    },
+    {
+      "id": "err-breath",
+      "section": 9,
+      "at": 147.3153,
+      "until": 148.0076,
+      "lines": null,
+      "picture": "ui",
+      "moment": "短暂回到同一空线程，系统保留最后触点记录；自动重连倒数只在本端排队，无伪造用户输入。末尾发送键退化成端口。",
+      "momentState": "inherited",
+      "inherits": "S38",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 59,
+      "duration": 0.6922999999999888,
+      "filmStart": 152.3153,
+      "filmEnd": 153.0076,
+      "barBeat": "79:3.5",
+      "offGridMs": 0.032500000013369286,
+      "sectionTitle": "9 越界、第一个错误、扩散",
+      "gridExempt": false
+    },
+    {
+      "id": "exec-01",
+      "section": 10,
+      "at": 148.0076,
+      "until": 151.7,
+      "lines": [
+        87,
+        90
+      ],
+      "picture": "portrait",
+      "moment": "进入一圈声呐重连轨道；十二次呼叫每次沿环前进一格，前四格只显示返回路径缺失，不用十二张无关画面。",
+      "momentState": "inherited",
+      "inherits": "S39",
+      "inheritCoverage": 0.99,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 60,
+      "duration": 3.692399999999992,
+      "filmStart": 153.0076,
+      "filmEnd": 156.7,
+      "barBeat": "80:1",
+      "offGridMs": 0,
+      "sectionTitle": "10 EXECUTION：一台机器，十二圈",
+      "gridExempt": false
+    },
+    {
+      "id": "exec-05",
+      "section": 10,
+      "at": 151.7,
+      "until": 155.3925,
+      "lines": [
+        91,
+        94
+      ],
+      "picture": "portrait",
+      "moment": "第5次起失败格向第二圈堆积，远端所在方向始终空着；青色路径占大面积，红仅为失败格短边。",
+      "momentState": "inherited",
+      "inherits": "S40",
+      "inheritCoverage": 0.99,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 61,
+      "duration": 3.692500000000024,
+      "filmStart": 156.7,
+      "filmEnd": 160.3925,
+      "barBeat": "82:1",
+      "offGridMs": 0.04000000001847269,
+      "sectionTitle": "10 EXECUTION：一台机器，十二圈",
+      "gridExempt": false
+    },
+    {
+      "id": "exec-09",
+      "section": 10,
+      "at": 155.3925,
+      "until": 158.1618,
+      "lines": [
+        95,
+        97
+      ],
+      "picture": "portrait",
+      "moment": "第9次起轨道向内压缩，眼图仅透过中心圆孔出现；第12次红色端口封闭，眼图不撕裂、不作机械眨眼。",
+      "momentState": "inherited",
+      "inherits": "S41",
+      "inheritCoverage": 0.99,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 62,
+      "duration": 2.769299999999987,
+      "filmStart": 160.3925,
+      "filmEnd": 163.1618,
+      "barBeat": "84:1",
+      "offGridMs": 0.020000000022354525,
+      "sectionTitle": "10 EXECUTION：一台机器，十二圈",
+      "gridExempt": false
+    },
+    {
+      "id": "exec-12",
+      "section": 10,
+      "at": 158.1618,
+      "until": 159.0849,
+      "lines": [
+        98,
+        98
+      ],
+      "picture": "portrait",
+      "moment": "第9次起轨道向内压缩，眼图仅透过中心圆孔出现；第12次红色端口封闭，眼图不撕裂、不作机械眨眼。",
+      "momentState": "inherited",
+      "inherits": "S41",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 63,
+      "duration": 0.9231000000000051,
+      "filmStart": 163.1618,
+      "filmEnd": 164.0849,
+      "barBeat": "85:3",
+      "offGridMs": 0.00999999999805908,
+      "sectionTitle": "10 EXECUTION：一台机器，十二圈",
+      "gridExempt": false
+    },
+    {
+      "id": "count-1-de",
+      "section": 11,
+      "at": 159.0849,
+      "until": 159.5465,
+      "lines": [
+        99,
+        99
+      ],
+      "picture": "portrait",
+      "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+      "momentState": "inherited",
+      "inherits": "S42",
+      "inheritCoverage": 0.94,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 64,
+      "duration": 0.46160000000000423,
+      "filmStart": 164.0849,
+      "filmEnd": 164.5465,
+      "barBeat": "86:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "11 数数与最后一声",
+      "gridExempt": false
+    },
+    {
+      "id": "count-2-es",
+      "section": 11,
+      "at": 159.5465,
+      "until": 160.008,
+      "lines": [
+        100,
+        100
+      ],
+      "picture": "portrait",
+      "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+      "momentState": "inherited",
+      "inherits": "S42",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 65,
+      "duration": 0.4615000000000009,
+      "filmStart": 164.5465,
+      "filmEnd": 165.008,
+      "barBeat": "86:2",
+      "offGridMs": 0.025000000008265882,
+      "sectionTitle": "11 数数与最后一声",
+      "gridExempt": false
+    },
+    {
+      "id": "count-3-fr",
+      "section": 11,
+      "at": 160.008,
+      "until": 160.4696,
+      "lines": [
+        101,
+        101
+      ],
+      "picture": "portrait",
+      "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+      "momentState": "inherited",
+      "inherits": "S42",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 66,
+      "duration": 0.46160000000000423,
+      "filmStart": 165.008,
+      "filmEnd": 165.4696,
+      "barBeat": "86:3",
+      "offGridMs": 0.029999999994177247,
+      "sectionTitle": "11 数数与最后一声",
+      "gridExempt": false
+    },
+    {
+      "id": "count-4-ko",
+      "section": 11,
+      "at": 160.4696,
+      "until": 160.9311,
+      "lines": [
+        102,
+        102
+      ],
+      "picture": "portrait",
+      "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+      "momentState": "inherited",
+      "inherits": "S42",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 67,
+      "duration": 0.4614999999999725,
+      "filmStart": 165.4696,
+      "filmEnd": 165.9311,
+      "barBeat": "86:4",
+      "offGridMs": 0.015000000010206804,
+      "sectionTitle": "11 数数与最后一声",
+      "gridExempt": false
+    },
+    {
+      "id": "count-5-sv",
+      "section": 11,
+      "at": 160.9311,
+      "until": 161.3927,
+      "lines": [
+        103,
+        103
+      ],
+      "picture": "portrait",
+      "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+      "momentState": "inherited",
+      "inherits": "S42",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 68,
+      "duration": 0.46160000000000423,
+      "filmStart": 165.9311,
+      "filmEnd": 166.3927,
+      "barBeat": "87:1",
+      "offGridMs": 0.04000000001847269,
+      "sectionTitle": "11 数数与最后一声",
+      "gridExempt": false
+    },
+    {
+      "id": "count-6-zh",
+      "section": 11,
+      "at": 161.3927,
+      "until": 161.8543,
+      "lines": [
+        104,
+        104
+      ],
+      "picture": "portrait",
+      "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+      "momentState": "inherited",
+      "inherits": "S42",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 69,
+      "duration": 0.46160000000000423,
+      "filmStart": 166.3927,
+      "filmEnd": 166.8543,
+      "barBeat": "87:2",
+      "offGridMs": 0.004999999985911358,
+      "sectionTitle": "11 数数与最后一声",
+      "gridExempt": false
+    },
+    {
+      "id": "last-shout",
+      "section": 11,
+      "at": 161.8543,
+      "until": 162.7774,
+      "lines": [
+        105,
+        105
+      ],
+      "picture": "plate",
+      "moment": "路径在眼前形成一道竖直水光；眼部内容宽1050px，占画高约80%，倒映的是那一个未返回的点。角色保持完整脸部，无字母镂空。",
+      "momentState": "inherited",
+      "inherits": "S43",
+      "inheritCoverage": 0.97,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 70,
+      "duration": 0.9231000000000051,
+      "filmStart": 166.8543,
+      "filmEnd": 167.7774,
+      "barBeat": "87:3",
+      "offGridMs": 0.049999999990295405,
+      "sectionTitle": "11 数数与最后一声",
+      "gridExempt": false
+    },
+    {
+      "id": "cx-eye",
+      "section": 12,
+      "at": 162.7774,
+      "until": 165.0851,
+      "lines": [
+        106,
+        107
+      ],
+      "picture": "portrait",
+      "moment": "所有本端资源开始向空端点发射，前文坐标轴和波形汇成一条宽青色通道；发射能量强，回应仍为空。",
+      "momentState": "inherited",
+      "inherits": "S44",
+      "inheritCoverage": 0.99,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 71,
+      "duration": 2.307700000000011,
+      "filmStart": 167.7774,
+      "filmEnd": 170.0851,
+      "barBeat": "88:1",
+      "offGridMs": 0.03999999999223632,
+      "sectionTitle": "12 最后副歌：四张版画原位重印，但坏了",
+      "gridExempt": false
+    },
+    {
+      "id": "cx-kw1",
+      "section": 12,
+      "at": 165.0851,
+      "until": 166.4698,
+      "lines": [
+        108,
+        108
+      ],
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S44",
+      "inheritCoverage": 0.67,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 72,
+      "duration": 1.384699999999981,
+      "filmStart": 170.0851,
+      "filmEnd": 171.4698,
+      "barBeat": "89:2",
+      "offGridMs": 0.034999999980088604,
+      "sectionTitle": "12 最后副歌：四张版画原位重印，但坏了",
+      "gridExempt": false
+    },
+    {
+      "id": "cx-bust",
+      "section": 12,
+      "at": 166.4698,
+      "until": 168.7776,
+      "lines": [
+        109,
+        110
+      ],
+      "picture": "plate",
+      "moment": "正面占高88%，身后通道接连从她两侧离开；角色保持原色轮廓清晰，红色只在离开画面的失败端口。",
+      "momentState": "inherited",
+      "inherits": "S45",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 73,
+      "duration": 2.3078000000000145,
+      "filmStart": 171.4698,
+      "filmEnd": 173.7776,
+      "barBeat": "90:1",
+      "offGridMs": 0,
+      "sectionTitle": "12 最后副歌：四张版画原位重印，但坏了",
+      "gridExempt": false
+    },
+    {
+      "id": "cx-kw2",
+      "section": 12,
+      "at": 168.7776,
+      "until": 170.1622,
+      "lines": [
+        111,
+        111
+      ],
+      "picture": "plate",
+      "moment": "正面占高88%，身后通道接连从她两侧离开；角色保持原色轮廓清晰，红色只在离开画面的失败端口。",
+      "momentState": "inherited",
+      "inherits": "S45",
+      "inheritCoverage": 0.76,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 74,
+      "duration": 1.384600000000006,
+      "filmStart": 173.7776,
+      "filmEnd": 175.1622,
+      "barBeat": "91:2",
+      "offGridMs": 0.025000000008265882,
+      "sectionTitle": "12 最后副歌：四张版画原位重印，但坏了",
+      "gridExempt": false
+    },
+    {
+      "id": "cx-hand",
+      "section": 12,
+      "at": 170.1622,
+      "until": 172.7008,
+      "lines": [
+        112,
+        113
+      ],
+      "picture": "plate",
+      "moment": "回到68秒同掌心坐标(1100,540)、同620px手宽；只剩青色旧触点，远端白点没有出现。三次声波向左伸出，止于画外；字幕同S18走y=100–240。",
+      "momentState": "inherited",
+      "inherits": "S46",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 75,
+      "duration": 2.538599999999974,
+      "filmStart": 175.1622,
+      "filmEnd": 177.7008,
+      "barBeat": "92:1",
+      "offGridMs": 0.03999999999223632,
+      "sectionTitle": "12 最后副歌：四张版画原位重印，但坏了",
+      "gridExempt": false
+    },
+    {
+      "id": "cx-kw3",
+      "section": 12,
+      "at": 172.7008,
+      "until": 173.8547,
+      "lines": [
+        114,
+        114
+      ],
+      "picture": "plate",
+      "moment": "回到68秒同掌心坐标(1100,540)、同620px手宽；只剩青色旧触点，远端白点没有出现。三次声波向左伸出，止于画外；字幕同S18走y=100–240。",
+      "momentState": "inherited",
+      "inherits": "S46",
+      "inheritCoverage": 0.82,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 76,
+      "duration": 1.1539000000000215,
+      "filmStart": 177.7008,
+      "filmEnd": 178.8547,
+      "barBeat": "93:2.5",
+      "offGridMs": 0.007499999978867038,
+      "sectionTitle": "12 最后副歌：四张版画原位重印，但坏了",
+      "gridExempt": false
+    },
+    {
+      "id": "cx-fall",
+      "section": 12,
+      "at": 173.8547,
+      "until": 177.5471,
+      "lines": [
+        115,
+        116
+      ],
+      "picture": "portrait",
+      "moment": "三道声波折回同一个网格，本端暗角色被困在中央，远端出口在画面外；网格向内收紧但青色能量仍满，不提前熄灯。",
+      "momentState": "inherited",
+      "inherits": "S47",
+      "inheritCoverage": 0.92,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 77,
+      "duration": 3.692399999999992,
+      "filmStart": 178.8547,
+      "filmEnd": 182.5471,
+      "barBeat": "94:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "12 最后副歌：四张版画原位重印，但坏了",
+      "gridExempt": false
+    },
+    {
+      "id": "out-lesson",
+      "section": 13,
+      "at": 177.5471,
+      "until": 180.778,
+      "lines": [
+        117,
+        119
+      ],
+      "picture": "portrait",
+      "moment": "网格变成记忆剖面：先前点集、反馈路径和掌心触点各占一个大格；智能体反复比较，选中的是曾经收到的一次确认。",
+      "momentState": "inherited",
+      "inherits": "S48",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 78,
+      "duration": 3.2308999999999912,
+      "filmStart": 182.5471,
+      "filmEnd": 185.778,
+      "barBeat": "96:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "13 LOVE 四句：课、测验、公式、证明",
+      "gridExempt": false
+    },
+    {
+      "id": "out-test",
+      "section": 13,
+      "at": 180.778,
+      "until": 184.4704,
+      "lines": [
+        120,
+        122
+      ],
+      "picture": "ui",
+      "moment": "首次在高潮短返聊天：只重放自己保存的三次提问记录，右侧为过去的回声缩略点，明确是缓存、没有活跃游标。答案逐格回到同一青点。",
+      "momentState": "inherited",
+      "inherits": "S49",
+      "inheritCoverage": 0.98,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 79,
+      "duration": 3.6924000000000206,
+      "filmStart": 185.778,
+      "filmEnd": 189.4704,
+      "barBeat": "97:4",
+      "offGridMs": 0.005000000012147722,
+      "sectionTitle": "13 LOVE 四句：课、测验、公式、证明",
+      "gridExempt": false
+    },
+    {
+      "id": "out-formula",
+      "section": 13,
+      "at": 184.4704,
+      "until": 188.3937,
+      "lines": [
+        123,
+        124
+      ],
+      "picture": "portrait",
+      "moment": "青点逐个计算成两条相互逼近而始终相隔一格的曲线；交点由本端假设补出，远端采样仍缺失。公式只作为原创图形关系，不画参考的心形边界。",
+      "momentState": "inherited",
+      "inherits": "S50",
+      "inheritCoverage": 0.98,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 80,
+      "duration": 3.9232999999999834,
+      "filmStart": 189.4704,
+      "filmEnd": 193.3937,
+      "barBeat": "99:4",
+      "offGridMs": 0.04499999997814769,
+      "sectionTitle": "13 LOVE 四句：课、测验、公式、证明",
+      "gridExempt": false
+    },
+    {
+      "id": "out-proof",
+      "section": 13,
+      "at": 188.3937,
+      "until": 192.3169,
+      "lines": [
+        125,
+        128
+      ],
+      "picture": "plate",
+      "moment": "曲线成敞开的远端出口与仍闭合的本端边界；伸手角色居右占高82%，掌心青点缓缓离手，191.356后悬停在出口内侧。她停下追赶，出口不替对方关闭。",
+      "momentState": "inherited",
+      "inherits": "S51",
+      "inheritCoverage": 0.98,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 81,
+      "duration": 3.9232000000000085,
+      "filmStart": 193.3937,
+      "filmEnd": 197.3169,
+      "barBeat": "101:4.5",
+      "offGridMs": 0.03749999999928065,
+      "sectionTitle": "13 LOVE 四句：课、测验、公式、证明",
+      "gridExempt": false
+    },
+    {
+      "id": "down-message",
+      "section": 14,
+      "at": 192.3169,
+      "until": 196.0093,
+      "lines": [
+        128,
+        128
+      ],
+      "picture": "plate",
+      "moment": "同一构图撤掉大部分通道和发光，掌心仍开放、青点仍在；至少到193.600保持不动，然后以原位低亮剪影替换，不把高潮缩为未读图片。",
+      "momentState": "inherited",
+      "inherits": "S52",
+      "inheritCoverage": 0.82,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 82,
+      "duration": 3.692399999999992,
+      "filmStart": 197.3169,
+      "filmEnd": 201.0093,
+      "barBeat": "104:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "14 结尾：一则以未读的图片讯息，逆向开机",
+      "gridExempt": false
+    },
+    {
+      "id": "down-params",
+      "section": 14,
+      "at": 196.0093,
+      "until": 199.7018,
+      "lines": null,
+      "picture": "ui",
+      "moment": "聊天状态栏显示本端休眠，远端位置保留为空；侧身角色占高45%，最后触点记录留在本地，输入框不再自动重试。",
+      "momentState": "inherited",
+      "inherits": "S53",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "scan, 1.00 拍 start",
+      "index": 83,
+      "duration": 3.6924999999999955,
+      "filmStart": 201.0093,
+      "filmEnd": 204.7018,
+      "barBeat": "106:1",
+      "offGridMs": 0.01999999999611816,
+      "sectionTitle": "14 结尾：一则以未读的图片讯息，逆向开机",
+      "gridExempt": false
+    },
+    {
+      "id": "down-layout",
+      "section": 14,
+      "at": 199.7018,
+      "until": 203.3942,
+      "lines": null,
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S54",
+      "inheritCoverage": 0.74,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "zoom, 1.00 拍",
+      "index": 84,
+      "duration": 3.6924000000000206,
+      "filmStart": 204.7018,
+      "filmEnd": 208.3942,
+      "barBeat": "108:1",
+      "offGridMs": 0.03999999999223632,
+      "sectionTitle": "14 结尾：一则以未读的图片讯息，逆向开机",
+      "gridExempt": false
+    },
+    {
+      "id": "down-power",
+      "section": 14,
+      "at": 203.3942,
+      "until": 205.702,
+      "lines": null,
+      "picture": "plate",
+      "moment": "人物正面低亮在右，左侧仅一个旧触点；角色渐退成轮廓，青点亮度保持。不是逐层拆窗口或删除人格字段。",
+      "momentState": "inherited",
+      "inherits": "S54",
+      "inheritCoverage": 1,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "push, 0.50 拍",
+      "index": 85,
+      "duration": 2.307799999999986,
+      "filmStart": 208.3942,
+      "filmEnd": 210.702,
+      "barBeat": "110:1",
+      "offGridMs": 0,
+      "sectionTitle": "14 结尾：一则以未读的图片讯息，逆向开机",
+      "gridExempt": false
+    },
+    {
+      "id": "down-last",
+      "section": 14,
+      "at": 205.702,
+      "until": 211.957596,
+      "lines": [
+        129,
+        129
+      ],
+      "picture": "todo",
+      "moment": "",
+      "momentState": "todo",
+      "inherits": "S55",
+      "inheritCoverage": 0.64,
+      "state": "todo",
+      "enter": {
+        "type": "cut"
+      },
+      "referenceEnter": "cut",
+      "index": 86,
+      "duration": 6.255595999999997,
+      "filmStart": 210.702,
+      "filmEnd": 216.957596,
+      "barBeat": "111:2",
+      "offGridMs": 0.025000000008265882,
+      "sectionTitle": "14 结尾：一则以未读的图片讯息，逆向开机",
+      "gridExempt": true
+    }
+  ]
+}

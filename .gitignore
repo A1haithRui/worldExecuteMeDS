@@ -4,6 +4,14 @@
 /newProj_v1014/data/audio-features-v1.json
 /newProj_v1014/audio/
 /newProj_v1014/docs/p0-*.png
+/newProj_v1017/data/lyrics.json
+/newProj_v1017/data/audio-features-v1.json
+/newProj_v1017/audio/
+
+# Our own per-shot clips are rendered output; the table and tooling stay in Git.
+/newProj_v1017/shots/*.mp4
+/newProj_v1017/shots/*.jpg
+/newProj_v1017/compareResult/*.png
 
 # Upstream checkouts still contain their own Git metadata.
 # Remove these two lines after their .git directories are removed locally.

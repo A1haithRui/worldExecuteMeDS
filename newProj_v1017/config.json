@@ -1,0 +1,31 @@
+{
+  "song": {
+    "title": "Mili - world.execute(me);",
+    "audio": "audio/song.wav",
+    "note": "Local working copy. The song and its lyrics are not licensed with this repository's code."
+  },
+  "paths": {
+    "features": "data/audio-features-v1.json",
+    "lyrics": "data/lyrics.json",
+    "shots": "shots/index.js",
+    "storyboard": "STORYBOARD.md"
+  },
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 60,
+    "previewWidth": 1280,
+    "previewHeight": 720
+  },
+  "safety": {
+    "preroll": 5.0,
+    "maxFlash": 0.7,
+    "warningLine": "本片含有闪烁画面与强光，光敏感者请留意",
+    "warningCountdown": 3.0,
+    "warningSeconds": 6.5,
+    "note": "preroll = seconds of silent warning page BEFORE the song. Every time in shots/ is song time (audio start = 0), so no cue moves; film time = song time + preroll. maxFlash caps every full-screen flash and is asserted by tools/check-storyboard.mjs. flashRange is not typed here: the storyboard computes it from the shots that actually carry flash."
+  },
+  "beat": {
+    "note": "Read from the feature table, not typed. Every cut must land on a beat, half-beat or bar line; tools/check-storyboard.mjs enforces it."
+  }
+}

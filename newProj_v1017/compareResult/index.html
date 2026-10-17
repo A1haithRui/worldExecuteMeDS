@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>逐镜对比 · 参考片 vs 我们的片子</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #08090b; color: #dfe3e8; font: 14px/1.6 "Microsoft YaHei", "Segoe UI", sans-serif; }
+  header { padding: 16px 20px 12px; border-bottom: 1px solid #232a33; background: #0e1116; }
+  h1 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
+  h2 { margin: 0 0 10px; font-size: 15px; font-weight: 600; color: #7fd4c4; }
+  .sub { color: #8b98a6; font-size: 13px; }
+  main { padding: 16px 20px 60px; }
+  section { margin-bottom: 24px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button, select, input { background: #161b22; color: #dfe3e8; border: 1px solid #303842;
+                          border-radius: 4px; padding: 6px 11px; font: inherit; cursor: pointer; }
+  button:hover { background: #1e242d; border-color: #4b93a8; }
+  button.on { background: #163a42; border-color: #7fd4c4; color: #eafcf8; }
+  button:disabled { opacity: .4; cursor: default; }
+  .films { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .films.only-left { grid-template-columns: 1fr; }
+  .films.only-left .side.right { display: none; }
+  .films.only-right { grid-template-columns: 1fr; }
+  .films.only-right .side.left { display: none; }
+  @media (max-width: 900px) { .films { grid-template-columns: 1fr; } }
+  .side { border: 1px solid #232a33; border-radius: 6px; overflow: hidden; background: #0e1116; }
+  .side .cap { padding: 7px 10px; font-size: 13px; display: flex; justify-content: space-between; gap: 10px; }
+  .side .cap b { font-weight: 600; }
+  .side .cap span { color: #8b98a6; font-family: Consolas, monospace; }
+  video { width: 100%; display: block; background: #000; aspect-ratio: 16/9; }
+  .now { font-family: Consolas, monospace; color: #7fd4c4; font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #1b2129; vertical-align: top; }
+  th { color: #8b98a6; font-weight: 500; position: sticky; top: 0; background: #0e1116; z-index: 1; }
+  tr.group td { background: #141a21; color: #7fd4c4; font-weight: 600; }
+  tr.shot { cursor: pointer; }
+  tr.shot:hover td { background: #161d25; }
+  tr.shot.active td { background: #1d3040; }
+  td.t { font-family: Consolas, monospace; white-space: nowrap; }
+  .list { max-height: 52vh; overflow: auto; border: 1px solid #232a33; border-radius: 6px; }
+  .tag { display: inline-block; border: 1px solid #333c46; border-radius: 3px; padding: 0 5px;
+         font-size: 12px; color: #9fb0bf; }
+  .tag.written { border-color: #3f7a55; color: #9fd8b5; }
+  .tag.inherited { border-color: #7a6a3b; color: #e0cf9f; }
+  .tag.todo { border-color: #7a3b3b; color: #f0a9a9; }
+  .tag.mine { border-color: #3b6a7a; color: #9fd0e0; }
+  .clips { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 900px) { .clips { grid-template-columns: 1fr; } }
+  .missing { display: flex; align-items: center; justify-content: center; aspect-ratio: 16/9;
+             background: #0e1116; border: 1px dashed #3a2b2b; color: #c99; text-align: center; padding: 20px; }
+  code { background: #161b22; padding: 1px 5px; border-radius: 3px; font-family: Consolas, monospace; color: #cfe6e9; }
+  .warn { border: 1px solid #6a5a3b; background: #1d1810; color: #e8d3a8; padding: 9px 12px; border-radius: 5px; font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>逐镜对比 · 参考片 vs 我们的片子</h1>
+  <div class="sub" id="meta"></div>
+</header>
+<main>
+  <section>
+    <div class="bar" style="margin-bottom:10px">
+      <button id="play">播放两边</button>
+      <button id="stop">暂停</button>
+      <button id="rewind">回到开头</button>
+      <button id="prev">← 上一镜</button>
+      <button id="next">下一镜 →</button>
+      <label>倍速 <select id="rate">
+        <option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option>
+      </select></label>
+      <label>片长 <select id="span">
+        <option value="0">整镜</option><option value="1.2" selected>前后 1.2s</option><option value="2.5">前后 2.5s</option>
+      </select></label>
+      <button id="layout-both" class="on">并排</button>
+      <button id="layout-left">只看参考片</button>
+      <button id="layout-right">只看我们</button>
+      <span class="now" id="clock">歌曲 0:00.000</span>
+    </div>
+    <div class="films" id="films">
+      <div class="side left">
+        <div class="cap"><b id="capL"></b><span id="tL">--</span></div>
+        <video id="vL" preload="metadata" playsinline></video>
+      </div>
+      <div class="side right">
+        <div class="cap"><b id="capR"></b><span id="tR">--</span></div>
+        <video id="vR" preload="metadata" playsinline></video>
+      </div>
+    </div>
+    <div id="filmMsg" style="margin-top:10px"></div>
+    <div class="sub" style="margin-top:8px">
+      两边按<strong>歌曲时间</strong>对齐:参考片有 5 秒片头警告页,我们的当前导出没有,所以播放时会自动补偿这个差值。
+      <code>空格</code> 播放/暂停,<code>←/→</code> 上一镜/下一镜。
+    </div>
+  </section>
+
+  <section>
+    <h2>逐镜对比（两边同一镜 id）</h2>
+    <div class="bar" style="margin-bottom:10px">
+      <button id="clip-prev">← 上一镜</button>
+      <button id="clip-next">下一镜 →</button>
+      <label><input type="checkbox" id="clip-auto"> 播完自动下一镜</label>
+      <span class="sub" id="clipId"></span>
+    </div>
+    <div class="clips">
+      <div>
+        <div class="sub" style="margin-bottom:5px" id="clipCapL"></div>
+        <div id="clipHostL"></div>
+      </div>
+      <div>
+        <div class="sub" style="margin-bottom:5px" id="clipCapR"></div>
+        <div id="clipHostR"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>87 个镜头槽（点一行跳到该镜）</h2>
+    <div class="bar" style="margin-bottom:8px">
+      <input id="q" placeholder="搜镜头 id 或时刻…" style="flex:1;min-width:200px">
+      <select id="sec"></select>
+      <select id="state">
+        <option value="all">全部状态</option>
+        <option value="todo">只看待写时刻</option>
+        <option value="inherited">只看承接（待重写）</option>
+        <option value="written">只看已写</option>
+      </select>
+    </div>
+    <div class="list"><table id="rows"><thead><tr>
+      <th style="width:130px">歌曲时间</th><th style="width:96px">小节:拍</th>
+      <th style="width:130px">镜头 id</th><th style="width:56px">歌词行</th>
+      <th>时刻（我们的）</th><th style="width:112px">时刻状态</th>
+      <th style="width:82px">参考片用</th>
+    </tr></thead><tbody></tbody></table></div>
+  </section>
+</main>
+
+<script src="../../claude-version-study/data/shots.js"></script>
+<script src="../data/shots.js"></script>
+<script src="config.js"></script>
+<script>
+var CFG = window.COMPARE;
+var REF = window.CLAUDE_STUDY;     // 参考片：87 镜
+var OURS = window.MV;              // 我们的表：87 镜，id 一一对应
+var byId = {};
+REF.shots.forEach(function (s) { byId[s.id] = s; });
+
+var vL = document.getElementById('vL'), vR = document.getElementById('vR');
+var tbody = document.querySelector('#rows tbody');
+var current = 0, stopAt = null, spanMode = 'clip';
+
+function fmt(t) {
+  var m = Math.floor(Math.abs(t) / 60), s = Math.abs(t) - m * 60;
+  return (t < 0 ? '-' : '') + m + ':' + (s < 10 ? '0' : '') + s.toFixed(3);
+}
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]; }); }
+function pad3(n) { return String(n + 1).padStart(3, '0'); }
+
+document.getElementById('meta').textContent =
+  '参考片 ' + CFG.left.label + ' · ' + REF.shots.length + ' 镜 ｜ 我们 ' + CFG.right.label + ' · ' + OURS.shots.length + ' 镜 · 同音频 ' + fmt(OURS.source.songDuration);
+document.getElementById('capL').textContent = CFG.left.label;
+document.getElementById('capR').textContent = CFG.right.label;
+document.getElementById('clipCapL').textContent = CFG.left.label + ' 的同一镜';
+document.getElementById('clipCapR').textContent = CFG.right.label + ' 的同一镜（尚未渲染）';
+
+vL.src = CFG.left.file;
+vR.src = CFG.right.file;
+vL.addEventListener('error', function () { document.getElementById('filmMsg').innerHTML = '<div class="warn">读不到参考片：<code>' + CFG.left.file + '</code></div>'; });
+vR.addEventListener('error', function () { document.getElementById('filmMsg').innerHTML = '<div class="warn">读不到我们的成片：<code>' + CFG.right.file + '</code>（可在 config.js 里改路径）</div>'; });
+
+// --- timeline sync: both films are driven by SONG time ---------------------
+function songOf(v, side) { return v.currentTime - (side === 'L' ? CFG.left.preroll : CFG.right.preroll); }
+function videoTimeFor(song, side) { return song + (side === 'L' ? CFG.left.preroll : CFG.right.preroll); }
+
+// A seek is only honoured once the browser knows the media's duration, and the
+// two films are very different sizes (720p30 vs 1080p60), so one side can still
+// be at readyState 1 while the other is already playing. Re-assert the target
+// for a moment instead of setting currentTime once into the void.
+var desired = null, desiredUntil = 0;
+function seekSide(v, song, side) {
+  var t = Math.max(0, Math.min(videoTimeFor(song, side), (v.duration || 1e9) - 0.05));
+  var apply = function () { try { v.currentTime = t; } catch (e) {} };
+  if (v.readyState >= 1) apply();
+  else v.addEventListener('loadedmetadata', apply, { once: true });
+}
+function seekBoth(song) {
+  desired = song;
+  desiredUntil = performance.now() + 3000;
+  seekSide(vL, song, 'L');
+  seekSide(vR, song, 'R');
+}
+function playBoth() {
+  vL.play().catch(function () {});
+  vR.play().catch(function () {});
+}
+function pauseBoth() { vL.pause(); vR.pause(); }
+
+// Drift correction: the browser's two decoders never run at exactly the same
+// rate, so nudge the follower rather than letting them separate.
+function syncTick() {
+  var rate = parseFloat(document.getElementById('rate').value || '1');
+  if (desired !== null) {
+    var sl0 = songOf(vL, 'L'), sr0 = songOf(vR, 'R');
+    if (Math.abs(sl0 - desired) > 0.12) seekSide(vL, desired, 'L');
+    if (Math.abs(sr0 - desired) > 0.12) seekSide(vR, desired, 'R');
+    if ((Math.abs(sl0 - desired) < 0.04 && Math.abs(sr0 - desired) < 0.04) || performance.now() > desiredUntil) desired = null;
+  } else if (!vL.paused && !vR.paused && vL.readyState >= 2 && vR.readyState >= 2) {
+    // Proportional rate nudge, not a seek: a seek resets the decoder to
+    // readyState 1 and the stall it causes is bigger than the drift it fixes.
+    // Only a catastrophic separation is corrected by seeking.
+    var d = songOf(vR, 'R') - songOf(vL, 'L');
+    if (Math.abs(d) > 0.4) vR.currentTime = videoTimeFor(songOf(vL, 'L'), 'R');
+    else vR.playbackRate = Math.max(0.9, Math.min(1.1, rate * (1 - d * 0.6)));
+  }
+  document.getElementById('clock').textContent = '歌曲 ' + fmt(songOf(vL.paused ? vR : vL, vL.paused ? 'R' : 'L'));
+  document.getElementById('tL').textContent = fmt(vL.currentTime) + ' / ' + fmt(vL.duration || 0);
+  document.getElementById('tR').textContent = fmt(vR.currentTime) + ' / ' + fmt(vR.duration || 0);
+  if (stopAt !== null) {
+    var song = vL.paused ? songOf(vR, 'R') : songOf(vL, 'L');
+    if (song >= stopAt) { stopAt = null; pauseBoth(); }
+  }
+  requestAnimationFrame(syncTick);
+}
+
+function currentSpan() {
+  var s = parseFloat(document.getElementById('span').value);
+  var shot = OURS.shots[current];
+  return { from: s > 0 ? shot.at - s : shot.at, to: s > 0 ? shot.until + s : shot.until };
+}
+function jumpTo(i) {
+  if (i < 0 || i >= OURS.shots.length) return;
+  current = i;
+  var sp = currentSpan();
+  seekBoth(Math.max(CFG.timeline.from, sp.from));
+  stopAt = Math.min(CFG.timeline.to, sp.to);
+  playBoth();
+  highlight();
+  loadClips(i);
+}
+function highlight() {
+  Array.prototype.forEach.call(tbody.querySelectorAll('tr.shot'), function (tr) {
+    tr.classList.toggle('active', Number(tr.dataset.i) === current);
+  });
+}
+
+// --- per-shot clips --------------------------------------------------------
+function clipUrl(side, i) {
+  var c = CFG[side], id = OURS.shots[i].id;
+  return c.clipDir + pad3(i) + '_' + id + '.mp4';
+}
+function loadClips(i) {
+  var s = OURS.shots[i];
+  var urlR = clipUrl('right', i);
+  document.getElementById('clipId').textContent =
+    '第 ' + (i + 1) + ' / ' + OURS.shots.length + ' 镜 · ' + s.id + ' · 歌曲 ' + fmt(s.at) + '–' + fmt(s.until);
+  var hostL = document.getElementById('clipHostL'), hostR = document.getElementById('clipHostR');
+  hostL.innerHTML = '<video controls preload="metadata" src="' + clipUrl('left', i) + '"></video>';
+  hostR.innerHTML = '<video controls preload="metadata" src="' + urlR + '"></video>';
+  // Our own per-shot clips do not exist until a section is rendered, so say so
+  // instead of leaving a broken player. One request is unavoidable -- the
+  // browser has to try -- but it is reported here rather than as a silent error.
+  var rv = hostR.querySelector('video');
+  rv.addEventListener('error', function () {
+    hostR.innerHTML = '<div class="missing">这一镜我们还没有渲染<br><span class="sub">' + esc(urlR) + '</span></div>';
+  });
+  var last = hostL.querySelector('video');
+  if (last) last.addEventListener('ended', function () {
+    if (document.getElementById('clip-auto').checked) { current = i; jumpTo(i + 1); }
+  });
+}
+
+// --- table -----------------------------------------------------------------
+function render() {
+  var q = document.getElementById('q').value.trim().toLowerCase();
+  var sec = document.getElementById('sec').value;
+  var st = document.getElementById('state').value;
+  tbody.innerHTML = '';
+  var lastSec = -1;
+  OURS.shots.forEach(function (s, i) {
+    if (sec !== 'all' && String(s.section) !== sec) return;
+    if (st !== 'all' && s.momentState !== st) return;
+    if (q && (s.id + ' ' + (s.moment || '') + ' ' + s.barBeat).toLowerCase().indexOf(q) < 0) return;
+    if (s.section !== lastSec) {
+      lastSec = s.section;
+      var g = document.createElement('tr');
+      g.className = 'group';
+      g.innerHTML = '<td colspan="7">' + esc(s.sectionTitle) + '</td>';
+      tbody.appendChild(g);
+    }
+    var r = byId[s.id];
+    var tr = document.createElement('tr');
+    tr.className = 'shot';
+    tr.dataset.i = i;
+    tr.innerHTML =
+      '<td class="t">' + fmt(s.at) + '–' + fmt(s.until) + '</td>' +
+      '<td class="t">' + esc(s.barBeat) + '</td>' +
+      '<td class="t">' + esc(s.id) + '</td>' +
+      '<td class="t">' + (s.lines ? (s.lines[0] === s.lines[1] ? s.lines[0] : s.lines[0] + '-' + s.lines[1]) : '-') + '</td>' +
+      '<td>' + (s.moment ? esc(s.moment) : '<span class="sub">（还没写）</span>') + '</td>' +
+      '<td><span class="tag ' + s.momentState + '">' + (s.momentState === 'written' ? '已写' : s.momentState === 'inherited' ? '承接 ' + (s.inherits || '') : '待写') + '</span></td>' +
+      '<td class="sub">' + esc(r && r.enter ? r.enter.text : '—') + '</td>';
+    tr.onclick = function () { jumpTo(i); };
+    tbody.appendChild(tr);
+  });
+}
+
+(function sections() {
+  var all = document.createElement('option');
+  all.value = 'all'; all.textContent = '全部段落';
+  document.getElementById('sec').appendChild(all);
+  OURS.sections.forEach(function (s) {
+    var o = document.createElement('option');
+    o.value = String(s.index); o.textContent = s.index + ' ' + s.title;
+    document.getElementById('sec').appendChild(o);
+  });
+})();
+
+document.getElementById('play').onclick = playBoth;
+document.getElementById('stop').onclick = pauseBoth;
+document.getElementById('rewind').onclick = function () { seekBoth(CFG.timeline.from); };
+document.getElementById('prev').onclick = function () { jumpTo(current - 1); };
+document.getElementById('next').onclick = function () { jumpTo(current + 1); };
+document.getElementById('clip-prev').onclick = function () { jumpTo(current - 1); };
+document.getElementById('clip-next').onclick = function () { jumpTo(current + 1); };
+document.getElementById('rate').onchange = function () {
+  var r = parseFloat(this.value);
+  vL.playbackRate = r; vR.playbackRate = r;
+};
+function layout(cls, btn) {
+  document.getElementById('films').className = 'films' + (cls ? ' ' + cls : '');
+  ['layout-both', 'layout-left', 'layout-right'].forEach(function (id) {
+    document.getElementById(id).classList.toggle('on', id === btn);
+  });
+}
+document.getElementById('layout-both').onclick = function () { layout('', 'layout-both'); };
+document.getElementById('layout-left').onclick = function () { layout('only-left', 'layout-left'); };
+document.getElementById('layout-right').onclick = function () { layout('only-right', 'layout-right'); };
+document.getElementById('q').addEventListener('input', render);
+document.getElementById('sec').addEventListener('change', render);
+document.getElementById('state').addEventListener('change', render);
+document.addEventListener('keydown', function (e) {
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
+  if (e.code === 'Space') { e.preventDefault(); (vL.paused && vR.paused) ? playBoth() : pauseBoth(); }
+  if (e.code === 'ArrowRight') { e.preventDefault(); jumpTo(current + 1); }
+  if (e.code === 'ArrowLeft') { e.preventDefault(); jumpTo(current - 1); }
+});
+
+render();
+loadClips(0);
+highlight();
+requestAnimationFrame(syncTick);
+</script>
+</body>
+</html>
