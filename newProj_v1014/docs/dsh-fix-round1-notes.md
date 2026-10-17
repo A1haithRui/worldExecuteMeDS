@@ -265,6 +265,14 @@ const drift = driftEnv * Math.sin((t - P4.cues.loopDrift) * 0.5 + i * 0.7) * 6;
 
 文件名形如 `after-frame-206.000.png`，目录名标明缺陷与 before/after。
 
+### 随代码存档的对照图
+
+上面四组原始静帧共 576 MB，而 `out/` 不纳入版本管理，因此另做了一张压缩对照图随代码一起存档：
+
+![四条缺陷的前后对照](fix-round1-before-after.jpg)
+
+行序为 A / B / C / D，左列修复前、右列修复后。A 是触点附近约 50px 的起点位移，D 只有数 px，两者在全幅下不可读，因此改用放大裁切（A 1.6×、D 3.2× 取左边状态格的顶边）；B 与 C 为整幅。A 行同时说明了原缺陷的形态：before 里触点和载波是两个分开的点，after 里载波从触点原位长出。对照图由 ffmpeg 合成，未引入新依赖；原始帧与带声音短段仍只保存在本机 `out/fix-round1/`。
+
 `out/fix-round1/_render/` 保留原始读数：`after/probe-p4.json`、`probe-p5.json`、`probe-p7.json`（每个时刻的完整 `window.frameDiagnostics`）、`after/p4|p5|p7/` 的探针帧、以及前后两次 p4 的 motion 报告。`_render` 是证据，不是交付物；`out/` 已被 gitignore，所以这些文件不会进入工作区改动。
 
 **before 帧取自 HEAD（`cbef4ab`）的原始源码**：用 `git archive HEAD newProj_v1014/src` 抽出、`tar` 解到仓库外的临时目录（`MV_DEPENDENCIES` 指向参考工程解析依赖），因此 before 是逐字节的原始构建，不是「把缺陷手动改回去」。临时目录已删除，重建命令：
