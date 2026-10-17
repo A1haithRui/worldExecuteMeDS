@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>审片台 · world.execute(me); DeepSeek 版</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #06131f; color: #d7e6ea;
+         font: 14px/1.6 "Microsoft YaHei", "Segoe UI", sans-serif; }
+  header { padding: 18px 22px 12px; border-bottom: 1px solid #17384a; }
+  h1 { margin: 0 0 4px; font-size: 19px; font-weight: 600; color: #e6f2ef; }
+  h2 { margin: 0 0 10px; font-size: 15px; font-weight: 600; color: #83e9e6; }
+  .sub { color: #6f8fa3; font-size: 13px; }
+  main { padding: 18px 22px 60px; max-width: 1500px; }
+  section { margin-bottom: 26px; }
+  .grid { display: grid; grid-template-columns: minmax(420px, 46%) 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 1100px) { .grid { grid-template-columns: 1fr; } }
+  video { width: 100%; background: #000; border: 1px solid #1c4053; border-radius: 6px; display: block; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+  button, select { background: #0d2a39; color: #d7e6ea; border: 1px solid #24566b;
+                   border-radius: 4px; padding: 6px 11px; font: inherit; cursor: pointer; }
+  button:hover { background: #14384a; border-color: #3a86a0; }
+  button.on { background: #14474f; border-color: #83e9e6; color: #e6f2ef; }
+  button:disabled { opacity: .45; cursor: default; }
+  .now { color: #83e9e6; font-family: Consolas, monospace; font-size: 13px; }
+  .warn { background: #2a1b1b; border: 1px solid #7a3b3b; color: #f0c9c9;
+          padding: 9px 12px; border-radius: 5px; margin: 10px 0 0; font-size: 13px; }
+  .ok { color: #9fd8b5; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid #12293a; vertical-align: top; }
+  th { color: #6f8fa3; font-weight: 500; position: sticky; top: 0; background: #071a26; z-index: 1; }
+  tr.group td { background: #0a2230; color: #83e9e6; font-weight: 600; }
+  tr:hover td { background: #0b2333; }
+  tr.approved td { color: #7f9aa8; }
+  tr.active td { background: #10394a; }
+  td.t { font-family: Consolas, monospace; white-space: nowrap; color: #cfe6e9; }
+  .tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 12px;
+         border: 1px solid #2b5a70; color: #9ec6d6; margin-right: 6px; }
+  .tag.stale { border-color: #8a4040; color: #f0a9a9; }
+  .tag.done { border-color: #3f7a55; color: #9fd8b5; }
+  .hint { color: #8aa7b6; }
+  .list { max-height: 62vh; overflow: auto; border: 1px solid #17384a; border-radius: 6px; }
+  .clips { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .clip { border: 1px solid #17384a; border-radius: 6px; padding: 10px; }
+  .clip h3 { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: #d7e6ea; }
+  img.sheet { width: 100%; border: 1px solid #17384a; border-radius: 6px; }
+  code { background: #0b2534; padding: 1px 5px; border-radius: 3px;
+         font-family: Consolas, monospace; color: #bfe2e8; }
+  textarea { width: 100%; height: 120px; background: #081c28; color: #cfe6e9;
+             border: 1px solid #24566b; border-radius: 4px; padding: 8px; font-family: Consolas, monospace; }
+  ul { margin: 6px 0 0 18px; padding: 0; }
+  li { margin: 3px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>审片台 · world.execute(me); DeepSeek 版</h1>
+  <div class="sub" id="meta"></div>
+</header>
+
+<main>
+  <section>
+    <div class="grid">
+      <div>
+        <video id="film" controls preload="metadata"></video>
+        <div class="bar">
+          <span class="now" id="now">--:--.---</span>
+          <button id="stop">停止审听</button>
+          <label>窗口 <select id="lead">
+            <option value="2.5" selected>前后 2.5 秒</option>
+            <option value="5">前后 5 秒</option>
+            <option value="1">前后 1 秒</option>
+          </select></label>
+          <button id="sweep">连续审听未核点</button>
+        </div>
+        <div id="filmMsg"></div>
+      </div>
+      <div>
+        <h2>怎么用</h2>
+        <ul>
+          <li>点表格里任意一行的 <strong>审听</strong>，播放该点前后各几秒后自动停。</li>
+          <li><strong>连续审听未核点</strong> 会按时间顺序自动跳着过一遍，可以随时停。</li>
+          <li>听完把 <strong>确认</strong> 打勾；<strong>复制结果</strong> 会把结论整理成文字，贴回对话即可。</li>
+          <li>标了 <span class="tag stale">画面已修复</span> 的行，本页成片是旧版，请用右侧对应的修复后短段。</li>
+          <li>键盘：<code>空格</code> 播放/停止，<code>←/→</code> ±5 秒，<code>回车</code> 审听当前行，<code>N</code> 下一个未核点。</li>
+        </ul>
+        <div id="summary" class="sub" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>修复后的三段（与上表同一时间轴）</h2>
+    <div class="clips" id="clips"></div>
+    <video id="clip" controls preload="metadata" style="margin-top:14px"></video>
+    <div class="bar"><span class="now" id="clipNow">选一个短段</span></div>
+  </section>
+
+  <section>
+    <h2>检查点</h2>
+    <div class="bar">
+      <button id="f-all" class="on">全部</button>
+      <button id="f-pending">只看未核</button>
+      <button id="f-stale">只看画面已修复</button>
+      <button id="copy">复制结果</button>
+    </div>
+    <div class="list"><table id="rows"><thead>
+      <tr><th style="width:92px">时间</th><th style="width:86px">镜头</th><th style="width:74px">类型</th>
+      <th>要听什么</th><th style="width:120px">状态</th><th style="width:150px">操作</th></tr>
+    </thead><tbody></tbody></table></div>
+    <textarea id="out" style="display:none"></textarea>
+  </section>
+
+  <section>
+    <h2>四条缺陷的前后对照</h2>
+    <img class="sheet" src="../docs/fix-round1-before-after.jpg" alt="四条缺陷前后对照">
+    <div class="sub" style="margin-top:8px">
+      A 最后一次呼叫起点 · B 片尾暗环复活 · C 第 5–12 次呼叫未累积 · D S29 漂移时间反向。
+      A、D 差异只有几十像素和几像素，所以用了放大裁切。文字记录见
+      <code>docs/dsh-fix-round1-notes.md</code>。
+    </div>
+  </section>
+
+  <section>
+    <h2>还没做的</h2>
+    <ul>
+      <li><strong>人工审听切点</strong>：165 个边界里目前只有 68.300 由用户确认。就是这一页要做的事。</li>
+      <li><strong>导演精修</strong>：减少每镜都出现的声呐/光带/颗粒，让重点镜头突出；字幕阅读节奏。</li>
+      <li><strong>条件补图</strong>：另一形态胸像与尖鳍局部层，只在分镜确认保留那两个桥段时做。</li>
+      <li><strong>重导全曲</strong>：修复后尚未重新渲染完整成片（约半小时）。</li>
+    </ul>
+    <div class="sub" style="margin-top:10px">
+      更新本页：改完分镜后在本项目目录运行 <code>node tools/build-review-hub.mjs</code>。
+    </div>
+  </section>
+</main>
+
+<script>
+var DATA = {"film":{"file":"../out/world-execute-me-deepseek-1080p60.mp4","exported":"2026-10-17 03:31","duration":211.957596,"staleNote":"本页成片导出于上述修复轮之前。切点时间完全未变，因此可用来审听所有镜头边界；但三段画面是旧版，已用红标标出并配了修复后短段。"},"segments":[{"id":"p2","label":"S01–S06","from":0,"to":29.709},{"id":"p3","label":"S07–S14","from":29.709,"to":59.223},{"id":"p0","label":"S15–S19","from":59.223,"to":74.045},{"id":"p1","label":"S20–S27","from":74.045,"to":95.465},{"id":"p4","label":"S28–S35","from":95.465,"to":131.224},{"id":"p5","label":"S36–S43","from":131.224,"to":162.805},{"id":"p6","label":"S44–S50","from":162.805,"to":188.483},{"id":"p7","label":"S51–S56","from":188.483,"to":211.958}],"fixed":[{"from":99.349,"to":103.489,"label":"缺陷 D · S29 漂移"},{"from":148.036,"to":159.113,"label":"缺陷 C · S39–S41 呼叫累积"},{"from":200.652,"to":211.957596,"label":"缺陷 A/B · S54–S56 片尾"}],"fixedVideos":[{"file":"../out/fix-round1/segments/S29-drift-99.000-105.000.mp4","from":99,"to":105,"label":"S29 漂移 · 修复后"},{"file":"../out/fix-round1/segments/S39-S41-calls-148.000-159.200.mp4","from":148,"to":159.2,"label":"S39–S41 呼叫 · 修复后"},{"file":"../out/fix-round1/segments/S54-S56-ending-200.600-211.958.mp4","from":200.6,"to":211.958,"label":"S54–S56 片尾 · 修复后"}],"rows":[{"shot":"S02","t":3.873,"dominant":"model","hint":"核L3/L5的起音与节点落位","status":"pending","segment":"p2","fixed":null},{"shot":"S03","t":7.446,"dominant":"chat","hint":"核L7强调是否早于10.091","status":"pending","segment":"p2","fixed":null},{"shot":"S04","t":11.095,"dominant":"model","hint":"核L10结束和16秒前器乐起势","status":"pending","segment":"p2","fixed":null},{"shot":"S05","t":16,"dominant":"plate","hint":"核标题乐句实际音头；不沿用参考15.113的首色规则","status":"pending","segment":"p2","fixed":null},{"shot":"S06","t":20,"dominant":"chat","hint":"核20–29.709器乐与29.709人声弱起","status":"pending","segment":"p2","fixed":null},{"shot":"S07","t":29.709,"dominant":"model","hint":"核L12/L14，关键词事件独立于硬切","status":"pending","segment":"p2","fixed":null},{"shot":"S08","t":33.412,"dominant":"chat","hint":"核L15/L17确认动作；保留字幕跨镜","status":"pending","segment":"p3","fixed":null},{"shot":"S09","t":37.067,"dominant":"model","hint":"核L18/L20音头，白点到切点不跟随假逐词时间","status":"pending","segment":"p3","fixed":null},{"shot":"S10","t":40.706,"dominant":"plate","hint":"核L21/L23的强弱，44.452是否为乐句先行","status":"pending","segment":"p3","fixed":null},{"shot":"S11","t":44.452,"dominant":"chat","hint":"核L24/L25两个字母事件，不能用行首替代词头","status":"pending","segment":"p3","fixed":null},{"shot":"S12","t":47.672,"dominant":"model","hint":"核L26/L27与零散重击，禁每拍整屏明暗","status":"pending","segment":"p3","fixed":null},{"shot":"S13","t":51.363,"dominant":"model","hint":"核L28/L29字母词头与跨零事件","status":"pending","segment":"p3","fixed":null},{"shot":"S14","t":55.083,"dominant":"plate","hint":"核L30/L31持续音及59.223弱起，不能提前结束长音","status":"pending","segment":"p3","fixed":null},{"shot":"S15","t":59.223,"dominant":"chat","hint":"核59.223行首与59.4115低频候选，先唱后重击可分开","status":"pending","segment":"p3","fixed":null},{"shot":"S16","t":62.589,"dominant":"model","hint":"核62.589/65.397；闭合不能早于回传","status":"pending","segment":"p0","fixed":null},{"shot":"S17","t":66.601,"dominant":"plate","hint":"核66.5653中频峰与L38/L39衔接","status":"pending","segment":"p0","fixed":null},{"shot":"S18","t":68.252,"dominant":"plate","hint":"核68.252行首、68.2814中频、68.3013低频，触碰须审听","status":"pending","segment":"p0","fixed":null},{"shot":"S19","t":70.084,"dominant":"model","hint":"核L41–43与74.045弱起；不做窗口套窗","status":"pending","segment":"p0","fixed":null},{"shot":"S20","t":74.045,"dominant":"chat","hint":"核L44名词词头和L46强调；时间仍仅行级","status":"pending","segment":"p0","fixed":null},{"shot":"S21","t":77.576,"dominant":"model","hint":"核L47名词及L49起音；81.351是否需提前准备角色","status":"pending","segment":"p1","fixed":null},{"shot":"S22","t":81.351,"dominant":"plate","hint":"核L50内名词真实音头；81.351仅为句首，不在此必然长耳","status":"pending","segment":"p1","fixed":null},{"shot":"S23","t":82.833,"dominant":"plate","hint":"核82.8383峰；84.268附近低频无强候选，不能强吸附到鼓","status":"pending","segment":"p1","fixed":null},{"shot":"S24","t":85.078,"dominant":"model","hint":"核L53–55及87.922强调；不做缺色补版或太阳校样","status":"pending","segment":"p1","fixed":null},{"shot":"S25","t":88.587,"dominant":"chat","hint":"核L56到L57，不照搬88.96设置切点","status":"pending","segment":"p1","fixed":null},{"shot":"S26","t":90.197,"dominant":"plate","hint":"核两字母实际音头及91.0396重击；不把91.040当已核准词头","status":"pending","segment":"p1","fixed":null},{"shot":"S27","t":92.015,"dominant":"model","hint":"核91.9576/94.9108低频候选与L58/L59词头","status":"pending","segment":"p1","fixed":null},{"shot":"S28","t":95.465,"dominant":"chat","hint":"核L60/L61两字母及99.349弱起；不按每拍机械切换","status":"pending","segment":"p1","fixed":null},{"shot":"S29","t":99.349,"dominant":"model","hint":"核100.0192/100.2587孤立低频峰；100.5–103.2勿加常规鼓脉冲；103.2619上升候选","status":"pending","segment":"p4","fixed":"缺陷 D · S29 漂移"},{"shot":"S30","t":103.489,"dominant":"chat","hint":"核103.489人声与103.7009中频候选、110.221确认缺口","status":"pending","segment":"p4","fixed":"缺陷 D · S29 漂移"},{"shot":"S31","t":110.9,"dominant":"chat","hint":"核L70–73重复起音，不假定每句等间隔","status":"pending","segment":"p4","fixed":null},{"shot":"S32","t":114.92,"dominant":"plate","hint":"核L74–76连续重复与117.274强调；情绪变冷不等于音乐变弱","status":"pending","segment":"p4","fixed":null},{"shot":"S33","t":118.333,"dominant":"model","hint":"核L77–79和120.860强调，抽离按词组而非字母随机抖","status":"pending","segment":"p4","fixed":null},{"shot":"S34","t":121.728,"dominant":"plate","hint":"核124.9326中频峰与124.890索引；眼图无水平镜像","status":"pending","segment":"p4","fixed":null},{"shot":"S35","t":125.708,"dominant":"chat","hint":"核L83–85，红色首次在131.224候选事件出现","status":"pending","segment":"p4","fixed":null},{"shot":"S36","t":131.224,"dominant":"model","hint":"核131.1684低/中频候选，L85文件到135.224不代表人声尾已测","status":"pending","segment":"p4","fixed":null},{"shot":"S37","t":135.224,"dominant":"model","hint":"核135.224后是否确为无新歌词；节拍密度与135–144能量变化","status":"pending","segment":"p5","fixed":null},{"shot":"S38","t":143.421,"dominant":"chat","hint":"核147.660歌词先行与148.0102低频候选，允许人声跨出本镜","status":"pending","segment":"p5","fixed":null},{"shot":"S39","t":148.036,"dominant":"model","hint":"核L86–89；画内事件按148.036+两拍序列，字幕仍取本机索引","status":"pending","segment":"p5","fixed":"缺陷 C · S39–S41 呼叫累积"},{"shot":"S40","t":151.728,"dominant":"model","hint":"核第5–8次实际人声音头，非统一修正歌词偏移","status":"pending","segment":"p5","fixed":"缺陷 C · S39–S41 呼叫累积"},{"shot":"S41","t":155.421,"dominant":"model","hint":"核第9–12次与158.900/159.113竞争切点","status":"pending","segment":"p5","fixed":"缺陷 C · S39–S41 呼叫累积"},{"shot":"S42","t":159.113,"dominant":"model","hint":"核L98–103；候选每拍159.113起，逐条对比本机行时间","status":"pending","segment":"p5","fixed":"缺陷 C · S39–S41 呼叫累积"},{"shot":"S43","t":161.882,"dominant":"plate","hint":"核L104起音161.584与候选161.882差异，禁止未审先改字幕","status":"pending","segment":"p5","fixed":null},{"shot":"S44","t":162.805,"dominant":"model","hint":"核162.7966低频与L105弱起；高潮从此维持面积和速度","status":"pending","segment":"p5","fixed":null},{"shot":"S45","t":166.016,"dominant":"plate","hint":"核L108–110；角色不随每次鼓点抖动","status":"pending","segment":"p6","fixed":null},{"shot":"S46","t":169.824,"dominant":"plate","hint":"核L111–113，172.712强调；手宽不为高潮加大到全屏","status":"pending","segment":"p6","fixed":null},{"shot":"S47","t":173.643,"dominant":"model","hint":"核L114/L115长音与177.246弱起，177.57仅为参考网格候选","status":"pending","segment":"p6","fixed":null},{"shot":"S48","t":177.246,"dominant":"model","hint":"核L116–118，179.929后三个音节暂不假装有逐词时间","status":"pending","segment":"p6","fixed":null},{"shot":"S49","t":180.857,"dominant":"chat","hint":"核L119–121和183.646音节；本镜保留高潮面积，不做灰色休止","status":"pending","segment":"p6","fixed":null},{"shot":"S50","t":184.54,"dominant":"model","hint":"核L122/L123、187.665音节；闭合仅为本端预测，不能画成真实回应","status":"pending","segment":"p6","fixed":null},{"shot":"S51","t":188.483,"dominant":"plate","hint":"核L124–127与191.356三个音节；192.344掉层不强截人声","status":"pending","segment":"p6","fixed":null},{"shot":"S52","t":192.344,"dominant":"plate","hint":"核192.3095低频候选与195.356声尾上限，实测能量降约2.7dB","status":"pending","segment":"p7","fixed":null},{"shot":"S53","t":195.356,"dominant":"chat","hint":"核195.356不是已核准人声收住；有延音就保留字幕并延后休眠事件","status":"pending","segment":"p7","fixed":null},{"shot":"S54","t":200.652,"dominant":"plate","hint":"核205.811最后一句起音，200.652为暂定构图切点","status":"pending","segment":"p7","fixed":"缺陷 A/B · S54–S56 片尾"},{"shot":"S55","t":205.811,"dominant":"model","hint":"核205.709中频候选及207.4086能量尾；不把歌词4秒默认时长当实际发声","status":"pending","segment":"p7","fixed":"缺陷 A/B · S54–S56 片尾"},{"shot":"S56","t":209.811,"dominant":"model","hint":"核209.811仅索引上限；尾音能量阈值与实际观感待核","status":"pending","segment":"p7","fixed":"缺陷 A/B · S54–S56 片尾"}],"events":[{"shot":"事件","t":59.4115,"dominant":"event","hint":"远端消息进入。低频通量候选；确认字幕仍从 59.223 行首开始，不拖到乐队拍点。","status":"pending","segment":"p0","fixed":null},{"shot":"事件","t":61.958,"dominant":"event","hint":"接收确认与水纹。行边界初值；听清词头与重击的关系。","status":"pending","segment":"p0","fixed":null},{"shot":"事件","t":65.397,"dominant":"event","hint":"回路闭合。强调行起点初值，不是独立人声音头测量。","status":"pending","segment":"p0","fixed":null},{"shot":"事件","t":68.3,"dominant":"event","hint":"掌心触碰。用户已确认这一落点正确。","status":"approved","segment":"p0","fixed":null},{"shot":"事件","t":84.268,"dominant":"event","hint":"远端白色回声出现。候选点，确认回声是否与词句对齐。","status":"pending","segment":"p1","fixed":null},{"shot":"事件","t":91.04,"dominant":"event","hint":"另一形态切换。低频起音候选，不是已核准的字母词头。","status":"pending","segment":"p1","fixed":null},{"shot":"事件","t":102.6,"dominant":"event","hint":"S29 漂移峰值。确认收住是否读得到（修复后此点开始收）。","status":"pending","segment":"p4","fixed":"缺陷 D · S29 漂移"},{"shot":"事件","t":148.0102,"dominant":"event","hint":"重连轨道起点。低频候选；确认画内事件按 148.036 + 两拍序列。","status":"pending","segment":"p5","fixed":null},{"shot":"事件","t":155.785,"dominant":"event","hint":"第 9 次呼叫完成，轨道开始向内压缩（callTime(9)）。","status":"pending","segment":"p5","fixed":"缺陷 C · S39–S41 呼叫累积"},{"shot":"事件","t":158.554,"dominant":"event","hint":"第 12 次呼叫完成，红色端口封闭不得早于此（callTime(12)）。","status":"pending","segment":"p5","fixed":"缺陷 C · S39–S41 呼叫累积"},{"shot":"事件","t":205.709,"dominant":"event","hint":"最后一句的中频候选。与 205.811 的索引上限是什么关系。","status":"pending","segment":"p7","fixed":"缺陷 A/B · S54–S56 片尾"},{"shot":"事件","t":207.45,"dominant":"event","hint":"尾音衰减起点。环从此开始衰减，确认收尾不显突兀。","status":"pending","segment":"p7","fixed":"缺陷 A/B · S54–S56 片尾"}]};
+var film = document.getElementById('film');
+var clip = document.getElementById('clip');
+var leadSel = document.getElementById('lead');
+var tbody = document.querySelector('#rows tbody');
+var nowEl = document.getElementById('now');
+var clipNow = document.getElementById('clipNow');
+var outEl = document.getElementById('out');
+var msgEl = document.getElementById('filmMsg');
+var stopAt = null, queue = null, activeRow = null, filter = 'all';
+var checked = {};
+
+function fmt(t) {
+  if (!isFinite(t)) return '--:--.---';
+  var m = Math.floor(t / 60), s = t - m * 60;
+  return m + ':' + (s < 10 ? '0' : '') + s.toFixed(3);
+}
+function key(r) { return r.shot + '@' + r.t; }
+
+document.getElementById('meta').textContent =
+  '成片导出 ' + DATA.film.exported + ' · 时长 ' + fmt(DATA.film.duration) +
+  ' · 检查点 ' + (DATA.rows.length + DATA.events.length) + ' 个 · ' + DATA.film.file;
+
+(function buildClips() {
+  var box = document.getElementById('clips');
+  DATA.fixedVideos.forEach(function (v) {
+    var d = document.createElement('div');
+    d.className = 'clip';
+    var h = document.createElement('h3');
+    h.textContent = v.label + '  (' + fmt(v.from) + '–' + fmt(v.to) + ')';
+    var b = document.createElement('button');
+    b.textContent = '载入这个短段';
+    b.onclick = function () {
+      clip.src = v.file;
+      clip.currentTime = 0;
+      clip.play();
+      clipNow.textContent = v.label;
+    };
+    d.appendChild(h); d.appendChild(b); box.appendChild(d);
+  });
+})();
+
+function rowHtml(r, isEvent) {
+  var span = r.fixed ? '<span class="tag stale">画面已修复</span>' : '';
+  var done = r.status === 'approved';
+  var tag = done ? '<span class="tag done">已确认</span>' : '<span class="tag">待核</span>';
+  return '<td class="t">' + fmt(r.t) + '</td>' +
+    '<td>' + (isEvent ? '事件' : r.shot) + '</td>' +
+    '<td>' + (isEvent ? '候选' : r.dominant) + '</td>' +
+    '<td><span class="hint">' + (r.hint || '—') + '</span> ' + span + '</td>' +
+    '<td>' + tag + ' <label><input type="checkbox" data-k="' + key(r) + '"' +
+      (checked[key(r)] ? ' checked' : '') + '> 确认</label></td>' +
+    '<td><button data-t="' + r.t + '" data-seg="' + r.segment + '">审听</button></td>';
+}
+
+function render() {
+  tbody.innerHTML = '';
+  var groups = {};
+  var list = [];
+  DATA.rows.forEach(function (r) { r._event = false; list.push(r); });
+  DATA.events.forEach(function (r) { r._event = true; list.push(r); });
+  list.sort(function (a, b) { return a.t - b.t; });
+  list.forEach(function (r) {
+    if (filter === 'pending' && r.status === 'approved') return;
+    if (filter === 'stale' && !r.fixed) return;
+    if (!groups[r.segment]) {
+      groups[r.segment] = true;
+      var seg = DATA.segments.filter(function (s) { return s.id === r.segment; })[0];
+      var tr = document.createElement('tr');
+      tr.className = 'group';
+      tr.innerHTML = '<td colspan="6">' + seg.label + '　' + fmt(seg.from) + ' – ' + fmt(seg.to) + '</td>';
+      tbody.appendChild(tr);
+    }
+    var tr = document.createElement('tr');
+    if (r.status === 'approved') tr.className = 'approved';
+    tr.dataset.t = r.t;
+    tr.innerHTML = rowHtml(r, r._event);
+    tbody.appendChild(tr);
+  });
+  bindRows();
+  updateSummary();
+}
+
+function bindRows() {
+  Array.prototype.forEach.call(tbody.querySelectorAll('button[data-t]'), function (b) {
+    b.onclick = function () { audition(parseFloat(b.dataset.t)); };
+  });
+  Array.prototype.forEach.call(tbody.querySelectorAll('input[data-k]'), function (c) {
+    c.onchange = function () { checked[c.dataset.k] = c.checked; updateSummary(); };
+  });
+}
+
+function updateSummary() {
+  var n = DATA.rows.length + DATA.events.length;
+  var done = 0;
+  DATA.rows.concat(DATA.events).forEach(function (r) {
+    if (r.status === 'approved' || checked[key(r)]) done++;
+  });
+  document.getElementById('summary').textContent =
+    '已核 ' + done + ' / ' + n + '（68.300 触碰已提前确认，其余待你听）。';
+}
+
+function lead() { return parseFloat(leadSel.value); }
+
+function audition(t) {
+  stopAt = t + lead();
+  queue = null;
+  film.currentTime = Math.max(0, t - lead());
+  var p = film.play();
+  if (p && p.catch) p.catch(function () {});
+  highlight(t);
+}
+
+function highlight(t) {
+  Array.prototype.forEach.call(tbody.querySelectorAll('tr'), function (tr) {
+    tr.classList.toggle('active', tr.dataset.t === String(t));
+  });
+}
+
+function stop() { stopAt = null; queue = null; film.pause(); }
+
+function tick() {
+  nowEl.textContent = fmt(film.currentTime) + ' / ' + fmt(film.duration || DATA.film.duration);
+  if (stopAt !== null && film.currentTime >= stopAt) {
+    film.pause();
+    stopAt = null;
+    if (queue) nextInQueue();
+  }
+  requestAnimationFrame(tick);
+}
+
+function nextInQueue() {
+  if (!queue || !queue.length) { queue = null; return; }
+  var t = queue.shift();
+  audition(t);
+}
+
+document.getElementById('stop').onclick = stop;
+document.getElementById('sweep').onclick = function () {
+  var list = [];
+  DATA.rows.concat(DATA.events).sort(function (a, b) { return a.t - b.t; })
+    .forEach(function (r) {
+      if (r.status === 'approved' || checked[key(r)]) return;
+      list.push(r.t);
+    });
+  if (!list.length) { alert('没有未核的检查点。'); return; }
+  queue = list;
+  nextInQueue();
+};
+document.getElementById('f-all').onclick = function () { filter = 'all'; setFilter(this); };
+document.getElementById('f-pending').onclick = function () { filter = 'pending'; setFilter(this); };
+document.getElementById('f-stale').onclick = function () { filter = 'stale'; setFilter(this); };
+function setFilter(btn) {
+  ['f-all', 'f-pending', 'f-stale'].forEach(function (id) {
+    document.getElementById(id).classList.toggle('on', id === btn.id);
+  });
+  render();
+}
+document.getElementById('copy').onclick = function () {
+  var lines = ['审片结果（' + new Date().toLocaleString() + '）'];
+  DATA.rows.concat(DATA.events).sort(function (a, b) { return a.t - b.t; })
+    .forEach(function (r) {
+      var ok = r.status === 'approved' || checked[key(r)];
+      if (!ok) return;
+      lines.push('已确认  ' + fmt(r.t) + '  ' + (r._event ? '事件' : r.shot) + '  ' + (r.hint || ''));
+    });
+  var text = lines.join('\n');
+  outEl.style.display = 'block';
+  outEl.value = text;
+  outEl.select();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(function () {});
+  }
+  alert('结论已整理到下面的文本框（已全选，可直接 Ctrl+C）。');
+};
+
+film.addEventListener('error', function () {
+  msgEl.innerHTML = '<div class="warn">找不到成片文件：<code>' + DATA.film.file +
+    '</code><br>它在本机的 <code>newProj_v1014/out/</code>（不进 Git）。在项目目录运行 ' +
+    '<code>npm run export:full</code> 重新导出即可；修复后尚未重导。</div>';
+});
+film.addEventListener('loadedmetadata', function () {
+  msgEl.innerHTML = '<div class="warn">' + DATA.film.staleNote + '</div>';
+});
+clip.addEventListener('timeupdate', function () { clipNow.textContent = fmt(clip.currentTime); });
+
+document.addEventListener('keydown', function (e) {
+  if (e.target && (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+  if (e.code === 'Space') { e.preventDefault(); film.paused ? film.play() : film.pause(); }
+  if (e.code === 'ArrowRight') { e.preventDefault(); film.currentTime = Math.min(film.duration || 1e9, film.currentTime + 5); }
+  if (e.code === 'ArrowLeft') { e.preventDefault(); film.currentTime = Math.max(0, film.currentTime - 5); }
+  if (e.code === 'KeyN') {
+    var list = DATA.rows.concat(DATA.events).sort(function (a, b) { return a.t - b.t; });
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].t > film.currentTime + 0.05 && list[i].status !== 'approved' && !checked[key(list[i])]) {
+        audition(list[i].t); return;
+      }
+    }
+  }
+  if (e.code === 'Enter') {
+    var tr = tbody.querySelector('tr.active');
+    if (tr) audition(parseFloat(tr.dataset.t));
+  }
+});
+
+film.src = DATA.film.file;
+render();
+tick();
+</script>
+</body>
+</html>

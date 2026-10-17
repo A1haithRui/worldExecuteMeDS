@@ -24,6 +24,8 @@
     "export:p7": "node tools/export-p0.mjs --preset p7",
     "export:full": "node tools/export-p0.mjs --preset full",
     "check:engine": "node tools/check-time-windows.mjs && node tools/check-engine.mjs",
+    "review": "node tools/build-review-hub.mjs",
+    "check:review": "node tools/check-review-hub.mjs",
     "check:windows": "node tools/check-time-windows.mjs",
     "check:flash": "python tools/check-flash.py",
     "probe": "node tools/probe-times.mjs",

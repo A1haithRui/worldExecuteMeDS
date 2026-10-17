@@ -15,6 +15,12 @@
 
 这两项只在本机使用，已由总目录 `.gitignore` 排除。没有歌词时仍可看画面和时间线。
 
+## 审片台（推荐入口）
+
+`review/index.html` 是专门用来看片的静态页面：**双击即可打开，不需要启动服务**（页面只用 `<video>` 与 `<img>`，没有 fetch 和 ES 模块）。它按镜头列出全部 55 个边界和 12 个镜内候选事件，每行带分镜自己的 `audio_check` 提示；点「审听」会播放该点前后各 2.5 秒后自动停，也可以连续过一遍所有未核点，勾选后可复制结论。
+
+分镜或镜头表变化后，在本目录运行 `npm run review` 重新生成；`npm run check:review` 会用真实 Chrome 以 `file://` 打开它，检查无脚本错误、行数与媒体是否就位。详见 [review/README.md](review/README.md)。
+
 ## 角色素材
 
 `assets/character/deepseek_{bust,profile,reach,eye}_v3.png` 是当前使用的透明角色图；`v3_sources/` 保存源图、提示词和质量记录。成品素材的设计讨论与品牌素材说明见 `v3_sources/design_notes_v3.md`。
