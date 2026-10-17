@@ -1,5 +1,6 @@
 // Shared deterministic drawing primitives. No cross-frame animation state.
 import { spec, fitBlock, drawWipeRows, drawRule } from "./engine/type.js";
+import { noteReversedWindow } from "./engine/motion.js";
 
 const W = 1920,
   H = 1080,
@@ -18,7 +19,12 @@ const W = 1920,
   };
 const clamp = (x) => Math.max(0, Math.min(1, x)),
   mix = (a, b, k) => a + (b - a) * k,
-  phase = (t, a, b) => clamp((t - a) / (b - a));
+  // Guarded: a window with b < a would clamp silently and invert the meaning,
+  // which is invisible in a frame dump. See engine/motion.js.
+  phase = (t, a, b) => {
+    noteReversedWindow(t, a, b, "mv-draw.phase");
+    return clamp((t - a) / (b - a));
+  };
 const ease = (x) => {
     const p = clamp(x);
     return p * p * (3 - 2 * p);

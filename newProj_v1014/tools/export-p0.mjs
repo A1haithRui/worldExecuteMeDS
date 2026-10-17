@@ -216,6 +216,20 @@ try {
       }, t);
       diagnostics.push(d);
     }
+    // The runtime half of the reversed-time-window guard. The static half is
+    // tools/check-time-windows.mjs; this catches windows that only become
+    // reversed for particular values, which no static scan can see.
+    const timeWindows = await page.evaluate(() =>
+      window.timeWindowReport ? window.timeWindowReport() : { hits: 0, violations: [] },
+    );
+    if (timeWindows.hits > 0) {
+      const list = timeWindows.violations
+        .map((v) => `${v.kind} a=${v.a} b=${v.b} hits=${v.hits}`)
+        .join("; ");
+      throw new Error(
+        `Reversed time windows rendered ${timeWindows.hits} times: ${list}`,
+      );
+    }
     writeFileSync(
       resolve(folder, "stills-validation.json"),
       JSON.stringify(
@@ -223,6 +237,8 @@ try {
           deterministic: true,
           repeatSeekTimes: repeats,
           captionAudit,
+          timeWindowViolations: timeWindows.violations,
+          timeWindowViolationHits: timeWindows.hits,
           errors: failures,
           failedRequests: requests,
           diagnostics,
@@ -238,6 +254,7 @@ try {
         deterministic: true,
         errors: failures,
         failedRequests: requests,
+        timeWindowViolationHits: timeWindows.hits,
       }),
     );
   } else {

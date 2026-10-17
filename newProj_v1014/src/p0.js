@@ -77,12 +77,15 @@ function avatar(ctx, x, y, r = 25) {
   ctx.drawImage(images.bust, x - r * 1.6, y - r * 1.35, 3.2 * r, 4.07 * r);
   ctx.restore();
 }
-const outbound = route([
-    [470, 570],
-    [650, 200],
-    [1220, 120],
-    [1450, 410],
-  ]),
+// The project's first send path. Exported so the last call in S55 can retrace
+// it from the retained touch point instead of inventing a second route.
+export const OUTBOUND_CONTROL = Object.freeze([
+  [470, 570],
+  [650, 200],
+  [1220, 120],
+  [1450, 410],
+]);
+const outbound = route(OUTBOUND_CONTROL),
   inbound = route([
     [1450, 410],
     [1350, 780],

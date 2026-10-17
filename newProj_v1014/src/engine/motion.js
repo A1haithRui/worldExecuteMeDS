@@ -7,7 +7,55 @@ export const inv = (x) => 1 - clamp(x);
 export const unlerp = (a, b, x) => (b === a ? 0 : (x - a) / (b - a));
 
 // ---- normalised progress between two song times -------------------------
-export const phase = (t, a, b) => clamp((t - a) / (b - a || 1e-9));
+
+// A reversed window (b < a) is a bug that cannot be seen in a frame dump:
+// phase() clamps to 0 or 1, so the picture still animates while the meaning is
+// inverted. The guard records the violation and returns the same value it
+// always would, so a preview or a 12,000-frame export is never interrupted.
+// b === a is a legal degenerate window and is not reported.
+const reversedWindows = new Map();
+let reversedWindowHits = 0;
+
+export function noteReversedWindow(t, a, b, kind) {
+  if (!(b < a)) return;
+  reversedWindowHits++;
+  const key = `${kind}|${a}|${b}`;
+  const seen = reversedWindows.get(key);
+  if (seen) {
+    seen.hits++;
+    return;
+  }
+  const rec = { kind, a, b, firstSeenAt: t, hits: 1, sites: [] };
+  try {
+    rec.sites = (new Error().stack || "")
+      .split("\n")
+      .slice(2, 5)
+      .map((s) => s.trim().replace(/^at\s+/, ""))
+      .filter(Boolean);
+  } catch {
+    /* stack capture is best effort */
+  }
+  reversedWindows.set(key, rec);
+}
+
+/** Everything the guard has recorded, plus a total hit count. */
+export function reversedWindowReport() {
+  return {
+    hits: reversedWindowHits,
+    violations: [...reversedWindows.values()].map((v) => ({ ...v })),
+  };
+}
+
+/** Forget everything the guard has seen, so one check run cannot mask another. */
+export function resetReversedWindowGuard() {
+  reversedWindows.clear();
+  reversedWindowHits = 0;
+}
+
+export const phase = (t, a, b) => {
+  noteReversedWindow(t, a, b, "motion.phase");
+  return clamp((t - a) / (b - a || 1e-9));
+};
 export const since = (t, a) => t - a;
 
 // ---- easing -------------------------------------------------------------

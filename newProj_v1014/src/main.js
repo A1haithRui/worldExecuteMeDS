@@ -10,7 +10,7 @@ import { drawCaption } from "./mv-draw.js";
 import { createStage, shakeAt } from "./engine/stage.js";
 import { setAudioFeatures, sampleAt, audio as songAudio } from "./engine/audio.js";
 import { drawAmbient, ambientFor } from "./engine/ambient.js";
-import { smooth, mix, clamp } from "./engine/motion.js";
+import { smooth, mix, clamp, reversedWindowReport, resetReversedWindowGuard } from "./engine/motion.js";
 import {
   ALL_SHOTS, POLISHED_RANGES, SEGMENT_RENDER, SHOT_CAMERA, SHOT_TRANSITIONS,
   AMBIENT_BY_SHOT, AMBIENT_FOCUS, inPolished, SEGMENTS,
@@ -327,12 +327,18 @@ function paint(t) {
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.clearRect(0, 0, 1920, 1080);
   }
+  const windowGuard = reversedWindowReport();
   window.frameDiagnostics = {
     ...(p0Scene || { time: t, shot: "concept", line: line?.index }),
     transition: mvStage.last.transition,
     gradeApplied: appliedGrade
       ? { glow: +appliedGrade.glow.toFixed(4), zoom: +(appliedGrade.camera?.zoom ?? 1).toFixed(5) }
       : null,
+    // Reversed time windows seen so far. This accumulator deliberately survives
+    // across frames (this object is rebuilt each frame) so a whole export can be
+    // checked in one pass. It never affects the rendered pixels.
+    timeWindowViolations: windowGuard.violations,
+    timeWindowViolationHits: windowGuard.hits,
   };
   $("sceneName").textContent = p0Scene ? `${p0Scene.shot} / 精修` : scene.title;
   $("systemText").textContent = scene.system;
@@ -391,6 +397,10 @@ window.p4Config = P4;
 window.p5Config = P5;
 window.p6Config = P6;
 window.p7Config = P7;
+// Tools call this before a probe run so one run's violations cannot be masked by
+// another's, and read the report back off window.frameDiagnostics.
+window.resetTimeWindowGuard = resetReversedWindowGuard;
+window.timeWindowReport = reversedWindowReport;
 // The whole registry, so offline tools do not have to hardcode segment ids.
 window.mvSegments = SEGMENTS.map((s) => ({
   id: s.id,

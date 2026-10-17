@@ -196,12 +196,26 @@ function s29(ctx, t, line, diag) {
     { x: 770, y: 300, w: 380, h: 440, label: "alt / preview", key: "silhouette" },
     { x: 1240, y: 300, w: 380, h: 440, label: "current", key: "bust" },
   ];
-  const settle = ease(at(t, P4.cues.settleBack, P4.cues.loopDrift + 1.6));
+  // The loop drifts in and then settles. Two forward-running envelopes:
+  //   enter  0 -> 1 across [loopDrift, settleBack]
+  //   hold   1 -> 0 across [settleBack, settleTo]
+  // so the group is completely still before 100.5, drifts through 100.5-102.6,
+  // and is held at rest afterwards. The sine term alone is not enough: it is
+  // already non-zero before 100.5, which is why the enter envelope is needed.
+  //
+  // The documented window ends at 104.2, but S29 itself ends at 103.489 -- a
+  // later end would leave the cells still drifting when the shot cuts, so the
+  // "settle and hold" the storyboard asks for could never happen on screen. The
+  // envelope therefore finishes at the earlier of the two.
+  const S29_END = P4.shots[2];
+  const settleTo = Math.min(P4.cues.settleBack + 1.6, S29_END);
+  const enter = ease(at(t, P4.cues.loopDrift, P4.cues.settleBack));
+  const hold = 1 - ease(at(t, P4.cues.settleBack, settleTo));
+  const driftEnv = enter * hold;
   cells.forEach((c, i) => {
     const k = at(t, P4.cues.cellsIn + i * 0.2, P4.cues.cellsIn + i * 0.2 + 0.5);
     if (k <= 0) return;
-    // After 100.5s the whole group drifts slowly and then holds the original.
-    const drift = (1 - settle) * Math.sin((t - P4.cues.loopDrift) * 0.5 + i * 0.7) * 6;
+    const drift = driftEnv * Math.sin((t - P4.cues.loopDrift) * 0.5 + i * 0.7) * 6;
     layer(ctx, k, () => {
       rect(ctx, c.x, c.y + drift, c.w, c.h, "#0b1a2a", 16, i === 1 ? TOKENS.border2 : TOKENS.border1);
       type(ctx, `0${i + 1}`, c.x + 22, c.y + 40 + drift, 18, TOKENS.labelCaption, "MV Mono");
@@ -232,7 +246,13 @@ function s29(ctx, t, line, diag) {
   beatRings(ctx, 1040, 760, t, { alpha: 0.16, maxR: 200, period, phase: phase0, count: 2 });
 
   caption(ctx, line, t, { x: 146, y: 940, width: 1620, size: 56 }, diag);
-  diag.cells = { count: cells.length, preview, settle };
+  diag.cells = {
+    count: cells.length,
+    preview,
+    driftEnv,
+    // Per-cell vertical offset, so the acceptance check can read it directly.
+    cellDrift: cells.map((_, i) => driftEnv * Math.sin((t - P4.cues.loopDrift) * 0.5 + i * 0.7) * 6),
+  };
 }
 
 // ---------------------------------------------------------------------------

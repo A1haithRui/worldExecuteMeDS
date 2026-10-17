@@ -40,14 +40,77 @@ export const P5 = Object.freeze({
     ringStart: 148.4,
     callEvery: 0.923077, // two beats at 130 BPM, per the storyboard grid
     secondRing: 152.0,
-    compress: 155.7,
-    portSeal: 158.6,
+    // `compress` and `portSeal` used to be independent time cues. They are now
+    // derived from the call counter's own grid (callTime(9) and callTime(12)),
+    // so they cannot disagree with the number of completed calls.
     probesStart: 159.3,
     probeEvery: 0.35,
     waterLight: 162.0,
   },
   eyeWidth: 1050,
 });
+
+// ---------------------------------------------------------------------------
+// The twelve reconnect calls, as one counter derived from song time alone.
+//
+// S39, S40 and S41 all read this, so the marks cannot disagree between shots:
+// call n completes at ringStart + (n-1) * callEvery, which is the two-beat grid
+// the sequence was designed on.
+// ---------------------------------------------------------------------------
+const CALLS_TOTAL = 12;
+const callTime = (n) => P5.cues.ringStart + (n - 1) * P5.cues.callEvery;
+// A call counts as done on the frame nearest its completion instant, so a time
+// rounded to three decimals (149.323 rather than 149.323077) still reads as the
+// call it belongs to. Without the half-frame tolerance the acceptance times in
+// docs/dsh-fix-round1-prompt.md each fall a hair early and report the previous
+// count. The tolerance is half a frame at 60fps and cannot move a marker by a
+// whole frame.
+const FRAME = 1 / 60;
+const callsDone = (t) =>
+  Math.min(
+    CALLS_TOTAL,
+    Math.max(
+      0,
+      Math.floor((t + FRAME / 2 - P5.cues.ringStart) / P5.cues.callEvery) + 1,
+    ),
+  );
+
+/**
+ * Draw exactly the completed calls: one marker per call, never a batch.
+ * `slots` must hold CALLS_TOTAL entries of { x, y, failure }. Returns the number
+ * of markers drawn, which is always callsDone(t) -- the acceptance check reads
+ * it from diag rather than counting pixels.
+ */
+function drawCallMarkers(ctx, slots, done, opts = {}) {
+  const { failureColor = C.danger, pendingAlpha = 0.3, size = 8 } = opts;
+  let drawn = 0;
+  for (let i = 0; i < slots.length; i++) {
+    const s = slots[i];
+    const complete = i < done;
+    if (complete) drawn++;
+    layer(ctx, complete ? 0.92 : pendingAlpha, () => {
+      if (!complete) {
+        disc(ctx, s.x, s.y, 4.5, C.edge, 0.9);
+        return;
+      }
+      if (s.failure) {
+        // Fault red only on the failed cell itself.
+        disc(ctx, s.x, s.y, size, failureColor, 0.95, false, 1.8);
+        stroke(ctx, [[s.x - 5, s.y], [s.x + 5, s.y]], failureColor, 1.6);
+      } else {
+        // The first four show only that the return path is missing: hollow, no red.
+        disc(ctx, s.x, s.y, size, C.muted, 0.9, false, 1.8);
+        stroke(ctx, [[s.x - 4, s.y - 4], [s.x + 4, s.y + 4]], C.muted, 1.6);
+      }
+    });
+  }
+  return drawn;
+}
+
+const ringPoint = (cx, cy, r, i, n) => {
+  const a = -Math.PI / 2 + (i / n) * Math.PI * 2;
+  return { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r };
+};
 
 const { images, ready } = loadImages({
   bust: "/assets/character/deepseek_bust_v3.png",
@@ -301,44 +364,34 @@ function s39(ctx, t, line, diag) {
   const ring = polyline(CIRCLE(R0, C0[0], C0[1]), true);
   trace(ctx, ring, 1, C.edge, 1.8, 0.6);
 
-  // Twelve slots. Each completed call leaves a hollow marker: the return path
-  // is still missing, so nothing is ever filled in.
-  const start = P5.cues.ringStart;
-  const step = P5.cues.callEvery;
-  const calls = Math.max(0, Math.floor((t - start) / step) + 1);
-  const shown = Math.min(12, t < start ? 0 : calls);
-  for (let i = 0; i < 12; i++) {
-    const [px, py] = along(ring, i / 12);
-    const done = i < shown;
-    layer(ctx, done ? 0.95 : 0.32, () => {
-      if (done) {
-        disc(ctx, px, py, 9, C.muted, 0.9, false, 1.8);
-        stroke(ctx, [[px - 5, py - 5], [px + 5, py + 5]], C.muted, 1.6);
-      } else {
-        disc(ctx, px, py, 5, C.edge, 0.9);
-      }
-    });
-  }
-  // The carrier advances one slot per call.
-  const progress = start <= t ? (t - start) / step : 0;
-  const head = clamp(progress / 12);
-  const [hx, hy] = along(ring, head);
+  // Twelve slots on the track, one per call. Only the completed ones are marked,
+  // and the count comes from the shared counter, so it can never jump ahead.
+  const done = callsDone(t);
+  const slots = Array.from({ length: CALLS_TOTAL }, (_, i) => ({
+    ...ringPoint(C0[0], C0[1], R0, i, CALLS_TOTAL),
+    failure: i + 1 >= 5, // from the 5th call the cells become failures
+  }));
+  const drawn = drawCallMarkers(ctx, slots, done);
+
+  // The carrier advances one slot per completed call.
+  const headSlot = slots[Math.min(Math.max(done - 1, 0), CALLS_TOTAL - 1)];
   signalPath(ctx, ring, t, along, {
     packets: 2, speed: 0.06, color: C.cyan, packetColor: C.hot,
     baseAlpha: 0, width: 2, packetR: 4, beatPulse: f.beatPulse,
   });
-  node(ctx, hx, hy, t, { r: 8, color: C.hot, pulse: 0.4 + 0.6 * f.beatPulse });
+  node(ctx, headSlot.x, headSlot.y, t, { r: 8, color: C.hot, pulse: 0.4 + 0.6 * f.beatPulse });
   beatRings(ctx, C0[0], C0[1], t, { alpha: 0.12, maxR: 380, period, phase: phase0, count: 2 });
   // The remote direction stays empty.
   layer(ctx, 0.7, () => {
     type(ctx, "no return path", C0[0] + 24, C0[1] - R0 - 26, 18, C.muted, "MV Sans");
   });
-  layer(ctx, Math.min(1, shown / 4), () =>
-    type(ctx, `call ${Math.min(12, Math.max(1, shown))} / 12`, C0[0], C0[1] + 14, 26, C.hot, "MV Mono", "center"),
-  );
+  if (done >= 1)
+    layer(ctx, Math.min(1, done / 2), () =>
+      type(ctx, `call ${done} / ${CALLS_TOTAL}`, C0[0], C0[1] + 14, 26, C.hot, "MV Mono", "center"),
+    );
 
   caption(ctx, line, t, { x: 146, y: 940, width: 1580, size: 56 }, diag);
-  diag.ring = { calls: shown, head };
+  diag.calls = { done, total: CALLS_TOTAL, markers: drawn };
 }
 
 // ---------------------------------------------------------------------------
@@ -356,21 +409,25 @@ function s40(ctx, t, line, diag) {
   });
 
   const C0 = [1040, 520];
-  const rings = [
-    { r: 330, count: 12, from: 0 },
-    { r: 470, count: 8, from: 4 },
-  ];
-  rings.forEach((ring, ri) => {
-    const pts = polyline(CIRCLE(ring.r, C0[0], C0[1]), true);
-    trace(ctx, pts, 1, C.edge, 1.6, ri === 0 ? 0.6 : 0.35);
-    for (let i = 0; i < ring.count; i++) {
-      const [px, py] = along(pts, i / ring.count);
-      const done = i + ring.from <= 10;
-      layer(ctx, done ? 0.9 : 0.3, () => {
-        disc(ctx, px, py, done ? 8 : 5, done ? C.danger : C.edge, 0.9, false, 1.8);
-      });
-    }
+  const R_IN = 330;
+  const R_OUT = 470;
+  const done = callsDone(t);
+
+  // Two tracks: calls 1-4 stay on the inner one, and from the 5th the failures
+  // pile onto the second ring. One slot per call, so the marker count still
+  // equals the counter exactly.
+  trace(ctx, polyline(CIRCLE(R_IN, C0[0], C0[1]), true), 1, C.edge, 1.6, 0.6);
+  trace(ctx, polyline(CIRCLE(R_OUT, C0[0], C0[1]), true), 1, C.edge, 1.6, 0.35);
+
+  const slots = Array.from({ length: CALLS_TOTAL }, (_, i) => {
+    const n = i + 1;
+    if (n <= 4) return { ...ringPoint(C0[0], C0[1], R_IN, n - 1, 4), failure: false };
+    return { ...ringPoint(C0[0], C0[1], R_OUT, n - 5, 8), failure: true };
   });
+  const drawn = drawCallMarkers(ctx, slots, done);
+  // The carrier sits on the most recently completed slot.
+  const headSlot = slots[Math.min(Math.max(done - 1, 0), CALLS_TOTAL - 1)];
+  node(ctx, headSlot.x, headSlot.y, t, { r: 7, color: C.hot, pulse: 0.4 + 0.6 * f.beatPulse });
 
   // The remote direction is where the gap is.
   const gapDir = -Math.PI / 2;
@@ -381,15 +438,16 @@ function s40(ctx, t, line, diag) {
     type(ctx, "still nothing from the far side", gx + 80, gy + 6, 18, C.muted, "MV Sans");
   });
 
-  const sealed = at(t, P5.cues.secondRing, P5.cues.secondRing + 0.6);
-  if (sealed > 0 && t < P5.cues.compress)
-    layer(ctx, sealed, () =>
+  // The label fades once the failures have really started stacking.
+  const stacked = done >= 5 ? at(t, callTime(5), callTime(6)) : 0;
+  if (stacked > 0)
+    layer(ctx, stacked, () =>
       type(ctx, "failures stacking to the second ring", C0[0], 176, 19, C.muted, "MV Sans", "center"),
     );
   beatRings(ctx, C0[0], C0[1], t, { alpha: 0.1, maxR: 420, period, phase: phase0, count: 2 });
 
   caption(ctx, line, t, { x: 146, y: 940, width: 1580, size: 56 }, diag);
-  diag.rings = rings.length;
+  diag.calls = { done, total: CALLS_TOTAL, markers: drawn, outerFailures: Math.max(0, done - 4) };
 }
 
 // ---------------------------------------------------------------------------
@@ -405,7 +463,11 @@ function s41(ctx, t, line, diag) {
   });
 
   const C0 = [1040, 520];
-  const compress = ease(at(t, P5.cues.compress, P5.cues.compress + 1.6));
+  const done = callsDone(t);
+  // Compression starts exactly when the 9th call completes and runs to the 12th,
+  // both taken from the counter's own grid. The radius curve itself is unchanged
+  // from the approved render -- this round only removes the stray time cue.
+  const compress = done >= 9 ? ease(at(t, callTime(9), callTime(12))) : 0;
   const holeR = mix(240, 460, compress);
 
   // The eye shows only through the centre hole.
@@ -433,16 +495,19 @@ function s41(ctx, t, line, diag) {
   ctx.stroke();
   ctx.restore();
 
-  // The rings are compressed inward around the hole.
-  const ring = polyline(CIRCLE(mix(470, 520, compress), C0[0], C0[1]), true);
-  trace(ctx, ring, 1, C.edge, 1.6, 0.5);
-  for (let i = 0; i < 12; i++) {
-    const [px, py] = along(ring, i / 12);
-    layer(ctx, 0.85, () => disc(ctx, px, py, 8, C.danger, 0.9, false, 1.8));
-  }
+  // The track is compressed inward around the hole. Marker count still comes
+  // from the shared counter, so it cannot disagree with S39 and S40.
+  const trackR = mix(470, 520, compress);
+  trace(ctx, polyline(CIRCLE(trackR, C0[0], C0[1]), true), 1, C.edge, 1.6, 0.5);
+  const slots = Array.from({ length: CALLS_TOTAL }, (_, i) => ({
+    ...ringPoint(C0[0], C0[1], trackR, i, CALLS_TOTAL),
+    failure: i + 1 >= 5,
+  }));
+  const drawn = drawCallMarkers(ctx, slots, done);
 
-  // The twelfth call seals the red port.
-  const seal = at(t, P5.cues.portSeal, P5.cues.portSeal + 0.6);
+  // The twelfth call seals the red port. Gated on the counter, so it is
+  // impossible for the port to close before the 12th call completes at 158.554.
+  const seal = done >= CALLS_TOTAL ? ease(at(t, callTime(CALLS_TOTAL), callTime(CALLS_TOTAL) + 0.4)) : 0;
   if (seal > 0) {
     const sx = C0[0];
     const sy = C0[1] - 560 + compress * 60;
@@ -460,7 +525,13 @@ function s41(ctx, t, line, diag) {
   });
 
   caption(ctx, line, t, { x: 146, y: 240, width: 900, size: 56 }, diag);
-  diag.compress = { compress, holeR, sealed: t >= P5.cues.portSeal };
+  diag.calls = { done, total: CALLS_TOTAL, markers: drawn };
+  diag.compress = {
+    compress,
+    holeR,
+    sealed: seal > 0,
+    sealAt: callTime(CALLS_TOTAL),
+  };
 }
 
 // ---------------------------------------------------------------------------

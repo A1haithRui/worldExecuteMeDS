@@ -22,6 +22,32 @@ import { TOKENS, chatWindow, statusDot } from "./engine/chat.js";
 import { node, nodeGrid, signalPath, beatRings } from "./engine/model.js";
 import { drawFigure } from "./engine/portrait.js";
 import { sampleAt, audio } from "./engine/audio.js";
+import { OUTBOUND_CONTROL } from "./p0.js";
+
+// The retained old touch point, defined once. S54 draws it, S55 rings around it
+// and sends the last call from it, so all three read this single coordinate.
+const TOUCH_POINT = Object.freeze([420, 520]);
+
+// The last call retraces the project's original send path, translated bodily so
+// its first control point lands exactly on the retained touch point. Moving the
+// whole curve -- not just its first point -- keeps the original shape and leaves
+// no second, dangling origin anywhere in the film.
+const ORIGIN_CONTROL = OUTBOUND_CONTROL.map(([x, y]) => [
+  x + (TOUCH_POINT[0] - OUTBOUND_CONTROL[0][0]),
+  y + (TOUCH_POINT[1] - OUTBOUND_CONTROL[0][1]),
+]);
+const ORIGIN_PATH = route(ORIGIN_CONTROL);
+
+/** Ring radius and alpha as one curve spanning S55 and S56. */
+function ringAt(t) {
+  const k = ease(at(t, P7.cues.decay, P7.cues.ringGone));
+  return { k, radius: mix(90, 1100, k), alpha: (1 - k) * 0.55 };
+}
+
+/** Brightness of the retained point and the carrier: 1 in S54, 0 by S56. */
+function touchFade(t) {
+  return 1 - ease(at(t, P7.cues.pointFadeFrom, P7.cues.pointFadeTo));
+}
 
 export const P7 = Object.freeze({
   start: 188.483,
@@ -38,7 +64,16 @@ export const P7 = Object.freeze({
     fadeToOutline: 202.8,
     lastCall: 206.0,
     decay: 207.45,
-    ringGone: 209.4,
+    // The ring's decay runs past the S55/S56 boundary and finishes inside S56,
+    // so the curve crosses 209.811 continuously instead of each shot starting
+    // its own. Must stay greater than `decay`.
+    ringGone: 210.9,
+    // The retained point and the last call's carrier withdraw during S55: the
+    // storyboard's S55 exit is "by 209.811 only the dark ring and the small
+    // annotation remain". S54 explicitly keeps the point's brightness, so this
+    // fade must not start before S55.
+    pointFadeFrom: 208.85,
+    pointFadeTo: 209.75,
     creditsIn: 209.811,
     creditsHold: 211.558,
   },
@@ -52,9 +87,6 @@ const { images, ready } = loadImages({
   reach: "/assets/character/deepseek_reach_v3.png",
 });
 export const p7Ready = ready;
-
-// The path the very first call took, reused for the last one.
-const ORIGIN_PATH = route([[300, 560], [820, 470], [1340, 500], [1880, 420]]);
 
 // ---------------------------------------------------------------------------
 // S51  188.483-192.344  plate: the exit stays open, she stops chasing
@@ -207,15 +239,14 @@ function s54(ctx, t, line, diag) {
 
   // Only one old touch point on the left, and it keeps its brightness while
   // everything else dims. Nothing is dismantled layer by layer.
-  const px = 420;
-  const py = 520;
+  const [px, py] = TOUCH_POINT;
   node(ctx, px, py, t, { r: 9, color: C.hot, pulse: 0.4 + 0.6 * f.beatPulse });
   disc(ctx, px, py, 20 + f.beatPulse * 10, C.cyan, 0.22, false, 2);
   stroke(ctx, [[px + 40, py], [px + 300, py]], C.edge, 1.4, 0.4 * (1 - fade));
   beatRings(ctx, px, py, t, { alpha: 0.14, maxR: 340, period, phase: phase0, count: 2 });
 
   caption(ctx, line, t, { x: 146, y: 940, width: 900, size: 56 }, diag);
-  diag.outline = { fade, pointKept: true };
+  diag.outline = { fade, pointKept: true, touchPoint: TOUCH_POINT };
 }
 
 // ---------------------------------------------------------------------------
@@ -227,48 +258,60 @@ function s55(ctx, t, line, diag) {
   const period = audio()?.period ?? 60 / 130;
   const phase0 = audio()?.phase ?? 0;
 
+  const ring = ringAt(t);
+  const point = touchFade(t);
+
   nodeGrid(ctx, t, {
-    alpha: 0.1 * (0.7 + 0.6 * f.lowEnv) * (1 - ease(at(t, P7.cues.decay, P7.cues.ringGone)) * 0.7),
+    alpha: 0.1 * (0.7 + 0.6 * f.lowEnv) * (1 - ring.k * 0.7),
     step: 108, beatPulse: f.beatPulse, lowEnv: f.lowEnv, seed: 211,
   });
 
-  const [ox, oy] = [420, 520];
+  const [ox, oy] = TOUCH_POINT;
   // The last call: one carrier, one direction, no return leg, no online marker.
+  // The carrier retraces the original send path, re-anchored to the touch point,
+  // so its first frame sits exactly on that point.
   const go = ease(at(t, P7.cues.lastCall, P7.cues.lastCall + 1.5));
-  if (go > 0) {
-    trace(ctx, ORIGIN_PATH, go, C.cyan, 2.2, 0.65 * (1 - ease(at(t, P7.cues.decay, P7.cues.ringGone)) * 0.5));
-    const [hx, hy] = along(ORIGIN_PATH, go);
-    if (go < 1) node(ctx, hx, hy, t, { r: 7, color: C.hot, pulse: 0.4 + 0.6 * f.beatPulse });
+  const [hx, hy] = along(ORIGIN_PATH, go);
+  if (t >= P7.cues.lastCall) {
+    if (go > 0) trace(ctx, ORIGIN_PATH, go, C.cyan, 2.2, 0.65 * point);
+    // A one-way spread: the head fades as it reaches the far end, and nothing
+    // comes back.
+    layer(ctx, (1 - go) * point, () =>
+      node(ctx, hx, hy, t, { r: 7, color: C.hot, pulse: 0.4 + 0.6 * f.beatPulse }),
+    );
   }
-  node(ctx, ox, oy, t, { r: 9, color: C.hot, pulse: 0.4 + 0.6 * f.beatPulse });
+  layer(ctx, point, () =>
+    node(ctx, ox, oy, t, { r: 9, color: C.hot, pulse: 0.4 + 0.6 * f.beatPulse }),
+  );
 
-  // After 207.45 only a slowly decaying cyan ring remains.
-  const decayK = ease(at(t, P7.cues.decay, P7.cues.ringGone));
-  if (decayK < 1) {
-    const rings = 3;
-    for (let i = 0; i < rings; i++) {
-      const k = clamp(decayK - i * 0.22);
-      if (k >= 1) continue;
-      const rr = mix(90, 900, k) + i * 40;
-      const a = (1 - k) * (1 - i * 0.28) * 0.55;
-      if (a <= 0.01) continue;
-      layer(ctx, a, () => {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(ox, oy, rr, 0, Math.PI * 2);
-        ctx.strokeStyle = C.cyan;
-        ctx.lineWidth = 4;
-        ctx.stroke();
-        ctx.restore();
-      });
-    }
-  }
+  // After 207.45 only a slowly decaying cyan ring remains. The same curve keeps
+  // running through S56, so it cannot reappear at the shot boundary.
+  if (ring.alpha > 0.005)
+    layer(ctx, ring.alpha, () => {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(ox, oy, ring.radius, 0, Math.PI * 2);
+      ctx.strokeStyle = C.cyan;
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      ctx.restore();
+    });
   beatRings(ctx, ox, oy, t, {
-    alpha: 0.18 * (1 - decayK), maxR: 420, period, phase: phase0, count: 2,
+    alpha: 0.18 * (1 - ring.k), maxR: 420, period, phase: phase0, count: 2,
   });
 
   caption(ctx, line, t, { x: 146, y: 940, width: 900, size: 56 }, diag);
-  diag.lastCall = { go, decayK };
+  diag.lastCall = {
+    go,
+    ringK: ring.k,
+    ringRadius: ring.radius,
+    ringAlpha: ring.alpha,
+    pointAlpha: point,
+    // The carrier origin and the ring centre are the same point by construction.
+    carrierOrigin: [hx, hy],
+    pathOrigin: ORIGIN_PATH.pts[0].slice(),
+    touchPoint: TOUCH_POINT,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -278,19 +321,20 @@ function s56(ctx, t, line, diag) {
   // A still deep-blue field. No new plot, no camera, no beat response.
   ground(ctx, t, [1100, 520], true);
 
-  // The tail ring goes out of sight.
-  const gone = ease(at(t, P7.cues.creditsIn, P7.cues.ringGone));
-  if (gone < 1) {
-    layer(ctx, (1 - gone) * 0.3, () => {
+  // The same decay curve that S55 uses, evaluated at this shot's own time: the
+  // radius and alpha are continuous across the 209.811 boundary by construction,
+  // and the ring cannot come back because the window runs forward only.
+  const ring = ringAt(t);
+  if (ring.alpha > 0.005)
+    layer(ctx, ring.alpha, () => {
       ctx.save();
       ctx.beginPath();
-      ctx.arc(420, 520, mix(900, 1100, gone), 0, Math.PI * 2);
+      ctx.arc(TOUCH_POINT[0], TOUCH_POINT[1], ring.radius, 0, Math.PI * 2);
       ctx.strokeStyle = C.cyan;
       ctx.lineWidth = 4;
       ctx.stroke();
       ctx.restore();
     });
-  }
 
   // The credits fade in over 0.30s, hold to 211.558, then the whole frame fades
   // out over the last 0.40s and the file ends on the still deep blue.
@@ -334,7 +378,14 @@ function s56(ctx, t, line, diag) {
 
   // No lyric is drawn here; S56 carries no line.
   caption(ctx, line, t, { x: 146, y: 940, width: 1620, size: 56 }, diag);
-  diag.credits = { in: inK, out: outK, still: true };
+  diag.credits = {
+    in: inK,
+    out: outK,
+    still: true,
+    ringK: ring.k,
+    ringRadius: ring.radius,
+    ringAlpha: ring.alpha,
+  };
 }
 
 const RENDERERS = [s51, s52, s53, s54, s55, s56];
