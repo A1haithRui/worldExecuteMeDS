@@ -169,6 +169,26 @@ function gradeOptions(t, diag, shot) {
 }
 
 /** Render one frame. Pure in t: same t always yields the same pixels. */
+/**
+ * The lyric line for this frame, clipped to the shot that owns it.
+ *
+ * Lines do not start exactly on shot boundaries: L7 begins 0.25 s before
+ * boot-layout cuts, so choosing by time alone let the outgoing shot display the
+ * incoming shot's words. A shot may only show lines it declares; a line that
+ * began before the cut starts when the shot does, so the typewriter begins with
+ * the picture rather than mid-word.
+ */
+function lyricFor(t, shot, plan) {
+  const raw = lineAt(t);
+  if (!raw) return null;
+  const idx = raw.index + 1;
+  if (shot.lines && (idx < shot.lines[0] || idx > shot.lines[1])) return null;
+  if (plan.embeddedLines && plan.embeddedLines.includes(idx)) return null;
+  const start = Math.max(raw.start, shot.at);
+  const end = Math.min(raw.end ?? raw.start + 3, shot.until);
+  return end > start ? { ...raw, start, end } : null;
+}
+
 function renderFrame(t) {
   const plan = planAt(t);
   const shot = plan.cur;
@@ -186,13 +206,13 @@ function renderFrame(t) {
     stage.setTransition(null);
   }
 
-  const line = lineAt(t);
+  const lyricPlan = lyricPlanFor(shot);
+  const line = lyricFor(t, shot, lyricPlan);
   const opts = gradeOptions(t, diag, shot);
   diag.lyrics = lines.length;
   diag.captionLine = line ? line.index : null;
   // Lyrics are drawn by the stage after the composite, but placed by the shot's
   // own plan: no band, no fixed baseline, so the picture can use the whole frame.
-  const lyricPlan = lyricPlanFor(shot);
   stage.present(stageCanvas, t, opts, (c) => {
     if (!line) return;
     const drew = drawLyric(c, { ...lyricPlan, line }, t);

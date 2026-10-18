@@ -25,10 +25,14 @@ export const LYRIC_BY_SHOT = Object.freeze({
   "boot-power": { style: "typed", size: 48, align: "left", anchor: [214, 916] },
   // the line as display type across the foot of the assembled window
   "boot-layout": { style: "display", size: 92, align: "center", anchor: [960, 744], maxWidth: 980, rule: true },
-  // a print-style note in the frame's own top margin, above the card
-  "boot-params": { style: "margin", size: 44, align: "left", anchor: [196, 56] },
-  // this shot types its line into the composer itself
-  "boot-world": { style: "embedded" },
+  // bottom-centre of the card window: the top margin read as a title, not a line
+  "boot-params": { style: "display", size: 88, align: "center", anchor: [750, 872], maxWidth: 1020, rule: true },
+  // the composer types its first line itself; the rest of the section gets the
+  // big type back, which is the moment this shot is here for
+  "boot-world": {
+    style: "display", size: 104, align: "center", anchor: [950, 772], maxWidth: 1120,
+    rule: true, embeddedLines: [9],
+  },
 });
 
 /** The plan for a shot, with the line attached by the caller. */
