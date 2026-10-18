@@ -54,8 +54,8 @@
 | −0:05.00-0:00.00 | 歌曲前 | `preroll` | - | 影片在歌曲开始前先停 5 秒：WARNING 标签、全片含闪烁与强光的提示、片长 3:32、三秒倒数；倒数归零才进入正片。 | ui | off | none | cut | cut | 已写 |
 | 0:00.00-0:04.00 | 歌曲前 | `boot-power` | 1-3 | 一根发丝般的线从中心张开成 client 窗口；鲸鱼标志描出轮廓、填上品牌蓝，防护层扫过一遍，窗口底部才打出终端提示 dsh --boot 与 terminal ready。 | ui | off | typed | cut | cut | 已写 |
 | 0:04.00-0:07.69 | 2:1 | `boot-layout` | 4-6 | 窗口的四个部件——标题栏、侧栏、会话区、输入框——依次落位，虚线骨架标出各自的槽位，最后整张界面锁定成一体。 | ui | off | display | cut | push, 0.50 拍 | 已写 |
-| 0:07.69-0:11.39 | 4:1 | `boot-params` | 7-8 | 人格卡逐格填入 name / role / context / signal——name 是 deepseek、role 是 assistant；第五格 love 始终空着，只留一个光标在那里等，随后状态转 online 并停住。 | ui | off | margin | cut | zoom, 1.00 拍 | 已写 |
-| 0:11.39-0:15.08 | 6:1 | `boot-world` | 9-11 | 整张客户端就位：左侧栏是 New chat 与六条旧对话，中间是空的 New chat 与正中的鲸鱼标志，角色暗淡在右侧玻璃后；什么都没说，等待。 | ui | off | embedded | cut | scan, 1.00 拍 | 已写 |
+| 0:07.69-0:11.39 | 4:1 | `boot-params` | 7-8 | 人格卡逐格填入 name / role / context / signal——name 是 deepseek、role 是 assistant；第五格 love 始终空着，只留一个光标在那里等，随后状态转 online 并停住。 | ui | off | display | cut | zoom, 1.00 拍 | 已写 |
+| 0:11.39-0:15.08 | 6:1 | `boot-world` | 9-11 | 整张客户端就位：左侧栏是 New chat 与六条旧对话，中间是空的 New chat 与正中的鲸鱼标志，角色暗淡在右侧玻璃后；什么都没说，等待。 | ui | off | display | cut | scan, 1.00 拍 | 已写 |
 | 0:15.08-0:16.93 | 8:1 | `title` | 12 |  | todo | todo | display | cut | cut, flash 0.9 | **待写** |
 | 0:16.93-0:22.46 | 9:1 | `chat-open` | - |  | todo | todo | display | cut | zoom, 2.00 拍 start | **待写** |
 | 0:22.46-0:26.16 | 12:1 | `chat-type` | - | 器乐空档中用户写入首条短消息并发送；镜头由头像回到完整DeepSeek风格聊天窗口，智能体开始等待；不是静止等歌词。 | ui | todo | display | cut | push, 0.50 拍 | 承接 S06 |

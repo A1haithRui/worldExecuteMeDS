@@ -206,7 +206,10 @@ function renderFrame(t) {
     stage.setTransition(null);
   }
 
-  const lyricPlan = lyricPlanFor(shot);
+  // The plan is resolved against the line, because a keyword line takes the power
+  // treatment wherever it lands, overriding the shot's usual one.
+  const raw = lineAt(t);
+  const lyricPlan = lyricPlanFor(shot, raw ? raw.index : null);
   const line = lyricFor(t, shot, lyricPlan);
   const opts = gradeOptions(t, diag, shot);
   diag.lyrics = lines.length;

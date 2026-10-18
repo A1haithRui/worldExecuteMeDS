@@ -18,7 +18,7 @@ import { spec, measure, typewriter, drawWipeRows, drawRule, drawSlam } from "./t
 
 const IN = { white: "#eef3fb", hot: "#83e9e6", dim: "#9fb4d8", brand: "#4d6bfe", soft: "#7f93ff" };
 
-export const LYRIC_STYLES = Object.freeze(["typed", "display", "stamp", "margin", "curve", "embedded", "none"]);
+export const LYRIC_STYLES = Object.freeze(["typed", "display", "power", "stamp", "margin", "curve", "embedded", "none"]);
 
 const SIZE_FLOOR = 42;
 
@@ -50,6 +50,33 @@ function layoutLine(ctx, text, family, size, tracking, maxWidth) {
     // shrink proportionally, then step down so the loop always terminates
     s = Math.max(SIZE_FLOOR, Math.min(s - 1, s * Math.max(0.8, maxWidth / total)));
   }
+}
+
+/**
+ * The size at which the line exactly fills maxWidth, so a short keyword can be
+ * set as large as the frame allows instead of a fixed size that leaves air.
+ * Advance width is linear in size (tracking is proportional), so one measurement
+ * at a reference size gives the answer directly.
+ */
+function fillSize(ctx, text, family, tracking, maxWidth, maxSize) {
+  const REF = 100;
+  ctx.font = `${family === "MV Serif" ? 600 : 400} ${REF}px "${family}"`;
+  const chars = [...text];
+  const w = chars.reduce((a, c) => a + ctx.measureText(c).width + REF * tracking, 0) - REF * tracking;
+  return Math.max(SIZE_FLOOR, Math.min(maxSize, (REF * maxWidth) / Math.max(1, w)));
+}
+
+/** Per-character advances at a fixed size, as absolute x positions. */
+function glyphPositions(ctx, text, family, size, tracking, x0) {
+  ctx.font = `${family === "MV Serif" ? 600 : 400} ${size}px "${family}"`;
+  const chars = [...text];
+  const xs = [];
+  let x = x0;
+  chars.forEach((c) => {
+    xs.push(x);
+    x += ctx.measureText(c).width + size * tracking;
+  });
+  return { chars, xs, total: x - x0 - size * tracking };
 }
 
 // 1. typed -- a shell echoing the line. Used for interface shots.
@@ -132,6 +159,76 @@ function stamp(ctx, plan, t) {
   return w;
 }
 
+// 3.5 power -- the film's keyword lines. These are the shout lines of the song
+// (PROTECTION, OBJECT CREATION, INITIALIZATION, SIMULATION), so they get the
+// full width of their area, a breathing blue glow, a blue-to-white reveal, and a
+// light band that keeps travelling across them after they land.
+function power(ctx, plan, t) {
+  const {
+    line, anchor, align = "center", tracking = 0.1,
+    maxWidth = 1200, maxSize = 176, family = "MV Sans",
+  } = plan;
+  const size = fillSize(ctx, line.text, family, tracking, maxWidth, maxSize);
+  const probe = glyphPositions(ctx, line.text, family, size, tracking, 0);
+  const total = probe.total;
+  const x0 = anchor[0] - (align === "center" ? total / 2 : align === "right" ? total : 0);
+  const { chars, xs } = glyphPositions(ctx, line.text, family, size, tracking, x0);
+
+  const env = envelope(line, t);
+  const k = clamp((t - line.start) / 0.44);
+  const e = 1 - (1 - k) ** 3;
+  const y = anchor[1] + (1 - e) * 16;
+  const font = `${family === "MV Serif" ? 600 : 400} ${size}px "${family}"`;
+  const paint = (fill) => {
+    ctx.font = font;
+    ctx.fillStyle = fill;
+    chars.forEach((c, i) => ctx.fillText(c, xs[i], y));
+  };
+
+  ctx.save();
+  ctx.textBaseline = "alphabetic";
+  ctx.textAlign = "left";
+
+  // the blue under-layer: the whole line, glowing, breathing on song time
+  const breathe = 0.5 + 0.5 * Math.sin(t * 2.2);
+  ctx.globalAlpha = env;
+  ctx.shadowColor = "rgba(77,107,254,0.9)";
+  ctx.shadowBlur = 24 + 20 * breathe;
+  paint(IN.brand);
+  ctx.shadowBlur = 0;
+
+  // the white layer, revealed left to right: blue ahead of the wipe, white behind
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x0 - 20, y - size * 1.25, (total + 40) * e, size * 1.8);
+  ctx.clip();
+  paint(IN.white);
+  ctx.restore();
+
+  // a light band that keeps crossing the word, so it never settles into a slab
+  const period = 1.7;
+  const phase = ((t - line.start) % period + period) % period / period;
+  if (phase < 0.6 && e > 0.6) {
+    const bandW = Math.max(90, total * 0.2);
+    const bx = x0 - bandW + (total + bandW * 2) * (phase / 0.6);
+    ctx.save();
+    ctx.globalAlpha = env * 0.85;
+    ctx.beginPath();
+    ctx.rect(bx, y - size * 1.25, bandW, size * 1.8);
+    ctx.clip();
+    paint("#a9c4ff");
+    ctx.restore();
+  }
+  ctx.restore();
+
+  if (plan.rule !== false) {
+    drawRule(ctx, x0, y + size * 0.3, total, t, line.start, {
+      color: IN.hot, height: 2.5, alpha: 0.6, dur: 0.5,
+    });
+  }
+  return total;
+}
+
 // 4. margin -- a print-style note in the frame's own margin.
 function margin(ctx, plan, t) {
   const { line, anchor, size = 44, align = "left" } = plan;
@@ -190,7 +287,7 @@ function curve(ctx, plan, t) {
   return span;
 }
 
-const DRAW = { typed, display, stamp, margin, curve };
+const DRAW = { typed, display, power, stamp, margin, curve };
 
 /**
  * Draw the lyric for a plan, or nothing when the shot owns it ("embedded") or has

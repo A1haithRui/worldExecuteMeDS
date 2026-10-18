@@ -53,7 +53,11 @@
     <b>这一版换了歌词的说话方式。</b>字幕带取消了——底部那条 200px 现在归画面。歌词改成"长在画面里"，每镜从五种处理方式里选一种：
     <code>typed</code> 终端回显 · <code>display</code> 大字 · <code>stamp</code> 印压 · <code>margin</code> 页边注 · <code>curve</code> 沿形排。
     所以窗口从 1520×748 放大到 <b>1600×880</b>，人格卡到 1220×870，最后一镜到 1660×910。
-    <span class="sub">第 1 段的分配：power=typed（终端回显歌词）· layout=display（会话区里的大字）· params=margin（画面顶部的页边注）· world=embedded（输入框自己打字）。</span>
+    <span class="sub">第 1 段的分配：power=typed（终端回显歌词）· layout=display（会话区里的大字）· params=display（卡片底部居中）· world=嵌入打字 + 大字收尾。关键词句一律走 power。</span>
+  </div>
+  <div class="ask" style="border-left-color:#7f93ff">
+    <b>关键词句现在有专门的"力量"处理。</b>歌词里被喊出来的那四句——<code>PROTECTION</code> · <code>OBJECT CREATION</code> · <code>INITIALIZATION</code> · <code>SIMULATION</code>——自动套用一种独立处理，不管落在哪一镜：<b>按可用宽度撑满</b>（不再是固定字号）、<b>蓝色辉光呼吸</b>、<b>蓝→白的擦除显现</b>（擦除线前面是蓝、后面是白），以及一道<b>持续扫过文字的高光带</b>。
+    <span class="sub">另外把最后一镜的歌词落点从"窗口居中"改成"<b>主区居中</b>"——之前按整个窗口算中心，左侧就压到了侧栏；现在按窗口减去侧栏的主区算，不再压边。</span>
   </div>
   <h2>② 先看这个：左右对比片（15 秒）</h2>
   <video controls preload="metadata" src="01-boot-AB.mp4" poster="poster-ab.jpg"></video>
