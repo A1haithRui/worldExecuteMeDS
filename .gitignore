@@ -9,6 +9,7 @@
 /newProj_v1017/audio/
 
 # Our own per-shot clips are rendered output; the table and tooling stay in Git.
+/newProj_v1017/review/*.mp4
 /newProj_v1017/shots/*.mp4
 /newProj_v1017/shots/*.jpg
 /newProj_v1017/compareResult/*.png
