@@ -244,25 +244,45 @@ function skeleton(ctx, piece, x, y, lock) {
       type(ctx, ["chat", "files", "code", "logs"][i], x + 34, ry + 10, 13, C.muted, "MV Mono");
     }
   } else if (piece.key === "thread") {
-    // A watermark of the mark: the client is empty, and this is whose window it
-    // is. Kept very low so it never competes with the dashed slots.
-    drawWhale(ctx, x + piece.w / 2, y + piece.h / 2, 260, {
-      strokeK: 1, fillK: 1, color: BRAND, alpha: 0.07,
+    // Placeholder messages, not dashed frames. A thread reads as alternating
+    // blocks -- assistant on the left, you on the right -- and solid blocks say
+    // "this is where words go" without looking like a wireframe nobody filled
+    // in. No text: the words come in the next shot, not here.
+    const bh = 44;
+    const gap = 18;
+    const rows = [
+      { w: 0.56, side: "left" },
+      { w: 0.42, side: "right" },
+      { w: 0.50, side: "left" },
+      { w: 0.34, side: "right" },
+    ];
+    rows.forEach((r, i) => {
+      const bw = piece.w * r.w;
+      const by = y + 48 + i * (bh + gap);
+      const bx = r.side === "left" ? x + 24 : x + piece.w - 24 - bw;
+      const assistant = r.side === "left";
+      ctx.beginPath();
+      ctx.roundRect(bx, by, bw, bh, 12);
+      ctx.fillStyle = assistant ? "rgba(18,50,78,0.62)" : "rgba(26,40,54,0.62)";
+      ctx.fill();
+      ctx.strokeStyle = assistant ? "rgba(77,107,254,0.28)" : "rgba(120,150,175,0.16)";
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+      // two short rules inside each block, so it reads as text at a glance
+      const inx = bx + 16;
+      stroke(ctx, [[inx, by + bh / 2 - 5], [inx + bw * 0.5, by + bh / 2 - 5]], assistant ? "rgba(127,147,255,0.30)" : "rgba(150,175,195,0.24)", 2.4);
+      stroke(ctx, [[inx, by + bh / 2 + 8], [inx + bw * 0.32, by + bh / 2 + 8]], assistant ? "rgba(127,147,255,0.22)" : "rgba(150,175,195,0.18)", 2.4);
     });
-    ctx.save();
-    ctx.setLineDash([6, 6]);
-    ctx.strokeStyle = ink(dim * 0.6);
-    ctx.lineWidth = 1.2;
-    ctx.strokeRect(x + 20, y + 44, piece.w * 0.52, 54);
-    ctx.strokeRect(x + piece.w * 0.3, y + 118, piece.w * 0.66, 54);
-    ctx.restore();
   } else if (piece.key === "composer") {
-    ctx.save();
-    ctx.setLineDash([5, 5]);
-    ctx.strokeStyle = ink(dim * 0.6);
+    // A solid input field rather than a dashed frame: dashed reads as "to be
+    // built", and by this point the field exists.
+    ctx.beginPath();
+    ctx.roundRect(x + 20, y + 46, piece.w - 40, piece.h - 74, 10);
+    ctx.fillStyle = "rgba(9,26,38,0.85)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(38,74,96,0.85)";
     ctx.lineWidth = 1.2;
-    ctx.strokeRect(x + 20, y + 46, piece.w - 40, piece.h - 74);
-    ctx.restore();
+    ctx.stroke();
   }
 }
 
