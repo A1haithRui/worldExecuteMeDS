@@ -8,7 +8,8 @@
 // function of t, which is what makes export deterministic.
 import { createStage, shakeAt } from "./engine/stage.js";
 import { setAudioFeatures, sampleAt } from "./engine/audio.js";
-import { caption, drawCaption } from "./mv-draw.js";
+import { drawLyric } from "./engine/lyric.js";
+import { lyricPlanFor } from "../shots/lyric-plan.js";
 import { clamp, mix, smooth } from "./engine/motion.js";
 import { SHOTS_DERIVED, SOURCE, shotAt, shotById } from "../shots/index.js";
 import { BOOT_RENDER } from "../shots/s01_boot.js";
@@ -189,13 +190,13 @@ function renderFrame(t) {
   const opts = gradeOptions(t, diag, shot);
   diag.lyrics = lines.length;
   diag.captionLine = line ? line.index : null;
+  // Lyrics are drawn by the stage after the composite, but placed by the shot's
+  // own plan: no band, no fixed baseline, so the picture can use the whole frame.
+  const lyricPlan = lyricPlanFor(shot);
   stage.present(stageCanvas, t, opts, (c) => {
     if (!line) return;
-    // caption() only plans (it measures the block and fills diag.caption);
-    // drawCaption() is what puts ink on the frame.
-    const plan = caption(c, line, t, { x: 146, y: 940, width: 1600, size: 56 }, diag);
-    drawCaption(c, plan, t);
-    diag.captionDrawn = true;
+    const drew = drawLyric(c, { ...lyricPlan, line }, t);
+    if (drew != null) diag.lyric = { style: lyricPlan.style, line: line.index };
   });
   return diag;
 }

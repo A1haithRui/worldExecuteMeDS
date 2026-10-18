@@ -37,7 +37,7 @@ const SUBSYSTEM = "/ harness";
 // the same frame the interface is assembled into. Sized to fill the frame the
 // way the reference does: the lyric caption owns the bottom-left, so the window
 // stops just above it and takes the width instead.
-const WIN = Object.freeze({ x: 200, y: 120, w: 1520, h: 748 });
+const WIN = Object.freeze({ x: 160, y: 90, w: 1600, h: 880 });
 const WIN_CX = WIN.x + WIN.w / 2;
 const WIN_CY = WIN.y + WIN.h / 2;
 
@@ -187,25 +187,16 @@ function bootPower(ctx, t, s) {
       });
     }
 
-    // 7. the boot line: a terminal prompt, so the frame says "a shell is up"
+    // 7. the terminal status. The echoed command line is no longer drawn here:
+    // the lyric treatment types the current line in this exact spot, so the shell
+    // and the words are the same object.
     if (status > 0) {
-      const cmd = "dsh --boot";
-      const shown = typewriter(cmd, t, s.at + 3.30, 22);
       layer(ctx, 1, () => {
-        ctx.font = `400 18px "MV Mono"`;
-        const promptW = ctx.measureText("❯ ").width;
-        type(ctx, "❯", x + 34, y + h - 44, 19, BRAND_SOFT, "MV Mono");
-        type(ctx, shown, x + 34 + promptW + 4, y + h - 44, 19, "#9fb4d8", "MV Mono");
-        if (shown.length < cmd.length)
-          chatCaret(ctx, x + 38 + promptW + shown.length * 11.4, y + h - 40, 17, t, { on: true, color: BRAND_SOFT });
-        // terminal status: grey until the sweep has passed
         const on = sweep >= 1;
         disc(ctx, x + w - 40, y + h - 50, 5, on ? BRAND_SOFT : "#3a4a63", 1);
         if (on) halo(ctx, x + w - 40, y + h - 50, 26, 0.35, BRAND);
       });
       layer(ctx, at(t, s.at + 3.62, s.at + 3.95), () =>
-        // right-aligned so it stops short of the status dot instead of running
-        // underneath it
         type(ctx, "terminal ready", x + w - 66, y + h - 44, 16, "#6b86a8", "MV Mono", "right"),
       );
     }
@@ -421,7 +412,7 @@ function bootParams(ctx, t, s) {
 
   // Height keeps the footer clear of the lyric caption, which is drawn at y=940
   // and is ~82px tall when the line is emphasised.
-  const R = { x: 150, y: 110, w: 1120, h: 740 };
+  const R = { x: 140, y: 100, w: 1220, h: 870 };
   const readyAt = s.at + T.ready;
   const win = chatWindow(ctx, R, t, {
     title: PRODUCT,
@@ -531,7 +522,7 @@ function bootWorld(ctx, t, s) {
 
   // Height leaves the lyric caption clear: captions are drawn at y=940 and an
   // emphasised line is ~82px, so the window's foot has to stop above ~870.
-  const R = { x: 150, y: 105, w: 1500, h: 750 };
+  const R = { x: 120, y: 80, w: 1660, h: 910 };
   const inK = at(t, s.at + 0.05, s.at + 0.65);
   const SIDE = 340;
 

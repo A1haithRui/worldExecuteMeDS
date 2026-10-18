@@ -9,6 +9,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { SECTIONS, SHOTS_DERIVED, SOURCE, progress, validate } from "../shots/index.js";
+import { lyricPlanFor } from "../shots/lyric-plan.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const cfg = JSON.parse(readFileSync(resolve(root, "config.json"), "utf8"));
@@ -54,7 +55,7 @@ const rows = SHOTS_DERIVED.map((s) => {
   const state =
     s.momentState === "written" ? "已写" : s.momentState === "inherited" ? `承接 ${s.inherits ?? "?"}` : "**待写**";
   const moment = s.moment ? s.moment.replace(/\|/g, "/") : "";
-  return `| ${tc(s.at)}-${tc(s.until)} | ${s.barBeat} | \`${s.id}\` | ${lines} | ${moment} | ${s.picture} | ${s.state} | ${trans(s.enter)} | ${s.referenceEnter} | ${state} |`;
+  return `| ${tc(s.at)}-${tc(s.until)} | ${s.barBeat} | \`${s.id}\` | ${lines} | ${moment} | ${s.picture} | ${s.state} | ${lyricPlanFor(s).style} | ${trans(s.enter)} | ${s.referenceEnter} | ${state} |`;
 }).join("\n");
 
 // Flash range, computed from the shots that actually carry flash.
@@ -104,10 +105,12 @@ ${secRows}
 
 「时刻」栏说明这一镜是这场对话的哪个时刻——审片时唯一的叙事依据。
 「画面」栏:ui(用户看到的界面)· plate(版画/图形)· portrait(角色)· code(程式码)· todo(未定)。
+「歌词处理」栏是这一镜的歌词怎么出现(见 src/engine/lyric.js):typed 终端回显 · display 大字 · stamp 印压 · margin 页边注 · curve 沿形排 · embedded 镜头自己画 · none 无歌词。
 「参考片进入」栏是参考片在这一镜用的转场,仅供参考;我们的进入转场默认硬切,直到那一镜被真正设计过。
+**没有字幕带**:歌词由各镜自己的方案定位,舞台在转场合成之后绘制,所以溶解不会切断文字。
 
-| 歌曲时间 | 小节:拍 | 镜头 id | 歌词行 | 时刻 | 画面 | 颜色 | 进入转场 | 参考片进入 | 状态 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 歌曲时间 | 小节:拍 | 镜头 id | 歌词行 | 时刻 | 画面 | 颜色 | 歌词处理 | 进入转场 | 参考片进入 | 状态 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 ${rows}
 
 ## 检查
