@@ -58,7 +58,7 @@
 | 0:11.39-0:15.08 | 6:1 | `boot-world` | 9-11 | 整张客户端就位：左侧栏是 New chat 与六条旧对话，中间是空的 New chat 与正中的鲸鱼标志，角色暗淡在右侧玻璃后；什么都没说，等待。 | ui | off | display | cut | scan, 1.00 拍 | 已写 |
 | 0:15.08-0:16.93 | 8:1 | `title` | 12 | 火花亮起——聊天世界里的第一抹光；下方输入条打出启动命令 world.execute(me);，回车，画面一闪，会话开始。 | todo | todo | embedded | cut | cut, flash 0.9 | 已写 |
 | 0:16.93-0:22.46 | 9:1 | `chat-open` | - | 整张客户端打开一张空白会话；鼠标指针从右上划过窗口——用户来了；左下角的状态第一次亮成 online。 | todo | todo | embedded | cut | zoom, 2.00 拍 start | 已写 |
-| 0:22.46-0:26.16 | 12:1 | `chat-type` | - | 推近到输入条：先打出一句 how does a sine wave work，全选删掉，再打出真正的问题——would you love me if I ran you。 | ui | todo | embedded | cut | push, 0.50 拍 | 已写 |
+| 0:22.46-0:26.16 | 12:1 | `chat-type` | - | 鼠标停在刚点过的输入框里，就地在完整客户端中写下：先打出一句 how does a sine wave work，全选删掉，再打出真正的问题——would you love me if I ran you。 | ui | todo | embedded | cut | push, 0.50 拍 | 已写 |
 | 0:26.16-0:29.39 | 14:1 | `chat-think` | - | 问题送出，作为气泡落在右侧并标注 Delivered；发送键变成停止键，标志缩小左移，镜头开始坠入标志——答案将在里面成形。 | ui | todo | embedded | cut | cut, flash 0.35 | 已写 |
 | 0:29.39-0:33.31 | 15:4 | `v1-points` | 13-15 | 输入点扩成青色点集，沿z轴逐层展开；白色远端点获得一条坐标轴。主角是可交付的关系，不展示模型结构百科。 | portrait | todo | display | cut | cut, flash 0.25 | 承接 S07 |
 | 0:33.31-0:37.00 | 17:4.5 | `v1-circle` | 16-18 | 圆形关系作为一张青色附件发入线程；用户沿圆边拖出一段白色路径并确认，角色只留头像。 | ui | todo | display | cut | cut, flash 0.12 | 承接 S08 |

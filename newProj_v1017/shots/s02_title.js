@@ -21,7 +21,7 @@ import { drawWhale } from "../src/assets/whale.js";
 import { typewriter } from "../src/engine/type.js";
 import { figure } from "./figure.js";
 import {
-  clientWindow, composerCloseUp, cursorArrow, clickRipple,
+  clientWindow, cursorArrow, clickRipple,
   markGlow, connectionToast, messageBubble, CLIENT_R,
 } from "./ui-client.js";
 
@@ -227,35 +227,32 @@ function composerState(u) {
 }
 
 function chatType(ctx, t, s) {
-  ground(ctx, t, [960, 540], true, LIFT);
-  figure(ctx, t, "lowlight", 1660, 560, 1360, { alpha: 0.3 });
-
-  // the whole frame drifts in as the answer gets closer to being asked
-  const push = 1 + 0.022 * easeOut(at(t, s.at, s.at + 3.4));
-  ctx.save();
-  ctx.translate(960, 540);
-  ctx.scale(push, push);
-  ctx.translate(-960, -540);
-
-  drawWhale(ctx, 960, 286, 150, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.75 });
-  markGlow(ctx, 960, 286, 150, t, 0.6);
+  // Same window, same framing as chat-open. The previous version pushed in on the
+  // composer, which threw away the move the pointer had just made: you cannot walk
+  // the mouse to a box and then discover the film has zoomed somewhere else. So the
+  // question is typed where the pointer landed.
+  ground(ctx, t, [1180, 470], true, LIFT);
+  figure(ctx, t, "silhouette", 1700, 560, 1320, { alpha: 0.5 });
 
   const state = composerState(t - s.at);
-  const R = { x: 260, y: 430, w: 1400, h: 190 };
-  ctx.font = `400 32px "MV Sans"`;
-  const caretAt = state.value ? R.x + 40 + ctx.measureText(state.value).width : null;
   const asked = state.value === QUESTION;
-  composerCloseUp(ctx, R, t, {
-    text: state.value,
-    caretAt,
-    sendMode: asked ? "armed" : "hollow",
-    tone: "chat",
-  });
-  ctx.restore();
 
-  // the pointer is already in the box -- it landed there at the end of chat-open
-  const toSend = easeOut(at(t, s.at + 2.9, s.at + 3.5));
-  cursorArrow(ctx, 540 + 1062 * toSend, 560 + 26 * toSend, 1.5, 1);
+  const g = clientWindow(ctx, CLIENT_R, t, {
+    tone: "chat",
+    presence: "online",
+    chip: { text: "harness · online", on: true },
+    markAlpha: 0.55,
+    markPulse: 1,
+    composerText: state.value,
+    caret: state.value.length > 0,
+    sendMode: asked ? "armed" : "hollow",
+  });
+
+  // the pointer stays in the box it just clicked, then goes to the send control
+  const toSend = easeOut(at(t, s.at + 2.9, s.at + 3.6));
+  const from = { x: 660, y: 891 };
+  const to = { x: g.cb.x + g.cb.w - 62, y: g.cb.y + g.cb.h / 2 };
+  cursorArrow(ctx, from.x + (to.x - from.x) * toSend, from.y + (to.y - from.y) * toSend, 1.5, 1);
 
   return { phase: "type", value: state.value, asked };
 }

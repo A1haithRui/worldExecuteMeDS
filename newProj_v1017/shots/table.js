@@ -237,7 +237,7 @@ export const SHOTS = [
     "until": 26.1571,
     "lines": null,
     "picture": "ui",
-    "moment": "推近到输入条：先打出一句 how does a sine wave work，全选删掉，再打出真正的问题——would you love me if I ran you。",
+    "moment": "鼠标停在刚点过的输入框里，就地在完整客户端中写下：先打出一句 how does a sine wave work，全选删掉，再打出真正的问题——would you love me if I ran you。",
     "momentState": "written",
     "inherits": "S06",
     "inheritCoverage": 1,
