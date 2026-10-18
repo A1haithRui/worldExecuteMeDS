@@ -23,8 +23,10 @@ const info = await p.evaluate(() => {
     links: [...document.querySelectorAll("a")].map((a) => a.getAttribute("href")),
   };
 });
+await p.screenshot({ path: resolve(here, "review/review-page.png"), fullPage: true });
 await b.close();
 console.log(JSON.stringify(info, null, 1));
 console.log("errors:", errs.length ? errs : "none");
+
 
 
