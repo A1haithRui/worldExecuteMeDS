@@ -22,7 +22,7 @@ import { typewriter } from "../src/engine/type.js";
 import { figure } from "./figure.js";
 import {
   clientWindow, composerCloseUp, cursorArrow, clickRipple,
-  markFlare, connectionToast, messageBubble, CLIENT_R,
+  markGlow, connectionToast, messageBubble, CLIENT_R,
 } from "./ui-client.js";
 
 const BRAND = "#4d6bfe";
@@ -109,7 +109,7 @@ function title(ctx, t, s) {
     color: BRAND,
     alpha: 0.85 + 0.15 * markIn,
   });
-  markFlare(ctx, GATE.x, GATE.y, 210, t, markIn);
+  markGlow(ctx, GATE.x, GATE.y, 210, t, markIn);
 
   const bar = { x: 400, y: 690, w: 1120, h: 96 };
   const barIn = at(t, s.at + 0.30, s.at + 0.90);
@@ -157,8 +157,8 @@ function cursorPath(u) {
   const legA = easeOut(at(u, 0.80, 2.60));
   const legB = easeOut(at(u, 2.70, 3.70));
   return {
-    x: 1820 - (1820 - 1180) * legA - (1180 - 646) * legB,
-    y: 190 + (660 - 190) * legA + (898 - 660) * legB,
+    x: 1820 - (1820 - 1180) * legA - (1180 - 660) * legB,
+    y: 190 + (660 - 190) * legA + (891 - 660) * legB,
     a: at(u, 0.72, 1.15),
   };
 }
@@ -197,7 +197,7 @@ function chatOpen(ctx, t, s) {
 
   const p = cursorPath(t - s.at);
   if (p.a > 0) cursorArrow(ctx, p.x, p.y, 1.5, p.a);
-  clickRipple(ctx, 700, 898, t, s.at + LAND_AT);
+  clickRipple(ctx, 700, 891, t, s.at + LAND_AT);
 
   return { phase: "open", online: arrived, cursor: [Math.round(p.x), Math.round(p.y)] };
 }
@@ -238,7 +238,7 @@ function chatType(ctx, t, s) {
   ctx.translate(-960, -540);
 
   drawWhale(ctx, 960, 286, 150, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.75 });
-  markFlare(ctx, 960, 286, 150, t, 0.6, { rays: false });
+  markGlow(ctx, 960, 286, 150, t, 0.6);
 
   const state = composerState(t - s.at);
   const R = { x: 260, y: 430, w: 1400, h: 190 };
@@ -255,7 +255,7 @@ function chatType(ctx, t, s) {
 
   // the pointer is already in the box -- it landed there at the end of chat-open
   const toSend = easeOut(at(t, s.at + 2.9, s.at + 3.5));
-  cursorArrow(ctx, 520 + 1086 * toSend, 560 + 30 * toSend, 1.5, 1);
+  cursorArrow(ctx, 540 + 1062 * toSend, 560 + 26 * toSend, 1.5, 1);
 
   return { phase: "type", value: state.value, asked };
 }
@@ -270,23 +270,25 @@ function chatThink(ctx, t, s) {
 
   const sentK = at(t, s.at + 0.10, s.at + 0.55);
   const shrink = easeOut(at(t, s.at + 0.45, s.at + 1.70));
-  const push = easeOut(at(t, s.at + 2.05, s.at + 3.23));
+  // a real dolly into the mark: it accelerates, so the last second is the fall
+  const pushK = at(t, s.at + 1.95, s.at + 3.23);
+  const push = 1 + 2.6 * pushK ** 1.5;
 
   // the mark has moved to the left of the thread; the camera closes on it
   const target = { x: 1120 - 300 * shrink, y: 489 + 40 * shrink };
   ctx.save();
   ctx.translate(target.x, target.y);
-  ctx.scale(1 + 0.1 * push, 1 + 0.1 * push);
+  ctx.scale(push, push);
   ctx.translate(-target.x, -target.y);
 
   clientWindow(ctx, CLIENT_R, t, {
     tone: "chat",
     presence: "online",
     chip: { text: "harness · thinking", on: true },
-    markSize: 220 - 108 * shrink,
+    markSize: 240 - 118 * shrink,
     markDX: -300 * shrink,
     markDY: 40 * shrink,
-    markAlpha: 0.62,
+    markAlpha: 0.62 + 0.3 * pushK,
     markPulse: 1,
     sendMode: "stop",
   });
@@ -306,7 +308,7 @@ function chatThink(ctx, t, s) {
   }
   ctx.restore();
 
-  return { phase: "think", push };
+  return { phase: "think", push: Number(push.toFixed(3)) };
 }
 
 export const SECTION2_RENDER = Object.freeze({
