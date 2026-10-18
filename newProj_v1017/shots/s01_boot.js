@@ -34,8 +34,10 @@ const PRODUCT = "deepseek";
 const SUBSYSTEM = "/ harness";
 
 // The window the first two shots share, so the frame that opens in boot-power is
-// the same frame the interface is assembled into.
-const WIN = Object.freeze({ x: 420, y: 250, w: 1080, h: 580 });
+// the same frame the interface is assembled into. Sized to fill the frame the
+// way the reference does: the lyric caption owns the bottom-left, so the window
+// stops just above it and takes the width instead.
+const WIN = Object.freeze({ x: 200, y: 120, w: 1520, h: 748 });
 const WIN_CX = WIN.x + WIN.w / 2;
 const WIN_CY = WIN.y + WIN.h / 2;
 
@@ -129,23 +131,23 @@ function bootPower(ctx, t, s) {
 
     // 3. the mark strokes on, then floods with the brand blue
     if (markIn > 0) {
-      drawWhale(ctx, WIN_CX, WIN_CY - 46, 236, {
+      drawWhale(ctx, WIN_CX, WIN_CY - 56, 300, {
         strokeK: markIn,
         fillK: fillIn,
         color: BRAND,
         lineWidth: 2.4,
         alpha: 0.35 + 0.65 * openY,
       });
-      halo(ctx, WIN_CX, WIN_CY - 46, 300, 0.10 * fillIn, BRAND);
+      halo(ctx, WIN_CX, WIN_CY - 56, 360, 0.10 * fillIn, BRAND);
     }
 
     // 4. wordmark: the product name, then what it is running on
     if (wordIn > 0) {
       layer(ctx, wordIn, () =>
-        spacedCentred(ctx, "DeepSeek", WIN_CX, WIN_CY + 118, 40, "#e8eeff", "MV Sans", 0.24),
+        spacedCentred(ctx, "DeepSeek", WIN_CX, WIN_CY + 158, 46, "#e8eeff", "MV Sans", 0.24),
       );
       layer(ctx, wordIn * 0.7, () =>
-        spacedCentred(ctx, "HARNESS", WIN_CX, WIN_CY + 158, 15, "#6b86a8", "MV Mono", 0.34),
+        spacedCentred(ctx, "HARNESS", WIN_CX, WIN_CY + 204, 17, "#6b86a8", "MV Mono", 0.34),
       );
     }
 
@@ -192,19 +194,19 @@ function bootPower(ctx, t, s) {
       layer(ctx, 1, () => {
         ctx.font = `400 18px "MV Mono"`;
         const promptW = ctx.measureText("❯ ").width;
-        type(ctx, "❯", x + 30, y + h - 34, 18, BRAND_SOFT, "MV Mono");
-        type(ctx, shown, x + 30 + promptW + 4, y + h - 34, 18, "#9fb4d8", "MV Mono");
+        type(ctx, "❯", x + 34, y + h - 44, 19, BRAND_SOFT, "MV Mono");
+        type(ctx, shown, x + 34 + promptW + 4, y + h - 44, 19, "#9fb4d8", "MV Mono");
         if (shown.length < cmd.length)
-          chatCaret(ctx, x + 34 + promptW + shown.length * 10.8, y + h - 30, 16, t, { on: true, color: BRAND_SOFT });
+          chatCaret(ctx, x + 38 + promptW + shown.length * 11.4, y + h - 40, 17, t, { on: true, color: BRAND_SOFT });
         // terminal status: grey until the sweep has passed
         const on = sweep >= 1;
-        disc(ctx, x + w - 34, y + h - 40, 5, on ? BRAND_SOFT : "#3a4a63", 1);
-        if (on) halo(ctx, x + w - 34, y + h - 40, 26, 0.35, BRAND);
+        disc(ctx, x + w - 40, y + h - 50, 5, on ? BRAND_SOFT : "#3a4a63", 1);
+        if (on) halo(ctx, x + w - 40, y + h - 50, 26, 0.35, BRAND);
       });
       layer(ctx, at(t, s.at + 3.62, s.at + 3.95), () =>
         // right-aligned so it stops short of the status dot instead of running
         // underneath it
-        type(ctx, "terminal ready", x + w - 58, y + h - 34, 15, "#6b86a8", "MV Mono", "right"),
+        type(ctx, "terminal ready", x + w - 66, y + h - 44, 16, "#6b86a8", "MV Mono", "right"),
       );
     }
   }
@@ -216,11 +218,27 @@ function bootPower(ctx, t, s) {
 // boot-layout — 4.004–7.695. Header, sidebar, thread and composer fly into the
 // window that the previous shot opened, then the layout locks.
 // ---------------------------------------------------------------------------
+// Piece geometry scales with the window: a bigger frame needs a taller header, a
+// wider sidebar and a deeper composer, or it just looks like the old one with
+// more empty space inside.
+const PAD = 30;
+const HEADER_H = 80;
+const SIDEBAR_W = 210;
+const COMPOSER_H = 136;
 const PIECES = Object.freeze([
-  { key: "header", x: WIN.x + 24, y: WIN.y + 24, w: WIN.w - 48, h: 66, dx: 0, dy: -76 },
-  { key: "sidebar", x: WIN.x + 24, y: WIN.y + 102, w: 150, h: WIN.h - 138, dx: -150, dy: 0 },
-  { key: "thread", x: WIN.x + 186, y: WIN.y + 102, w: WIN.w - 210, h: WIN.h - 264, dx: 0, dy: 130 },
-  { key: "composer", x: WIN.x + 186, y: WIN.y + WIN.h - 150, w: WIN.w - 210, h: 118, dx: 0, dy: 170 },
+  { key: "header", x: WIN.x + PAD, y: WIN.y + PAD, w: WIN.w - PAD * 2, h: HEADER_H, dx: 0, dy: -90 },
+  {
+    key: "sidebar", x: WIN.x + PAD, y: WIN.y + PAD + HEADER_H + 16,
+    w: SIDEBAR_W, h: WIN.h - PAD * 2 - HEADER_H - 16, dx: -180, dy: 0,
+  },
+  {
+    key: "thread", x: WIN.x + PAD + SIDEBAR_W + 18, y: WIN.y + PAD + HEADER_H + 16,
+    w: WIN.w - PAD * 2 - SIDEBAR_W - 18, h: WIN.h - PAD * 2 - HEADER_H - COMPOSER_H - 40, dx: 0, dy: 150,
+  },
+  {
+    key: "composer", x: WIN.x + PAD + SIDEBAR_W + 18, y: WIN.y + WIN.h - PAD - COMPOSER_H,
+    w: WIN.w - PAD * 2 - SIDEBAR_W - 18, h: COMPOSER_H, dx: 0, dy: 190,
+  },
 ]);
 
 /**
@@ -234,50 +252,54 @@ function skeleton(ctx, piece, x, y, lock) {
   if (piece.key === "header") {
     // No "header" key label here: the lockup is the header's content, and a label
     // at the same baseline ran straight through the mark.
-    lockup(ctx, x + 18, y + 42, 19, 26, ink(0.85), C.muted, 0.9);
-    for (let i = 0; i < 3; i++) disc(ctx, x + piece.w - 34 - i * 16, y + 33, 3, ink(dim), 1);
+    lockup(ctx, x + 24, y + 50, 21, 32, ink(0.85), C.muted, 0.9);
+    for (let i = 0; i < 3; i++) disc(ctx, x + piece.w - 40 - i * 18, y + 40, 3.4, ink(dim), 1);
   } else if (piece.key === "sidebar") {
-    for (let i = 0; i < 4; i++) {
-      const ry = y + 46 + i * 34;
+    for (let i = 0; i < 5; i++) {
+      const ry = y + 58 + i * 44;
       ctx.fillStyle = ink(dim * 0.5);
-      ctx.fillRect(x + 14, ry, 10, 10);
-      type(ctx, ["chat", "files", "code", "logs"][i], x + 34, ry + 10, 13, C.muted, "MV Mono");
+      ctx.fillRect(x + 18, ry, 11, 11);
+      type(ctx, ["chat", "files", "code", "logs", "models"][i], x + 40, ry + 11, 14, C.muted, "MV Mono");
     }
   } else if (piece.key === "thread") {
     // Placeholder messages, not dashed frames. A thread reads as alternating
     // blocks -- assistant on the left, you on the right -- and solid blocks say
     // "this is where words go" without looking like a wireframe nobody filled
     // in. No text: the words come in the next shot, not here.
-    const bh = 44;
-    const gap = 18;
+    const bh = 56;
+    const gap = 22;
     const rows = [
-      { w: 0.56, side: "left" },
-      { w: 0.42, side: "right" },
-      { w: 0.50, side: "left" },
-      { w: 0.34, side: "right" },
+      { w: 0.54, side: "left" },
+      { w: 0.40, side: "right" },
+      { w: 0.48, side: "left" },
+      { w: 0.33, side: "right" },
+      { w: 0.44, side: "left" },
     ];
     rows.forEach((r, i) => {
       const bw = piece.w * r.w;
-      const by = y + 48 + i * (bh + gap);
-      const bx = r.side === "left" ? x + 24 : x + piece.w - 24 - bw;
+      const by = y + 62 + i * (bh + gap);
+      if (by + bh > y + piece.h - 24) return;
+      const bx = r.side === "left" ? x + 28 : x + piece.w - 28 - bw;
       const assistant = r.side === "left";
       ctx.beginPath();
-      ctx.roundRect(bx, by, bw, bh, 12);
+      ctx.roundRect(bx, by, bw, bh, 14);
       ctx.fillStyle = assistant ? "rgba(18,50,78,0.62)" : "rgba(26,40,54,0.62)";
       ctx.fill();
       ctx.strokeStyle = assistant ? "rgba(77,107,254,0.28)" : "rgba(120,150,175,0.16)";
       ctx.lineWidth = 1.2;
       ctx.stroke();
       // two short rules inside each block, so it reads as text at a glance
-      const inx = bx + 16;
-      stroke(ctx, [[inx, by + bh / 2 - 5], [inx + bw * 0.5, by + bh / 2 - 5]], assistant ? "rgba(127,147,255,0.30)" : "rgba(150,175,195,0.24)", 2.4);
-      stroke(ctx, [[inx, by + bh / 2 + 8], [inx + bw * 0.32, by + bh / 2 + 8]], assistant ? "rgba(127,147,255,0.22)" : "rgba(150,175,195,0.18)", 2.4);
+      const inx = bx + 20;
+      const line1 = assistant ? "rgba(127,147,255,0.30)" : "rgba(150,175,195,0.24)";
+      const line2 = assistant ? "rgba(127,147,255,0.22)" : "rgba(150,175,195,0.18)";
+      stroke(ctx, [[inx, by + bh / 2 - 7], [inx + bw * 0.52, by + bh / 2 - 7]], line1, 3);
+      stroke(ctx, [[inx, by + bh / 2 + 10], [inx + bw * 0.34, by + bh / 2 + 10]], line2, 3);
     });
   } else if (piece.key === "composer") {
     // A solid input field rather than a dashed frame: dashed reads as "to be
     // built", and by this point the field exists.
     ctx.beginPath();
-    ctx.roundRect(x + 20, y + 46, piece.w - 40, piece.h - 74, 10);
+    ctx.roundRect(x + 24, y + 50, piece.w - 48, piece.h - 84, 12);
     ctx.fillStyle = "rgba(9,26,38,0.85)";
     ctx.fill();
     ctx.strokeStyle = "rgba(38,74,96,0.85)";
@@ -339,26 +361,26 @@ function bootLayout(ctx, t, s) {
       ctx.lineWidth = lock > 0 ? 1.4 + 0.9 * lock : 1.4;
       ctx.stroke();
       // The header piece carries its own lockup instead of a key label.
-      if (p.key !== "header") type(ctx, p.key, px + 16, py + 26, 14, lock > 0 ? "#9fb4d8" : C.muted, "MV Mono");
+      if (p.key !== "header") type(ctx, p.key, px + 20, py + 32, 15, lock > 0 ? "#9fb4d8" : C.muted, "MV Mono");
       skeleton(ctx, p, px, py, lock);
     });
   });
 
   // the composer gets its placeholder last, so "empty" reads as intentional.
-  // It sits on the centre line of its dashed field, not above it.
+  // It sits on the centre line of its field, not above it.
   const ph = at(t, s.at + 1.95, s.at + 2.35);
   if (ph > 0) {
     const c = PIECES[3];
-    const fieldY = c.y + 46;
-    const fieldH = c.h - 74;
-    const baseY = fieldY + fieldH / 2 + 6;
+    const fieldY = c.y + 50;
+    const fieldH = c.h - 84;
+    const baseY = fieldY + fieldH / 2 + 7;
     const label = "发消息，/ 调用指令";
     layer(ctx, ph, () => {
-      type(ctx, label, c.x + 34, baseY, 18, "#43607d", "MV Sans");
+      type(ctx, label, c.x + 48, baseY, 19, "#43607d", "MV Sans");
       if (ph >= 1) {
-        ctx.font = `400 18px "MV Sans"`;
+        ctx.font = `400 20px "MV Sans"`;
         const tw = ctx.measureText(label).width;
-        chatCaret(ctx, c.x + 34 + tw + 10, baseY - 6, 20, t, { on: true, color: BRAND_SOFT });
+        chatCaret(ctx, c.x + 48 + tw + 12, baseY - 7, 21, t, { on: true, color: BRAND_SOFT });
       }
     });
   }
@@ -399,7 +421,7 @@ function bootParams(ctx, t, s) {
 
   // Height keeps the footer clear of the lyric caption, which is drawn at y=940
   // and is ~82px tall when the line is emphasised.
-  const R = { x: 190, y: 158, w: 1000, h: 700 };
+  const R = { x: 150, y: 110, w: 1120, h: 740 };
   const readyAt = s.at + T.ready;
   const win = chatWindow(ctx, R, t, {
     title: PRODUCT,
@@ -408,35 +430,35 @@ function bootParams(ctx, t, s) {
     state: t < readyAt ? "busy" : "online",
     stateLabel: t < readyAt ? "configuring" : "online",
     sidebar: false,
-    headerH: 96,
+    headerH: 100,
     enterAt: s.at + 0.06,
     enterDur: 0.5,
     footer: true,
     footerLabel: "PARAMETERS",
     clock: "00:00",
   });
-  const cx = R.x + 36;
-  const cw = R.w - 72;
-  const cardTop = R.y + 140;
+  const cx = R.x + 40;
+  const cw = R.w - 80;
+  const cardTop = R.y + 150;
 
   // The mark as a watermark behind the fields: the card belongs to this product.
   layer(ctx, 0.06, () =>
-    drawWhale(ctx, cx + cw / 2, cardTop + 172, 300, { strokeK: 1, fillK: 1, color: BRAND }),
+    drawWhale(ctx, cx + cw / 2, cardTop + 190, 340, { strokeK: 1, fillK: 1, color: BRAND }),
   );
 
   FIELDS.forEach(([key, value], i) => {
     const start = s.at + T.f0 + i * T.step;
     const k = at(t, start, start + 0.28);
     if (k <= 0) return;
-    const y = cardTop + i * 74;
+    const y = cardTop + i * 80;
     layer(ctx, k, () => {
-      rect(ctx, cx, y, cw, 58, "#0d1c2c", 10, TOKENS.border1);
-      type(ctx, key, cx + 20, y + 37, 17, TOKENS.labelTertiary, "MV Mono");
+      rect(ctx, cx, y, cw, 62, "#0d1c2c", 10, TOKENS.border1);
+      type(ctx, key, cx + 22, y + 40, 18, TOKENS.labelTertiary, "MV Mono");
       if (k > 0.5) {
         const shown = typewriter(value, t, start + 0.08, 22);
-        type(ctx, shown, cx + 200, y + 37, 20, TOKENS.labelPrimary, "MV Mono");
+        type(ctx, shown, cx + 220, y + 40, 21, TOKENS.labelPrimary, "MV Mono");
         if (shown.length < value.length)
-          chatCaret(ctx, cx + 204 + shown.length * 12, y + 44, 20, t, { color: TOKENS.accent });
+          chatCaret(ctx, cx + 224 + shown.length * 12.6, y + 47, 21, t, { color: TOKENS.accent });
       }
     });
   });
@@ -446,13 +468,13 @@ function bootParams(ctx, t, s) {
   const loveAt = s.at + T.love;
   const loveK = at(t, loveAt, loveAt + 0.30);
   if (loveK > 0) {
-    const y = cardTop + FIELDS.length * 74;
+    const y = cardTop + FIELDS.length * 80;
     layer(ctx, loveK, () => {
-      rect(ctx, cx, y, cw, 58, "#0b1826", 10, "#22405a");
-      type(ctx, "love", cx + 20, y + 37, 17, "#6f8aa8", "MV Mono");
+      rect(ctx, cx, y, cw, 62, "#0b1826", 10, "#22405a");
+      type(ctx, "love", cx + 22, y + 40, 18, "#6f8aa8", "MV Mono");
       // no value ever arrives -- just a caret, waiting
-      chatCaret(ctx, cx + 200, y + 44, 20, t, { on: true, color: "#4a6a8c" });
-      type(ctx, "undefined", cx + cw - 30, y + 37, 15, "#4a6a8c", "MV Mono", "right");
+      chatCaret(ctx, cx + 220, y + 47, 21, t, { on: true, color: "#4a6a8c" });
+      type(ctx, "undefined", cx + cw - 32, y + 40, 16, "#4a6a8c", "MV Mono", "right");
     });
   }
 
@@ -471,7 +493,7 @@ function bootParams(ctx, t, s) {
       ctx.fillStyle = g;
       ctx.fillRect(cx, sy - 60, cw, 120);
       // a settled hairline under the last field
-      stroke(ctx, [[cx, cardTop + (FIELDS.length + 1) * 74 + 16], [cx + cw, cardTop + (FIELDS.length + 1) * 74 + 16]], "rgba(131,233,230,0.35)", 1.2);
+      stroke(ctx, [[cx, cardTop + (FIELDS.length + 1) * 80 + 16], [cx + cw, cardTop + (FIELDS.length + 1) * 80 + 16]], "rgba(131,233,230,0.35)", 1.2);
     });
   }
 
@@ -505,13 +527,13 @@ function bootWorld(ctx, t, s) {
   // The figure behind the glass: large enough to fill the right of the frame and
   // bleed past the edges, the way the reference frames it, and bright enough to
   // be unmistakably a person -- dim, but not a smudge.
-  figure(ctx, t, "silhouette", 1600, 620, 1180, { alpha: 0.48 });
+  figure(ctx, t, "silhouette", 1700, 560, 1320, { alpha: 0.48 });
 
   // Height leaves the lyric caption clear: captions are drawn at y=940 and an
   // emphasised line is ~82px, so the window's foot has to stop above ~870.
-  const R = { x: 210, y: 150, w: 1320, h: 715 };
+  const R = { x: 150, y: 105, w: 1500, h: 750 };
   const inK = at(t, s.at + 0.05, s.at + 0.65);
-  const SIDE = 300;
+  const SIDE = 340;
 
   layer(ctx, 0.86 * inK, () => {
     // shell
@@ -527,46 +549,46 @@ function bootWorld(ctx, t, s) {
     ctx.fillStyle = "rgba(5,17,26,0.9)";
     ctx.fillRect(R.x, R.y, SIDE, R.h);
     stroke(ctx, [[R.x + SIDE, R.y], [R.x + SIDE, R.y + R.h]], "#1f3f52", 1.2);
-    lockup(ctx, R.x + 22, R.y + 48, 20, 30, "#dfe6ef", "#43607d", 0.95);
+    lockup(ctx, R.x + 26, R.y + 54, 22, 34, "#dfe6ef", "#43607d", 0.95);
 
     // new chat
-    const nb = { x: R.x + 18, y: R.y + 78, w: SIDE - 36, h: 46 };
+    const nb = { x: R.x + 20, y: R.y + 88, w: SIDE - 40, h: 50 };
     rect(ctx, nb.x, nb.y, nb.w, nb.h, "#0f2434", 8, "#274b60");
-    type(ctx, "+", nb.x + 16, nb.y + 30, 18, BRAND_SOFT, "MV Sans");
-    type(ctx, "New chat", nb.x + 40, nb.y + 30, 16, "#9fb4d8", "MV Sans");
+    type(ctx, "+", nb.x + 18, nb.y + 33, 19, BRAND_SOFT, "MV Sans");
+    type(ctx, "New chat", nb.x + 44, nb.y + 33, 17, "#9fb4d8", "MV Sans");
 
-    type(ctx, "Recents", R.x + 24, nb.y + nb.h + 34, 12, "#3d5f76", "MV Mono");
+    type(ctx, "Recents", R.x + 28, nb.y + nb.h + 38, 13, "#3d5f76", "MV Mono");
     RECENTS.forEach((title, i) => {
-      const ry = nb.y + nb.h + 54 + i * 34;
+      const ry = nb.y + nb.h + 60 + i * 38;
       // one of them is this session's slot, still empty
       const active = i === 0;
-      if (active) rect(ctx, R.x + 12, ry - 15, SIDE - 24, 30, "rgba(77,107,254,0.10)", 6);
-      type(ctx, title, R.x + 24, ry, 13.5, active ? "#a9bde0" : "#4a6b83", "MV Sans");
+      if (active) rect(ctx, R.x + 14, ry - 17, SIDE - 28, 34, "rgba(77,107,254,0.10)", 6);
+      type(ctx, title, R.x + 28, ry, 14.5, active ? "#a9bde0" : "#4a6b83", "MV Sans");
     });
 
     // who is waiting at the bottom
-    stroke(ctx, [[R.x, R.y + R.h - 54], [R.x + SIDE, R.y + R.h - 54]], "#1f3f52", 1.2);
-    disc(ctx, R.x + 30, R.y + R.h - 27, 9, "#2a4459", 1);
-    type(ctx, "you", R.x + 46, R.y + R.h - 22, 14, "#5b7590", "MV Sans");
-    disc(ctx, R.x + SIDE - 92, R.y + R.h - 27, 4, "#3d5f76", 1);
-    type(ctx, "silent", R.x + SIDE - 80, R.y + R.h - 22, 12, "#3d5f76", "MV Mono");
+    stroke(ctx, [[R.x, R.y + R.h - 60], [R.x + SIDE, R.y + R.h - 60]], "#1f3f52", 1.2);
+    disc(ctx, R.x + 34, R.y + R.h - 30, 10, "#2a4459", 1);
+    type(ctx, "you", R.x + 52, R.y + R.h - 25, 15, "#5b7590", "MV Sans");
+    disc(ctx, R.x + SIDE - 100, R.y + R.h - 30, 4, "#3d5f76", 1);
+    type(ctx, "silent", R.x + SIDE - 86, R.y + R.h - 25, 13, "#3d5f76", "MV Mono");
 
     // ---- main: the empty conversation
     const mx = R.x + SIDE;
     const mw = R.w - SIDE;
-    type(ctx, "New chat", mx + 34, R.y + 52, 20, "#dfe6ef", "MV Sans");
+    type(ctx, "New chat", mx + 40, R.y + 58, 22, "#dfe6ef", "MV Sans");
     // the ready chip, top right
-    rect(ctx, R.x + R.w - 178, R.y + 30, 144, 30, "rgba(77,107,254,0.10)", 15, "#2b4a6b");
-    disc(ctx, R.x + R.w - 160, R.y + 45, 4, BRAND_SOFT, 1);
-    type(ctx, "harness · ready", R.x + R.w - 148, R.y + 50, 13, "#9fb4d8", "MV Mono");
-    stroke(ctx, [[mx, R.y + 74], [R.x + R.w, R.y + 74]], "#1f3f52", 1.2);
+    rect(ctx, R.x + R.w - 196, R.y + 34, 162, 34, "rgba(77,107,254,0.10)", 17, "#2b4a6b");
+    disc(ctx, R.x + R.w - 176, R.y + 51, 4.5, BRAND_SOFT, 1);
+    type(ctx, "harness · ready", R.x + R.w - 162, R.y + 57, 14, "#9fb4d8", "MV Mono");
+    stroke(ctx, [[mx, R.y + 84], [R.x + R.w, R.y + 84]], "#1f3f52", 1.2);
 
     // the mark in front: this is the thing you are talking to
     const markY = R.y + R.h / 2 - 46;
-    drawWhale(ctx, mx + mw / 2, markY, 190, {
+    drawWhale(ctx, mx + mw / 2, markY, 220, {
       strokeK: 1, fillK: 1, color: BRAND, alpha: 0.42 + 0.1 * at(t, s.at + 1.2, s.at + 3.2),
     });
-    halo(ctx, mx + mw / 2, markY, 260, 0.10, BRAND);
+    halo(ctx, mx + mw / 2, markY, 300, 0.10, BRAND);
 
     // The hint fades as the box starts filling: the room stops being empty the
     // moment someone types into it.
@@ -578,23 +600,23 @@ function bootWorld(ctx, t, s) {
 
     // composer: the shot's only motion. The lyric that is on screen is also
     // being written into the box, one character at a time.
-    const cb = { x: mx + 34, y: R.y + R.h - 132, w: mw - 68, h: 92 };
+    const cb = { x: mx + 40, y: R.y + R.h - 144, w: mw - 80, h: 104 };
     rect(ctx, cb.x, cb.y, cb.w, cb.h, "#0b2433", 12, "#24495b");
     const baseY = cb.y + cb.h / 2 + 6;
     if (said.length === 0) {
-      type(ctx, "发消息，/ 调用指令", cb.x + 26, baseY, 18, "#3b5a74", "MV Sans");
+      type(ctx, "发消息，/ 调用指令", cb.x + 30, baseY, 19, "#3b5a74", "MV Sans");
     } else {
-      type(ctx, said, cb.x + 26, baseY, 19, "#cfd9ea", "MV Sans");
-      ctx.font = `400 19px "MV Sans"`;
-      chatCaret(ctx, cb.x + 28 + ctx.measureText(said).width, cb.y + cb.h / 2, 22, t, {
+      type(ctx, said, cb.x + 30, baseY, 20, "#cfd9ea", "MV Sans");
+      ctx.font = `400 20px "MV Sans"`;
+      chatCaret(ctx, cb.x + 32 + ctx.measureText(said).width, cb.y + cb.h / 2, 23, t, {
         on: true, color: BRAND_SOFT, width: 2,
       });
     }
     // the send affordance wakes up once there is something to send
     const armed = at(t, s.at + TYPING + 0.1, s.at + TYPING + 0.6) * (said.length > 0 ? 1 : 0);
-    const send = { x: cb.x + cb.w - 52, y: cb.y + cb.h / 2 };
-    disc(ctx, send.x, send.y, 17, BRAND_SOFT, 0.5 + 0.45 * armed, false, 1.4 + armed * 0.8);
-    halo(ctx, send.x, send.y, 52, 0.18 + 0.22 * armed, BRAND);
+    const send = { x: cb.x + cb.w - 58, y: cb.y + cb.h / 2 };
+    disc(ctx, send.x, send.y, 19, BRAND_SOFT, 0.5 + 0.45 * armed, false, 1.4 + armed * 0.8);
+    halo(ctx, send.x, send.y, 58, 0.18 + 0.22 * armed, BRAND);
   });
 
   return { phase: "world", empty: true, recents: RECENTS.length };
