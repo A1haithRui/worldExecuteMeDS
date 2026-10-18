@@ -4,17 +4,21 @@
 //   boot-power   0.000– 4.004  a hairline opens into the window, the mark lights
 //   boot-layout  4.004– 7.695  header / sidebar / thread / composer assemble
 //   boot-params  7.695–11.387  the persona card fills in; love stays undefined
-//   boot-world  11.387–15.080  an empty conversation, ready, nothing lit
+//   boot-world  11.387–15.080  a whole client, empty, with the mark in front
+//
+// Naming, settled with the director: the product line reads "deepseek / harness"
+// (we are booting dsh, not a generic "world model"), the persona card's role is
+// "assistant" (the role it plays in the conversation, and not a second name for
+// the product), and the boot line is a terminal prompt -- "power" alone read as
+// PowerShell to a viewer, which is not what the frame means.
 //
 // Everything here is a pure function of song time: no cross-frame state, no
 // random, no clock. That is what lets the exporter render any frame in any
 // order and still get identical pixels.
-import {
-  W, H, C, clamp, mix, at, layer, stroke, disc, rect, type, halo, point, ground,
-} from "../src/mv-draw.js";
-import { drawWhale, spaced } from "../src/assets/whale.js";
+import { C, mix, at, layer, stroke, disc, rect, type, halo, ground } from "../src/mv-draw.js";
+import { drawWhale } from "../src/assets/whale.js";
 import { TOKENS, chatWindow, caret as chatCaret } from "../src/engine/chat.js";
-import { drawFigure as portraitFigure, idle as portraitIdle } from "../src/engine/portrait.js";
+import { idle as portraitIdle } from "../src/engine/portrait.js";
 import { typewriter } from "../src/engine/type.js";
 import { loadImages } from "../src/mv-draw.js";
 
@@ -26,6 +30,8 @@ const { images } = loadImages({
 
 const BRAND = "#4d6bfe";
 const BRAND_SOFT = "#7f93ff";
+const PRODUCT = "deepseek";
+const SUBSYSTEM = "/ harness";
 
 // The window the first two shots share, so the frame that opens in boot-power is
 // the same frame the interface is assembled into.
@@ -61,6 +67,16 @@ function spacedCentred(ctx, text, cx, y, size, color, family = "MV Sans", tracki
     x += widths[i] + size * tracking;
   });
   return total;
+}
+
+/** `deepseek / harness` lockup with the mark; x is the left edge, y the baseline. */
+function lockup(ctx, x, y, size, markW, color, subColor, markAlpha = 1) {
+  drawWhale(ctx, x + markW / 2, y - size * 0.34, markW, { strokeK: 1, fillK: 1, color: BRAND, alpha: markAlpha });
+  type(ctx, PRODUCT, x + markW + size * 0.62, y, size, color, "MV Sans");
+  ctx.font = `400 ${size}px "MV Sans"`;
+  const tw = ctx.measureText(PRODUCT).width;
+  type(ctx, SUBSYSTEM, x + markW + size * 0.62 + tw + size * 0.6, y, size * 0.72, subColor, "MV Mono");
+  return markW + size * 0.62 + tw + size * 0.6 + ctx.measureText(SUBSYSTEM).width;
 }
 
 // ---------------------------------------------------------------------------
@@ -123,13 +139,13 @@ function bootPower(ctx, t, s) {
       halo(ctx, WIN_CX, WIN_CY - 46, 300, 0.10 * fillIn, BRAND);
     }
 
-    // 4. wordmark
+    // 4. wordmark: the product name, then what it is running on
     if (wordIn > 0) {
       layer(ctx, wordIn, () =>
         spacedCentred(ctx, "DeepSeek", WIN_CX, WIN_CY + 118, 40, "#e8eeff", "MV Sans", 0.24),
       );
       layer(ctx, wordIn * 0.7, () =>
-        spacedCentred(ctx, "WORLD MODEL", WIN_CX, WIN_CY + 158, 15, "#6b86a8", "MV Mono", 0.34),
+        spacedCentred(ctx, "HARNESS", WIN_CX, WIN_CY + 158, 15, "#6b86a8", "MV Mono", 0.34),
       );
     }
 
@@ -169,22 +185,26 @@ function bootPower(ctx, t, s) {
       });
     }
 
-    // 7. the boot line along the foot of the window
+    // 7. the boot line: a terminal prompt, so the frame says "a shell is up"
     if (status > 0) {
-      const label = "/ power line open";
-      const shown = typewriter(label, t, s.at + 3.30, 26);
+      const cmd = "dsh --boot";
+      const shown = typewriter(cmd, t, s.at + 3.30, 22);
       layer(ctx, 1, () => {
-        type(ctx, "power", x + 30, y + h - 34, 17, BRAND_SOFT, "MV Mono");
-        type(ctx, shown, x + 104, y + h - 34, 17, "#9fb4d8", "MV Mono");
-        if (shown.length < label.length)
-          chatCaret(ctx, x + 108 + shown.length * 10.2, y + h - 30, 16, t, { on: true, color: BRAND_SOFT });
-        // protection indicator: grey until the sweep has passed
+        ctx.font = `400 18px "MV Mono"`;
+        const promptW = ctx.measureText("❯ ").width;
+        type(ctx, "❯", x + 30, y + h - 34, 18, BRAND_SOFT, "MV Mono");
+        type(ctx, shown, x + 30 + promptW + 4, y + h - 34, 18, "#9fb4d8", "MV Mono");
+        if (shown.length < cmd.length)
+          chatCaret(ctx, x + 34 + promptW + shown.length * 10.8, y + h - 30, 16, t, { on: true, color: BRAND_SOFT });
+        // terminal status: grey until the sweep has passed
         const on = sweep >= 1;
         disc(ctx, x + w - 34, y + h - 40, 5, on ? BRAND_SOFT : "#3a4a63", 1);
         if (on) halo(ctx, x + w - 34, y + h - 40, 26, 0.35, BRAND);
       });
       layer(ctx, at(t, s.at + 3.62, s.at + 3.95), () =>
-        type(ctx, "protection on", x + w - 130, y + h - 34, 15, "#6b86a8", "MV Mono"),
+        // right-aligned so it stops short of the status dot instead of running
+        // underneath it
+        type(ctx, "terminal ready", x + w - 58, y + h - 34, 15, "#6b86a8", "MV Mono", "right"),
       );
     }
   }
@@ -212,8 +232,9 @@ function skeleton(ctx, piece, x, y, lock) {
   const dim = lock > 0 ? 0.55 : 0.4;
   const ink = (a) => `rgba(127,147,255,${a})`;
   if (piece.key === "header") {
-    type(ctx, "deepseek", x + 96, y + 40, 19, ink(0.8), "MV Sans");
-    type(ctx, "/ world model", x + 196, y + 40, 14, C.muted, "MV Mono");
+    // No "header" key label here: the lockup is the header's content, and a label
+    // at the same baseline ran straight through the mark.
+    lockup(ctx, x + 18, y + 42, 19, 26, ink(0.85), C.muted, 0.9);
     for (let i = 0; i < 3; i++) disc(ctx, x + piece.w - 34 - i * 16, y + 33, 3, ink(dim), 1);
   } else if (piece.key === "sidebar") {
     for (let i = 0; i < 4; i++) {
@@ -223,7 +244,11 @@ function skeleton(ctx, piece, x, y, lock) {
       type(ctx, ["chat", "files", "code", "logs"][i], x + 34, ry + 10, 13, C.muted, "MV Mono");
     }
   } else if (piece.key === "thread") {
-    // two empty message slots, drawn as dashed blocks
+    // A watermark of the mark: the client is empty, and this is whose window it
+    // is. Kept very low so it never competes with the dashed slots.
+    drawWhale(ctx, x + piece.w / 2, y + piece.h / 2, 260, {
+      strokeK: 1, fillK: 1, color: BRAND, alpha: 0.07,
+    });
     ctx.save();
     ctx.setLineDash([6, 6]);
     ctx.strokeStyle = ink(dim * 0.6);
@@ -236,7 +261,7 @@ function skeleton(ctx, piece, x, y, lock) {
     ctx.setLineDash([5, 5]);
     ctx.strokeStyle = ink(dim * 0.6);
     ctx.lineWidth = 1.2;
-    ctx.strokeRect(x + 20, y + 52, piece.w - 40, piece.h - 72);
+    ctx.strokeRect(x + 20, y + 46, piece.w - 40, piece.h - 74);
     ctx.restore();
   }
 }
@@ -293,27 +318,40 @@ function bootLayout(ctx, t, s) {
       ctx.strokeStyle = lock > 0 ? mix(C.edge, BRAND_SOFT, lock) : C.edge;
       ctx.lineWidth = lock > 0 ? 1.4 + 0.9 * lock : 1.4;
       ctx.stroke();
-      type(ctx, p.key, px + 16, py + 26, 14, lock > 0 ? "#9fb4d8" : C.muted, "MV Mono");
+      // The header piece carries its own lockup instead of a key label.
+      if (p.key !== "header") type(ctx, p.key, px + 16, py + 26, 14, lock > 0 ? "#9fb4d8" : C.muted, "MV Mono");
       skeleton(ctx, p, px, py, lock);
     });
   });
 
-  // the composer gets its placeholder last, so "empty" reads as intentional
+  // the composer gets its placeholder last, so "empty" reads as intentional.
+  // It sits on the centre line of its dashed field, not above it.
   const ph = at(t, s.at + 1.95, s.at + 2.35);
   if (ph > 0) {
     const c = PIECES[3];
+    const fieldY = c.y + 46;
+    const fieldH = c.h - 74;
+    const baseY = fieldY + fieldH / 2 + 6;
+    const label = "发消息，/ 调用指令";
     layer(ctx, ph, () => {
-      type(ctx, "发消息，/ 调用指令", c.x + 30, c.y + 96, 18, "#43607d", "MV Sans");
-      if (ph >= 1) chatCaret(ctx, c.x + 262, c.y + 90, 20, t, { on: true, color: BRAND_SOFT });
+      type(ctx, label, c.x + 34, baseY, 18, "#43607d", "MV Sans");
+      if (ph >= 1) {
+        ctx.font = `400 18px "MV Sans"`;
+        const tw = ctx.measureText(label).width;
+        chatCaret(ctx, c.x + 34 + tw + 10, baseY - 6, 20, t, { on: true, color: BRAND_SOFT });
+      }
     });
   }
 
-  // lock flash + label
+  // lock label: above the window, clear of both the frame edge and the lyric
+  // caption, which occupies the bottom of the frame
   if (lock > 0) {
     const fade = at(t, s.at + 2.80, s.at + 3.40);
-    layer(ctx, lock * (1 - fade * 0.7), () =>
-      spacedCentred(ctx, "LAYOUT LOCKED", WIN_CX, WIN.y + WIN.h - 22, 15, BRAND_SOFT, "MV Mono", 0.36),
-    );
+    layer(ctx, lock * (1 - fade * 0.7), () => {
+      spacedCentred(ctx, "LAYOUT LOCKED", WIN_CX, WIN.y - 24, 15, BRAND_SOFT, "MV Mono", 0.36);
+      const half = 92;
+      stroke(ctx, [[WIN_CX - half, WIN.y - 12], [WIN_CX + half, WIN.y - 12]], BRAND_SOFT, 1);
+    });
   }
 
   return { phase: "layout", pieces: PIECES.length };
@@ -321,24 +359,31 @@ function bootLayout(ctx, t, s) {
 
 // ---------------------------------------------------------------------------
 // boot-params — 7.695–11.387. The persona card fills field by field; the last
-// field, love, is never filled. Then the client initialises.
+// field, love, is never filled. Then the client initialises and holds.
 // ---------------------------------------------------------------------------
 const FIELDS = Object.freeze([
   ["name", "deepseek"],
-  ["role", "world model"],
+  ["role", "assistant"],
   ["context", "211.96 s"],
   ["signal", "bidirectional"],
 ]);
+
+// Field fill times, all relative to the shot start. They are front-loaded so the
+// finished card can hold for over a second before the cut: previously the last
+// field landed 0.3 s before the edit, which read as "it flashed past".
+const T = Object.freeze({ f0: 0.30, step: 0.36, love: 2.02, ready: 2.34 });
 
 function bootParams(ctx, t, s) {
   ground(ctx, t, [1180, 480], true);
   figure(ctx, t, "lowlight", 1480, 520, 720, { alpha: 0.92 });
 
-  const R = { x: 190, y: 158, w: 1000, h: 742 };
-  const readyAt = s.at + 3.30;
+  // Height keeps the footer clear of the lyric caption, which is drawn at y=940
+  // and is ~82px tall when the line is emphasised.
+  const R = { x: 190, y: 158, w: 1000, h: 700 };
+  const readyAt = s.at + T.ready;
   const win = chatWindow(ctx, R, t, {
-    title: "deepseek",
-    subtitle: "/ world model",
+    title: PRODUCT,
+    subtitle: SUBSYSTEM,
     session: "SESSION 000",
     state: t < readyAt ? "busy" : "online",
     stateLabel: t < readyAt ? "configuring" : "online",
@@ -354,16 +399,21 @@ function bootParams(ctx, t, s) {
   const cw = R.w - 72;
   const cardTop = R.y + 140;
 
+  // The mark as a watermark behind the fields: the card belongs to this product.
+  layer(ctx, 0.06, () =>
+    drawWhale(ctx, cx + cw / 2, cardTop + 172, 300, { strokeK: 1, fillK: 1, color: BRAND }),
+  );
+
   FIELDS.forEach(([key, value], i) => {
-    const start = s.at + 0.46 + i * 0.55;
-    const k = at(t, start, start + 0.34);
+    const start = s.at + T.f0 + i * T.step;
+    const k = at(t, start, start + 0.28);
     if (k <= 0) return;
     const y = cardTop + i * 74;
     layer(ctx, k, () => {
       rect(ctx, cx, y, cw, 58, "#0d1c2c", 10, TOKENS.border1);
       type(ctx, key, cx + 20, y + 37, 17, TOKENS.labelTertiary, "MV Mono");
       if (k > 0.5) {
-        const shown = typewriter(value, t, start + 0.12, 9);
+        const shown = typewriter(value, t, start + 0.08, 22);
         type(ctx, shown, cx + 200, y + 37, 20, TOKENS.labelPrimary, "MV Mono");
         if (shown.length < value.length)
           chatCaret(ctx, cx + 204 + shown.length * 12, y + 44, 20, t, { color: TOKENS.accent });
@@ -371,10 +421,10 @@ function bootParams(ctx, t, s) {
     });
   });
 
-  // The fifth field exists but is never filled: the prompt says the persona
-  // card has one field that stays undefined, and that gap is the shot's point.
-  const loveAt = s.at + 2.86;
-  const loveK = at(t, loveAt, loveAt + 0.34);
+  // The fifth field exists but is never filled: the prompt says the persona card
+  // has one field that stays undefined, and that gap is the shot's point.
+  const loveAt = s.at + T.love;
+  const loveK = at(t, loveAt, loveAt + 0.30);
   if (loveK > 0) {
     const y = cardTop + FIELDS.length * 74;
     layer(ctx, loveK, () => {
@@ -386,12 +436,22 @@ function bootParams(ctx, t, s) {
     });
   }
 
-  // init
-  const done = at(t, readyAt, readyAt + 0.5);
+  // init: the window's own state chip flips to online, and one thin highlight
+  // runs down the card to say "committed". No extra label -- the chip and its dot
+  // already sit in the header, and a second "ready" there collided with them.
+  const done = at(t, readyAt, readyAt + 0.45);
   if (done > 0) {
+    const sweepK = at(t, readyAt, readyAt + 0.9);
     layer(ctx, done, () => {
-      disc(ctx, R.x + R.w - 74, R.y + 62, 26, C.hot, 0.16, false, 2);
-      type(ctx, "ready", R.x + R.w - 130, R.y + 68, 16, C.hot, "MV Sans");
+      const sy = cardTop - 20 + (R.h - 120) * (1 - sweepK);
+      const g = ctx.createLinearGradient(0, sy - 60, 0, sy + 60);
+      g.addColorStop(0, "rgba(131,233,230,0)");
+      g.addColorStop(0.5, "rgba(131,233,230,0.07)");
+      g.addColorStop(1, "rgba(131,233,230,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(cx, sy - 60, cw, 120);
+      // a settled hairline under the last field
+      stroke(ctx, [[cx, cardTop + (FIELDS.length + 1) * 74 + 16], [cx + cw, cardTop + (FIELDS.length + 1) * 74 + 16]], "rgba(131,233,230,0.35)", 1.2);
     });
   }
 
@@ -399,59 +459,109 @@ function bootParams(ctx, t, s) {
 }
 
 // ---------------------------------------------------------------------------
-// boot-world — 11.387–15.080. A whole client with an empty conversation, and
-// the figure waiting behind the glass. Everything is ready; nothing is lit.
+// boot-world — 11.387–15.080. Reworked against the reference's SIMULATION shot:
+// a whole client with its sidebar of past conversations, the mark in front, and
+// the figure dim behind the glass. Nothing has been said yet.
 // ---------------------------------------------------------------------------
+const RECENTS = Object.freeze([
+  "sine wave, explained",
+  "where do you sleep between messages",
+  "the message I deleted",
+  "is a whale a machine",
+  "how many worlds at once",
+  "why can't I sleep",
+]);
+
 function bootWorld(ctx, t, s) {
   ground(ctx, t, [1180, 470], true);
 
-  // the figure behind the glass, barely there
-  figure(ctx, t, "silhouette", 1520, 560, 560, { alpha: 0.18 });
+  // the figure behind the glass, dim: present in the frame but unlit, so the
+  // mark in front is the only thing that reads as "on"
+  figure(ctx, t, "silhouette", 1520, 620, 820, { alpha: 0.24 });
 
-  const R = { x: 250, y: 170, w: 1300, h: 720 };
-  const inK = at(t, s.at + 0.05, s.at + 0.7);
-  layer(ctx, 0.75 * inK, () => {
+  // Height leaves the lyric caption clear: captions are drawn at y=940 and an
+  // emphasised line is ~82px, so the window's foot has to stop above ~870.
+  const R = { x: 210, y: 150, w: 1320, h: 715 };
+  const inK = at(t, s.at + 0.05, s.at + 0.65);
+  const SIDE = 300;
+
+  layer(ctx, 0.86 * inK, () => {
+    // shell
     ctx.beginPath();
     ctx.roundRect(R.x, R.y, R.w, R.h, 22);
-    ctx.fillStyle = "rgba(7,23,34,0.92)";
+    ctx.fillStyle = "rgba(7,23,34,0.94)";
     ctx.fill();
     ctx.strokeStyle = "#1f3f52";
     ctx.lineWidth = 1.4;
     ctx.stroke();
 
-    // header
-    type(ctx, "deepseek", R.x + 28, R.y + 44, 20, "#7f93ff", "MV Sans");
-    type(ctx, "/ world model", R.x + 132, R.y + 44, 16, "#43607d", "MV Mono");
-    type(ctx, "SESSION 001", R.x + R.w - 28, R.y + 44, 15, "#43607d", "MV Mono", "right");
-    stroke(ctx, [[R.x + 1, R.y + 66], [R.x + R.w - 1, R.y + 66]], "#1f3f52", 1.2);
+    // ---- sidebar: who this window belongs to, and what has been said before
+    ctx.fillStyle = "rgba(5,17,26,0.9)";
+    ctx.fillRect(R.x, R.y, SIDE, R.h);
+    stroke(ctx, [[R.x + SIDE, R.y], [R.x + SIDE, R.y + R.h]], "#1f3f52", 1.2);
+    lockup(ctx, R.x + 22, R.y + 48, 20, 30, "#dfe6ef", "#43607d", 0.95);
 
-    // empty thread: a place where two of them will meet
-    const midY = R.y + R.h / 2 - 40;
-    type(ctx, "new conversation", R.x + R.w / 2, midY, 26, "#43607d", "MV Sans", "center");
-    stroke(ctx, [[R.x + R.w / 2 - 90, midY + 22], [R.x + R.w / 2 + 90, midY + 22]], "#26455c", 1.2);
-    type(ctx, "nothing has been said yet", R.x + R.w / 2, midY + 58, 15, "#33526a", "MV Mono", "center");
+    // new chat
+    const nb = { x: R.x + 18, y: R.y + 78, w: SIDE - 36, h: 46 };
+    rect(ctx, nb.x, nb.y, nb.w, nb.h, "#0f2434", 8, "#274b60");
+    type(ctx, "+", nb.x + 16, nb.y + 30, 18, BRAND_SOFT, "MV Sans");
+    type(ctx, "New chat", nb.x + 40, nb.y + 30, 16, "#9fb4d8", "MV Sans");
 
-    // composer, with the only lit thing on screen
-    const cy2 = R.y + R.h - 132;
-    rect(ctx, R.x + 28, cy2, R.w - 56, 92, "#0b2433", 12, "#24495b");
-    type(ctx, "发消息，/ 调用指令", R.x + 56, cy2 + 52, 19, "#3b5a74", "MV Sans");
+    type(ctx, "Recents", R.x + 24, nb.y + nb.h + 34, 12, "#3d5f76", "MV Mono");
+    RECENTS.forEach((title, i) => {
+      const ry = nb.y + nb.h + 54 + i * 34;
+      // one of them is this session's slot, still empty
+      const active = i === 0;
+      if (active) rect(ctx, R.x + 12, ry - 15, SIDE - 24, 30, "rgba(77,107,254,0.10)", 6);
+      type(ctx, title, R.x + 24, ry, 13.5, active ? "#a9bde0" : "#4a6b83", "MV Sans");
+    });
+
+    // who is waiting at the bottom
+    stroke(ctx, [[R.x, R.y + R.h - 54], [R.x + SIDE, R.y + R.h - 54]], "#1f3f52", 1.2);
+    disc(ctx, R.x + 30, R.y + R.h - 27, 9, "#2a4459", 1);
+    type(ctx, "you", R.x + 46, R.y + R.h - 22, 14, "#5b7590", "MV Sans");
+    disc(ctx, R.x + SIDE - 92, R.y + R.h - 27, 4, "#3d5f76", 1);
+    type(ctx, "silent", R.x + SIDE - 80, R.y + R.h - 22, 12, "#3d5f76", "MV Mono");
+
+    // ---- main: the empty conversation
+    const mx = R.x + SIDE;
+    const mw = R.w - SIDE;
+    type(ctx, "New chat", mx + 34, R.y + 52, 20, "#dfe6ef", "MV Sans");
+    // the ready chip, top right
+    rect(ctx, R.x + R.w - 178, R.y + 30, 144, 30, "rgba(77,107,254,0.10)", 15, "#2b4a6b");
+    disc(ctx, R.x + R.w - 160, R.y + 45, 4, BRAND_SOFT, 1);
+    type(ctx, "harness · ready", R.x + R.w - 148, R.y + 50, 13, "#9fb4d8", "MV Mono");
+    stroke(ctx, [[mx, R.y + 74], [R.x + R.w, R.y + 74]], "#1f3f52", 1.2);
+
+    // the mark in front: this is the thing you are talking to
+    const markY = R.y + R.h / 2 - 46;
+    drawWhale(ctx, mx + mw / 2, markY, 190, {
+      strokeK: 1, fillK: 1, color: BRAND, alpha: 0.42 + 0.1 * at(t, s.at + 1.2, s.at + 3.2),
+    });
+    halo(ctx, mx + mw / 2, markY, 260, 0.10, BRAND);
+    type(ctx, "nothing has been said yet", mx + mw / 2, markY + 132, 14, "#3d5f76", "MV Mono", "center");
+
+    // composer
+    const cb = { x: mx + 34, y: R.y + R.h - 132, w: mw - 68, h: 92 };
+    rect(ctx, cb.x, cb.y, cb.w, cb.h, "#0b2433", 12, "#24495b");
+    type(ctx, "发消息，/ 调用指令", cb.x + 26, cb.y + cb.h / 2 + 6, 18, "#3b5a74", "MV Sans");
+    const send = { x: cb.x + cb.w - 52, y: cb.y + cb.h / 2 };
+    disc(ctx, send.x, send.y, 17, BRAND_SOFT, 0.5, false, 1.4);
+    halo(ctx, send.x, send.y, 52, 0.18, BRAND);
   });
 
   // the caret blinks on song time, so the frame stays reproducible
-  const caretOn = at(t, s.at + 0.7, s.at + 0.9);
+  const caretOn = at(t, s.at + 0.65, s.at + 0.9);
   if (caretOn > 0) {
-    const bobY = 0;
+    const cb = { x: R.x + SIDE + 34, y: R.y + R.h - 132, w: R.w - SIDE - 68, h: 92 };
     layer(ctx, caretOn * 0.9, () => {
-      chatCaret(ctx, R.x + 300, R.y + R.h - 132 + 40 + bobY, 22, t, { on: true, color: BRAND_SOFT, width: 2 });
-      // the far port is hollow: nothing has come back
-      const px = R.x + R.w - 92;
-      const py = R.y + R.h - 86;
-      disc(ctx, px, py, 13, BRAND_SOFT, 0.5, false, 1.4);
-      halo(ctx, px, py, 44, 0.16, BRAND);
+      ctx.font = `400 18px "MV Sans"`;
+      const tw = ctx.measureText("发消息，/ 调用指令").width;
+      chatCaret(ctx, cb.x + 26 + tw + 12, cb.y + cb.h / 2, 22, t, { on: true, color: BRAND_SOFT, width: 2 });
     });
   }
 
-  return { phase: "world", empty: true };
+  return { phase: "world", empty: true, recents: RECENTS.length };
 }
 
 export const BOOT_RENDER = Object.freeze({

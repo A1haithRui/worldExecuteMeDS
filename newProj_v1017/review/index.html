@@ -58,42 +58,58 @@
 
   <h2>③ 四镜逐帧对照</h2>
   <img src="stills-01-boot.jpg" alt="第 1 段八个时间点的画面">
-  <div class="sub">第一行 t=1.2 / 2.9 / 5.6 / 7.2 秒 · 第二行 t=8.8 / 11.1 / 12.2 / 14.6 秒</div>
+  <div class="sub">第一行 t=1.2 / 3.8 / 5.6 / 7.3 秒 · 第二行 t=8.6 / 10.2 / 12.4 / 14.6 秒</div>
 
-  <h2>④ 我希望你判的五件事</h2>
+  <h2>④ 这一版按你的意见改了什么</h2>
 
   <div class="ask">
-    <b>1. 启动页的节奏对不对。</b>现在的顺序是：发丝线 → 窗口张开 → 鲸鱼标志描边 → 填色 → 字标 → 防护层扫过 → 才亮 "power line open"。整段 4 秒。参考片用的是终端式的启动页（打字、开关），我们换成了 logo 点亮。<br>
-    <span class="sub">问题：你要"logo 先亮"还是"界面先出现、logo 后亮"？</span>
+    <b>1. 术语：<code>world model</code> → <code>harness</code>。</b>启动页、标题栏、人格卡三处统一成 <code>deepseek / harness</code>。<br>
+    <span class="sub">理由：harness 说明"跑的是 dsh"，而 world model 是我们自己造的词，观众读不出来。</span>
   </div>
 
   <div class="ask">
-    <b>2. logo 的大小和位置。</b>现在窗口正中、236px 宽，下方是 "DeepSeek / WORLD MODEL"。<br>
-    <span class="sub">问题：够不够大？要不要加上升入场？位置要不要偏左下留出界面感？</span>
+    <b>2. 启动行：<code>power</code> → 终端提示符。</b>现在窗口底部是 <code>❯ dsh --boot</code>，右下角状态 <code>terminal ready</code>。<br>
+    <span class="sub">原来的 "power" 想说的是电源线（配合歌词 Switch on the power line），但单看会读成 PowerShell，所以改成明确的终端行。</span>
   </div>
 
   <div class="ask">
-    <b>3. 界面装配读不读得出来。</b>四块（标题栏 / 侧栏 / 会话区 / 输入框）依次飞入，带虚线骨架和 "LAYOUT LOCKED"。<br>
-    <span class="sub">问题：能看出"这是在搭一个界面"吗？还是太抽象？</span>
+    <b>3. 界面装配：三处位置修正。</b>"发消息，/ 调用指令" 现在在虚线框里垂直居中；"LAYOUT LOCKED" 移到窗口上方并加了分隔线，不再贴着框；header 里加了鲸鱼标志，和 <code>deepseek / harness</code> 组成完整的品牌锁排。<br>
+    <span class="sub">另外在空白的会话区加了一个很淡的鲸鱼水印（7% 不透明度），让"这是谁的窗口"更明确。</span>
   </div>
 
   <div class="ask">
-    <b>4. 人格卡第五格 <code>love</code> 空着。</b>name / role / context / signal 都填了，第五格只有光标和一个 "undefined"。这是照参考片的叙事点做的。<br>
-    <span class="sub">问题：保留 <code>love</code>，还是换成更贴我们故事的字段（比如 <code>last_contact</code>）？</span>
+    <b>4. 人格卡：role 改成 <code>assistant</code>，并留出停顿。</b>填写整体提前，最后一格填完后停留约 <b>1.3 秒</b>（原来只有 0.3 秒，看起来像闪过去）。<br>
+    <span class="sub">role 用 assistant 而不是 world model：header 已经写了 harness，再重复一次没必要；assistant 也正好是对话里的角色名。卡区内加了鲸鱼水印。</span>
   </div>
 
   <div class="ask">
-    <b>5. 最后一镜要不要人物。</b>"空会话"这一镜现在右侧有角色剪影隔着玻璃（18% 不透明度），参考片这一镜是纯空界面、没有人物。<br>
-    <span class="sub">问题：保留人物（更贴我们的鲸鱼娘设定）还是去掉（更"空"）？</span>
+    <b>5. 最后一镜：照参考片重做。</b>左侧栏有 New chat 和六条旧对话（Recents），中间是空的 New chat 与正中的鲸鱼标志，右侧人物暗淡在玻璃后面，右上角 <code>harness · ready</code>，底部 <code>you / silent</code>。<br>
+    <span class="sub">人物不透明度从 18% 提到 24%，让它"存在但没点亮"。</span>
   </div>
 
+  <h2>⑤ 还想请你确认三件小事</h2>
+
+  <div class="ask">
+    <b>A. 终端行的文案。</b>现在是 <code>❯ dsh --boot</code> + <code>terminal ready</code>。<br>
+    <span class="sub">要不要更像真实终端（比如 <code>❯ dsh boot --attach world</code>），或者干脆只用 <code>❯ dsh</code> 更干净？</span>
+  </div>
+
+  <div class="ask">
+    <b>B. 六条旧对话的标题。</b>现在是：sine wave, explained / where do you sleep between messages / the message I deleted / is a whale a machine / how many worlds at once / why can't I sleep。<br>
+    <span class="sub">这些是我写的，想给后面的段落埋线索。要不要换方向（更贴歌词、更日常、或更冷）？</span>
+  </div>
+
+  <div class="ask">
+    <b>C. 最后一镜的人物。</b>现在 24%。<br>
+    <span class="sub">够不够"存在感"？再亮一点会更明显，但也会削弱"没点亮"的感觉。</span>
+  </div>
   <h2>⑤ 逐镜剪辑（想单独看某一镜时用）</h2>
   <table>
     <tr><th>镜头</th><th>歌曲时间</th><th>这一镜在讲什么</th><th>剪辑</th></tr>
     <tr><td><code>boot-power</code></td><td>0.00–4.00</td><td>电源接通，鲸鱼标志亮起，防护层扫过</td><td><a href="../shots/002_boot-power.mp4">002_boot-power.mp4</a></td></tr>
     <tr><td><code>boot-layout</code></td><td>4.00–7.69</td><td>标题栏、侧栏、会话区、输入框依次落位并锁定</td><td><a href="../shots/003_boot-layout.mp4">003_boot-layout.mp4</a></td></tr>
     <tr><td><code>boot-params</code></td><td>7.69–11.39</td><td>人格卡逐格填入，第五格 love 始终空着</td><td><a href="../shots/004_boot-params.mp4">004_boot-params.mp4</a></td></tr>
-    <tr><td><code>boot-world</code></td><td>11.39–15.08</td><td>空会话就位，只有光标亮着</td><td><a href="../shots/005_boot-world.mp4">005_boot-world.mp4</a></td></tr>
+    <tr><td><code>boot-world</code></td><td>11.39–15.08</td><td>整张客户端就位：侧栏对话记录、前景 logo、背景人物</td><td><a href="../shots/005_boot-world.mp4">005_boot-world.mp4</a></td></tr>
   </table>
 
   <h2>⑥ 想自己翻着看</h2>

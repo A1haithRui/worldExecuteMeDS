@@ -123,7 +123,7 @@ export const SHOTS = [
       3
     ],
     "picture": "ui",
-    "moment": "一根发丝般的线从中心张开成 client 窗口；鲸鱼标志在窗口里描出轮廓、填上品牌蓝，防护层从上到下扫过一遍，窗口底部才亮起「power line open」。",
+    "moment": "一根发丝般的线从中心张开成 client 窗口；鲸鱼标志描出轮廓、填上品牌蓝，防护层扫过一遍，窗口底部才打出终端提示 dsh --boot 与 terminal ready。",
     "momentState": "written",
     "inherits": "S01",
     "inheritCoverage": 0.97,
@@ -163,7 +163,7 @@ export const SHOTS = [
       8
     ],
     "picture": "ui",
-    "moment": "人格卡逐格填入 name / role / context / signal；第五格 love 始终空着，只留一个光标在那里等，随后客户端初始化完成、状态转 online。",
+    "moment": "人格卡逐格填入 name / role / context / signal——name 是 deepseek、role 是 assistant；第五格 love 始终空着，只留一个光标在那里等，随后状态转 online 并停住。",
     "momentState": "written",
     "inherits": "S03",
     "inheritCoverage": 0.92,
@@ -183,7 +183,7 @@ export const SHOTS = [
       11
     ],
     "picture": "ui",
-    "moment": "一个全新的空会话就位：标题栏、空会话区、输入框都在，角色隔着玻璃停在右侧；一切都准备好了，只有输入框里的光标亮着。",
+    "moment": "整张客户端就位：左侧栏是 New chat 与六条旧对话，中间是空的 New chat 与正中的鲸鱼标志，角色暗淡在右侧玻璃后；什么都没说，等待。",
     "momentState": "written",
     "inherits": "S04",
     "inheritCoverage": 1,
