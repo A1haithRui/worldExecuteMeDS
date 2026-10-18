@@ -69,12 +69,22 @@ const ours = resolve(reviewDir, `${index}-${name}-ours.mp4`);
 const refOut = resolve(reviewDir, `${index}-${name}-reference.mp4`);
 const ab = resolve(reviewDir, `${index}-${name}-AB.mp4`);
 
-// 1. our section, cut together
+// 1. our section, cut together. A silent section (the preroll) has no audio
+// stream, so the audio-bearing concat is tried first and the video-only form is
+// used when the clips carry no sound.
 const inputs = clips.flatMap((c) => ["-i", c]);
-const pairs = clips.map((_, i) => `[${i}:v][${i}:a]`).join("");
-run([...inputs, "-filter_complex", `${pairs}concat=n=${clips.length}:v=1:a=1[v][a]`,
-  "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
-  "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", ours]);
+const withAudio = clips.map((_, i) => `[${i}:v][${i}:a]`).join("");
+try {
+  run([...inputs, "-filter_complex", `${withAudio}concat=n=${clips.length}:v=1:a=1[v][a]`,
+    "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+    "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", ours]);
+} catch {
+  const videoOnly = clips.map((_, i) => `[${i}:v]`).join("");
+  run([...inputs, "-filter_complex", `${videoOnly}concat=n=${clips.length}:v=1:a=0[v]`,
+    "-map", "[v]", "-an", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+    "-pix_fmt", "yuv420p", ours]);
+  console.log("  （这一段没有音轨，按静音拼接）");
+}
 console.log(`  ${index}-${name}-ours.mp4       ${clips.length} 镜`);
 
 // 2. the reference's same stretch (its film time = song time + preroll)
@@ -88,7 +98,10 @@ const label = (x, text) =>
   `scale=640:360,drawtext=fontfile=C\\:/Windows/Fonts/consola.ttf:text='${text}':x=12:y=10:fontsize=15:fontcolor=white:box=1:boxcolor=black@0.6:boxborderw=6`;
 run(["-i", refOut, "-i", ours, "-filter_complex",
   `[0:v]${label("r", "REFERENCE")}[l];[1:v]${label("o", "OURS")}[r];[l][r]hstack=inputs=2[v]`,
-  "-map", "[v]", "-map", "1:a", "-c:v", "libx264", "-preset", "medium", "-crf", "20",
+  // Take the reference side's audio: it is the same song for a music section,
+  // and for the silent preroll it is silence, so either side works and the
+  // reference always has an audio stream while a silent clip does not.
+  "-map", "[v]", "-map", "0:a", "-c:v", "libx264", "-preset", "medium", "-crf", "20",
   "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", ab]);
 console.log(`  ${index}-${name}-AB.mp4`);
 

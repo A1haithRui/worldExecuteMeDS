@@ -84,7 +84,10 @@ export function createGrade(width = 1920, height = 1080, { noiseSeed = 71124 } =
 
   function noisePattern(ctx, t) {
     const frame = Math.round(t * 60);
-    const variant = noiseTiles[frame % NOISE_VARIANTS];
+    // Modulo, not remainder: the film now starts on a warning page at negative
+    // song time, and a negative frame index yields undefined here, which makes
+    // createPattern throw on the very first preroll frame.
+    const variant = noiseTiles[((frame % NOISE_VARIANTS) + NOISE_VARIANTS) % NOISE_VARIANTS];
     const p = ctx.createPattern(variant, "repeat");
     const ox = Math.round(hash01(frame, 1) * TILE);
     const oy = Math.round(hash01(frame, 2) * TILE);

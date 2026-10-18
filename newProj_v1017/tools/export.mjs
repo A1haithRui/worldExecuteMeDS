@@ -118,20 +118,46 @@ try {
   } else {
     // --- video -------------------------------------------------------------
     const frames = Math.max(1, Math.round((to - from) * fps));
-    const audioStart = Math.round(from * 44100);
-    const audioEnd = Math.round(to * 44100);
     mkdirSync(resolve(out, ".."), { recursive: true });
+
+    // Audio: the film starts with a silent warning page, so a range may begin
+    // before the song at 0. For a range that is entirely before the song there
+    // is no audio at all; a range that straddles it gets real silence padded in
+    // front, so the song still lands on the right frame of the clip.
+    const padSeconds = Math.max(0, -from);
+    const audioFrom = Math.max(0, from);
+    const audioTo = Math.max(0, to);
+    const silent = audioTo <= 0;
+    const audioArgs = [];
+    let filter = null;
+    let mapAudio = [];
+    if (!silent) {
+      if (padSeconds > 0.0005) {
+        audioArgs.push("-f", "lavfi", "-t", padSeconds.toFixed(3), "-i", "anullsrc=r=44100:cl=stereo");
+        audioArgs.push("-i", resolve(root, "audio/song.wav"));
+        filter =
+          `[2:a]atrim=start_sample=0:end_sample=${Math.round(audioTo * 44100)},asetpts=PTS-STARTPTS[s];` +
+          "[1:a][s]concat=n=2:v=0:a=1[a]";
+      } else {
+        audioArgs.push("-i", resolve(root, "audio/song.wav"));
+        filter =
+          `[1:a]atrim=start_sample=${Math.round(audioFrom * 44100)}` +
+          `:end_sample=${Math.round(audioTo * 44100)},asetpts=PTS-STARTPTS[a]`;
+      }
+      mapAudio = ["-map", "[a]"];
+    }
+
     const encoder = spawn(
       ffmpeg,
       [
         "-y", "-hide_banner", "-loglevel", "error",
         "-f", "image2pipe", "-framerate", String(fps), "-vcodec", "png", "-i", "pipe:0",
-        "-i", resolve(root, "audio/song.wav"),
-        "-filter_complex", `[1:a]atrim=start_sample=${audioStart}:end_sample=${audioEnd},asetpts=PTS-STARTPTS[a]`,
-        "-map", "0:v:0", "-map", "[a]",
+        ...audioArgs,
+        ...(filter ? ["-filter_complex", filter] : []),
+        "-map", "0:v:0", ...mapAudio,
         "-vf", `scale=${width}:${height}:flags=lanczos`,
         "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p", "-r", String(fps),
-        "-c:a", "aac", "-b:a", "192k", "-ar", "44100",
+        ...(silent ? ["-an"] : ["-c:a", "aac", "-b:a", "192k", "-ar", "44100"]),
         "-movflags", "+faststart",
         "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
         out,

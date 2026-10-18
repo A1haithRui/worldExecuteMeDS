@@ -12,6 +12,7 @@ import { caption, drawCaption } from "./mv-draw.js";
 import { clamp, mix, smooth } from "./engine/motion.js";
 import { SHOTS_DERIVED, SOURCE, shotAt, shotById } from "../shots/index.js";
 import { BOOT_RENDER } from "../shots/s01_boot.js";
+import { preroll } from "../shots/s00_preroll.js";
 
 const $ = (id) => document.getElementById(id);
 const stageCanvas = $("storyboardCanvas");
@@ -22,7 +23,7 @@ const shotName = $("shotName");
 const coverage = $("coverage");
 
 const stage = createStage(1920, 1080);
-const RENDER = { ...BOOT_RENDER };
+const RENDER = { preroll, ...BOOT_RENDER };
 
 const BASE_GRADE = Object.freeze({
   exposure: 1,
@@ -33,6 +34,7 @@ const BASE_GRADE = Object.freeze({
 });
 
 let features = null;
+let config = {};
 let lines = [];
 window.renderReady = false;
 window.renderError = null;
@@ -54,6 +56,8 @@ const featuresReady = fetch("/data/audio-features-v1.json")
     features = setAudioFeatures(table);
   })
   .catch(() => {});
+
+const configReady = fetch("/config.json").then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
 
 const fontReady = (async () => {
   const faces = ["600 20px 'MV Serif'", "400 20px 'MV Sans'", "400 20px 'MV Mono'"];
@@ -137,7 +141,9 @@ function drawPending(ctx, shot, t) {
 
 function drawShot(ctx, shot, t) {
   const fn = RENDER[shot.id];
-  if (fn) return fn(ctx, t, shot, { features });
+  // safety comes from config.json so the preroll copy and the flash cap are one
+  // source of truth; songDuration lets the warning page state the film's length
+  if (fn) return fn(ctx, t, shot, { features, safety: config.safety, songDuration: SOURCE.songDuration });
   drawPending(ctx, shot, t);
   return { pending: shot.id };
 }
@@ -198,16 +204,19 @@ function renderFrame(t) {
 let playing = false;
 let clockT = 0;
 const END = SOURCE.songDuration;
+// The film opens on the warning page, which sits before the song starts.
+const START = -SOURCE.preroll;
 
 function setTime(t) {
-  clockT = Math.max(0, Math.min(END, t));
+  clockT = Math.max(START, Math.min(END, t));
   if (seek) seek.value = String(clockT);
 }
 
 function frameLabel(t) {
-  const m = Math.floor(t / 60);
-  const s = t - m * 60;
-  return `${m}:${s < 10 ? "0" : ""}${s.toFixed(3)}`;
+  const a = Math.abs(t);
+  const m = Math.floor(a / 60);
+  const s = a - m * 60;
+  return (t < 0 ? "-" : "") + m + ":" + (s < 10 ? "0" : "") + s.toFixed(3);
 }
 
 function tick() {
@@ -234,6 +243,7 @@ function tick() {
 // --- boot ------------------------------------------------------------------
 async function boot() {
   await Promise.all([lyricsReady, featuresReady, fontReady]);
+  config = await configReady;
   // In render mode the picture is all that matters: ffmpeg muxes the original
   // audio afterwards. Dropping the element's source stops the page pulling a
   // 35 MB WAV it will never use (and aborting it at teardown).
@@ -248,14 +258,14 @@ async function boot() {
     $("play").textContent = playing ? "暂停" : "播放";
     if (playing) {
       if (audio) {
-        audio.currentTime = clockT;
+        audio.currentTime = Math.max(0, clockT);
         audio.play().catch(() => {});
       }
     } else if (audio) audio.pause();
   };
   seek.oninput = () => {
     setTime(Number(seek.value));
-    if (audio) audio.currentTime = clockT;
+    if (audio) audio.currentTime = Math.max(0, clockT);
   };
   document.addEventListener("keydown", (e) => {
     if (e.code === "Space") {

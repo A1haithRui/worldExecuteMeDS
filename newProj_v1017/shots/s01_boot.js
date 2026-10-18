@@ -475,9 +475,10 @@ const RECENTS = Object.freeze([
 function bootWorld(ctx, t, s) {
   ground(ctx, t, [1180, 470], true);
 
-  // the figure behind the glass, dim: present in the frame but unlit, so the
-  // mark in front is the only thing that reads as "on"
-  figure(ctx, t, "silhouette", 1520, 620, 820, { alpha: 0.24 });
+  // The figure behind the glass: large enough to fill the right of the frame and
+  // bleed past the edges, the way the reference frames it, and bright enough to
+  // be unmistakably a person -- dim, but not a smudge.
+  figure(ctx, t, "silhouette", 1600, 620, 1180, { alpha: 0.48 });
 
   // Height leaves the lyric caption clear: captions are drawn at y=940 and an
   // emphasised line is ~82px, so the window's foot has to stop above ~870.
