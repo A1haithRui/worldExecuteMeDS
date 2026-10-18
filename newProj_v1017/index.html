@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>world.execute(me); · DeepSeek 版 · newProj_v1017</title>
+<link rel="stylesheet" href="/src/fonts.css">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #05090f; color: #dfe6ef;
+         font: 14px/1.6 "MV Sans", "Microsoft YaHei", sans-serif; }
+  main { width: min(1400px, calc(100% - 32px)); margin: 0 auto; padding: 18px 0 40px; }
+  .head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px; }
+  .head h1 { margin: 0; font-size: 18px; font-weight: 500; letter-spacing: .04em; }
+  .head span { color: #4d6bfe; font-weight: 400; }
+  .head small { color: #5b7590; font-family: "MV Mono", monospace; font-size: 12px; }
+  .stage { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden;
+           background: #05090f; border: 1px solid #1b3145; }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; }
+  .controls button { background: #0d1b2a; color: #dfe6ef; border: 1px solid #2a4a63;
+                     border-radius: 4px; padding: 7px 16px; font: inherit; cursor: pointer; }
+  .controls button:hover { border-color: #4d6bfe; }
+  .controls input { flex: 1; min-width: 200px; accent-color: #4d6bfe; }
+  .controls .mono { font-family: "MV Mono", monospace; font-size: 12px; color: #7f97ad; }
+  .foot { margin-top: 8px; font-family: "MV Mono", monospace; font-size: 11px; color: #4a6377; }
+  body.render-only main { width: 1920px; padding: 0; }
+  body.render-only .head, body.render-only .controls, body.render-only .foot { display: none; }
+  body.render-only .stage { width: 1920px; height: 1080px; aspect-ratio: auto; border: 0; }
+</style>
+</head>
+<body>
+<main>
+  <div class="head">
+    <h1>world.execute(me); <span>·</span> DeepSeek</h1>
+    <small id="coverage">…</small>
+  </div>
+  <div class="stage"><canvas id="storyboardCanvas" width="1920" height="1080"></canvas></div>
+  <div class="controls">
+    <button id="play" type="button">播放</button>
+    <input id="seek" type="range" min="0" max="211.957596" step="0.001" value="0" aria-label="进度">
+    <span class="mono" id="clock">0:00.000 / 3:31.958</span>
+    <span class="mono" id="shotName">—</span>
+  </div>
+  <p class="foot">
+    空格播放／暂停，方向键 ±1 秒。全片 87 镜与参考片一一对应；目前只实现了第 1 段（0 启动）四镜，
+    其余镜头会明确显示「NOT RENDERED YET」。
+  </p>
+  <audio id="audio" preload="none"></audio>
+</main>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
+

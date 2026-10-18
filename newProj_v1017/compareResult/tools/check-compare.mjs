@@ -58,18 +58,29 @@ const info = await page.evaluate(async () => {
   const songL = vL.currentTime - cfg.left.preroll;
   const songR = vR.currentTime - cfg.right.preroll;
 
-  // The right-hand per-shot clip does not exist yet, so the page must say so
-  // rather than show a broken player.
+  // A slot we have not rendered yet must say so rather than show a broken player.
   const missR = !!document.querySelector("#clipHostR .missing");
+  const missId = document.getElementById("clipId").textContent;
+
+  // Then a slot we HAVE rendered: both sides should give a playable clip.
+  document.querySelector('#rows tbody tr.shot[data-i="1"]').click();
+  await new Promise((r) => setTimeout(r, 2500));
+  const clipR = document.querySelector("#clipHostR video");
+  const clipL = document.querySelector("#clipHostL video");
+  const renderedId = document.getElementById("clipId").textContent;
 
   return {
     rows, groups,
     durL: vL.duration, durR: vR.duration,
     readyL: vL.readyState, readyR: vR.readyState,
     songL, songR,
-    clipId: document.getElementById("clipId").textContent,
     missingRightClip: missR,
-    leftClipSrc: (document.querySelector("#clipHostL video") || {}).src || "",
+    missingClipId: missId,
+    renderedClipId: renderedId,
+    ourClipReady: clipR ? clipR.readyState : -1,
+    ourClipDuration: clipR ? clipR.duration : 0,
+    theirClipReady: clipL ? clipL.readyState : -1,
+    ourClipSrc: clipR ? clipR.src : "",
     activeRow: (document.querySelector("#rows tbody tr.shot.active") || {}).dataset?.i ?? "",
   };
 });
@@ -95,9 +106,11 @@ ok("参考片可读", info.readyL >= 1, "readyState=" + info.readyL + " duration
 ok("我们的成片可读", info.readyR >= 1, "readyState=" + info.readyR + " duration=" + (info.durR || 0).toFixed(2));
 ok("两边落在同一歌曲时间", Math.abs(info.songL - info.songR) < 0.08,
    "参考 " + info.songL.toFixed(3) + "s vs 我们 " + info.songR.toFixed(3) + "s（差 " + ((info.songL - info.songR) * 1000).toFixed(0) + "ms）");
-ok("点行会高亮并载入该镜", info.activeRow === "11" && /第 12 \/ 87 镜/.test(info.clipId), info.clipId);
-ok("参考片该镜剪辑已载入", /claude-version-study\/shots\/\d{3}_/.test(info.leftClipSrc), info.leftClipSrc.split("/").slice(-1)[0]);
-ok("我们尚未渲染的镜有明确提示", info.missingRightClip, info.missingRightClip ? "显示占位说明" : "没有提示");
+ok("点行会高亮并载入该镜", info.activeRow === "1" && /第 2 \/ 87 镜/.test(info.renderedClipId), info.renderedClipId);
+ok("我们尚未渲染的镜有明确提示", info.missingRightClip, info.missingRightClip ? info.missingClipId : "没有提示");
+ok("我们已渲染的镜两边都能播", info.ourClipReady >= 1 && info.theirClipReady >= 1,
+   "我们 readyState=" + info.ourClipReady + " (" + (info.ourClipDuration || 0).toFixed(2) + "s) / 参考 readyState=" + info.theirClipReady);
+ok("我们该镜的剪辑路径正确", /newProj_v1017\/shots\/002_boot-power\.mp4/.test(info.ourClipSrc), info.ourClipSrc.split("/").slice(-1)[0]);
 ok("config.js 指向的片子都存在", missingFiles.length === 0, missingFiles.join(" | ") || "两个都存在");
 
 console.log("对比页面加载检查");
