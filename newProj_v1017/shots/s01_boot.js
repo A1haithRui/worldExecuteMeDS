@@ -472,6 +472,13 @@ const RECENTS = Object.freeze([
   "why can't I sleep",
 ]);
 
+// The shot's motion: the lyric that is on screen is typed into the composer.
+// 20 characters at 22 cps takes 0.9 s, so it lands about when that same lyric
+// line finishes on screen -- the box and the caption read as one gesture.
+const TYPED_LINE = "Set up our new world";
+const TYPING = 0.6;
+const TYPING_CPS = 22;
+
 function bootWorld(ctx, t, s) {
   ground(ctx, t, [1180, 470], true);
 
@@ -540,27 +547,35 @@ function bootWorld(ctx, t, s) {
       strokeK: 1, fillK: 1, color: BRAND, alpha: 0.42 + 0.1 * at(t, s.at + 1.2, s.at + 3.2),
     });
     halo(ctx, mx + mw / 2, markY, 260, 0.10, BRAND);
-    type(ctx, "nothing has been said yet", mx + mw / 2, markY + 132, 14, "#3d5f76", "MV Mono", "center");
 
-    // composer
+    // The hint fades as the box starts filling: the room stops being empty the
+    // moment someone types into it.
+    const said = typewriter(TYPED_LINE, t, s.at + TYPING, TYPING_CPS);
+    const fill = said.length / TYPED_LINE.length;
+    layer(ctx, 1 - fill, () =>
+      type(ctx, "nothing has been said yet", mx + mw / 2, markY + 132, 14, "#3d5f76", "MV Mono", "center"),
+    );
+
+    // composer: the shot's only motion. The lyric that is on screen is also
+    // being written into the box, one character at a time.
     const cb = { x: mx + 34, y: R.y + R.h - 132, w: mw - 68, h: 92 };
     rect(ctx, cb.x, cb.y, cb.w, cb.h, "#0b2433", 12, "#24495b");
-    type(ctx, "发消息，/ 调用指令", cb.x + 26, cb.y + cb.h / 2 + 6, 18, "#3b5a74", "MV Sans");
+    const baseY = cb.y + cb.h / 2 + 6;
+    if (said.length === 0) {
+      type(ctx, "发消息，/ 调用指令", cb.x + 26, baseY, 18, "#3b5a74", "MV Sans");
+    } else {
+      type(ctx, said, cb.x + 26, baseY, 19, "#cfd9ea", "MV Sans");
+      ctx.font = `400 19px "MV Sans"`;
+      chatCaret(ctx, cb.x + 28 + ctx.measureText(said).width, cb.y + cb.h / 2, 22, t, {
+        on: true, color: BRAND_SOFT, width: 2,
+      });
+    }
+    // the send affordance wakes up once there is something to send
+    const armed = at(t, s.at + TYPING + 0.1, s.at + TYPING + 0.6) * (said.length > 0 ? 1 : 0);
     const send = { x: cb.x + cb.w - 52, y: cb.y + cb.h / 2 };
-    disc(ctx, send.x, send.y, 17, BRAND_SOFT, 0.5, false, 1.4);
-    halo(ctx, send.x, send.y, 52, 0.18, BRAND);
+    disc(ctx, send.x, send.y, 17, BRAND_SOFT, 0.5 + 0.45 * armed, false, 1.4 + armed * 0.8);
+    halo(ctx, send.x, send.y, 52, 0.18 + 0.22 * armed, BRAND);
   });
-
-  // the caret blinks on song time, so the frame stays reproducible
-  const caretOn = at(t, s.at + 0.65, s.at + 0.9);
-  if (caretOn > 0) {
-    const cb = { x: R.x + SIDE + 34, y: R.y + R.h - 132, w: R.w - SIDE - 68, h: 92 };
-    layer(ctx, caretOn * 0.9, () => {
-      ctx.font = `400 18px "MV Sans"`;
-      const tw = ctx.measureText("发消息，/ 调用指令").width;
-      chatCaret(ctx, cb.x + 26 + tw + 12, cb.y + cb.h / 2, 22, t, { on: true, color: BRAND_SOFT, width: 2 });
-    });
-  }
 
   return { phase: "world", empty: true, recents: RECENTS.length };
 }
