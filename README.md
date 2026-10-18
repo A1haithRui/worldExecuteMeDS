@@ -16,8 +16,6 @@
 
 同日另做了 [`claude-version-study/`](claude-version-study/)：把参考片 87 个镜头逐镜切出来、做成可交互审查页，并写出[解剖结论](claude-version-study/ANALYSIS.md)——其中最有用的两条是"参考片 87 个边界里只有 13 个用成形转场（我们 55 个边界配了 40 条）"，以及"我们的全片闪帧最大跳变 9.93%，阈值 10%，压在线上且没有警告页"。
 
-《化身孤岛的鲸》临时探索支线已由用户取消，后续工作集中在本主线。
-
 - `newProj_v1014/assets/character/deepseek_*_v3.png`：当前选定的四张鲸鱼娘角色成品图（透明 PNG）。
 - `newProj_v1014/assets/character/v3_sources/`：v3 的生成源图、提示词、制作记录与质量检查。
 - `newProj_v1014/assets/character/v4/`：由 v3 提取的低亮、剪影与独立手部素材，以及使用边界和定位记录。

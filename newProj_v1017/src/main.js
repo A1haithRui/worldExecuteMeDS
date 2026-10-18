@@ -14,6 +14,7 @@ import { clamp, mix, smooth } from "./engine/motion.js";
 import { SHOTS_DERIVED, SOURCE, shotAt, shotById } from "../shots/index.js";
 import { BOOT_RENDER } from "../shots/s01_boot.js";
 import { preroll } from "../shots/s00_preroll.js";
+import { SECTION2_RENDER } from "../shots/s02_title.js";
 
 const $ = (id) => document.getElementById(id);
 const stageCanvas = $("storyboardCanvas");
@@ -24,7 +25,7 @@ const shotName = $("shotName");
 const coverage = $("coverage");
 
 const stage = createStage(1920, 1080);
-const RENDER = { preroll, ...BOOT_RENDER };
+const RENDER = { preroll, ...BOOT_RENDER, ...SECTION2_RENDER };
 
 const BASE_GRADE = Object.freeze({
   exposure: 1,
@@ -181,8 +182,13 @@ function gradeOptions(t, diag, shot) {
 function lyricFor(t, shot, plan) {
   const raw = lineAt(t);
   if (!raw) return null;
+  // A shot that declares no lines carries none: the table's "-" means this shot
+  // has no lyric of its own, which is how the reference reads too. Without this,
+  // a line that outlives its shot (L12 runs from 16.0 to 20.0, past a cut at
+  // 16.93) would be drawn again by the next shot at that shot's placement.
+  if (!shot.lines) return null;
   const idx = raw.index + 1;
-  if (shot.lines && (idx < shot.lines[0] || idx > shot.lines[1])) return null;
+  if (idx < shot.lines[0] || idx > shot.lines[1]) return null;
   if (plan.embeddedLines && plan.embeddedLines.includes(idx)) return null;
   const start = Math.max(raw.start, shot.at);
   const end = Math.min(raw.end ?? raw.start + 3, shot.until);

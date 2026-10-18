@@ -18,15 +18,10 @@
 import { C, mix, at, layer, stroke, disc, rect, type, halo, ground } from "../src/mv-draw.js";
 import { drawWhale } from "../src/assets/whale.js";
 import { TOKENS, chatWindow, caret as chatCaret } from "../src/engine/chat.js";
-import { idle as portraitIdle } from "../src/engine/portrait.js";
 import { typewriter } from "../src/engine/type.js";
-import { loadImages } from "../src/mv-draw.js";
+import { figure } from "./figure.js";
+import { clientWindow, RECENTS, CLIENT_R } from "./ui-client.js";
 
-const { images } = loadImages({
-  lowlight: "/assets/character/v4/deepseek_bust_v4_lowlight.png",
-  silhouette: "/assets/character/v4/deepseek_bust_v4_silhouette.png",
-  bust: "/assets/character/deepseek_bust_v3.png",
-});
 
 const BRAND = "#4d6bfe";
 const BRAND_SOFT = "#7f93ff";
@@ -41,19 +36,6 @@ const WIN = Object.freeze({ x: 160, y: 90, w: 1600, h: 880 });
 const WIN_CX = WIN.x + WIN.w / 2;
 const WIN_CY = WIN.y + WIN.h / 2;
 
-function figure(ctx, t, key, cx, cy, height, opts = {}) {
-  const { alpha = 1, seed = 5 } = opts;
-  const img = images[key] || images.bust;
-  if (!img || !img.complete || !img.naturalWidth) return null;
-  const b = portraitIdle(t, { seed, bobAmp: 4 });
-  const s = height / 1438;
-  const w = 1342 * s;
-  const h = 1704 * s;
-  layer(ctx, alpha, () =>
-    ctx.drawImage(img, cx + b.sway - w / 2, cy + b.bobY - h / 2, w * b.breathe, h * b.breathe),
-  );
-  return { x: cx - w / 2, y: cy - h / 2, w, h };
-}
 
 /** Centred letter-spaced text; returns its width. */
 function spacedCentred(ctx, text, cx, y, size, color, family = "MV Sans", tracking = 0.22) {
@@ -495,15 +477,10 @@ function bootParams(ctx, t, s) {
 // boot-world — 11.387–15.080. Reworked against the reference's SIMULATION shot:
 // a whole client with its sidebar of past conversations, the mark in front, and
 // the figure dim behind the glass. Nothing has been said yet.
+//
+// The client itself lives in ui-client.js, because section 2 is set inside the
+// same window and two copies of it would drift.
 // ---------------------------------------------------------------------------
-const RECENTS = Object.freeze([
-  "sine wave, explained",
-  "where do you sleep between messages",
-  "the message I deleted",
-  "is a whale a machine",
-  "how many worlds at once",
-  "why can't I sleep",
-]);
 
 // The shot's motion: the lyric that is on screen is typed into the composer.
 // 20 characters at 22 cps takes 0.9 s, so it lands about when that same lyric
@@ -520,99 +497,28 @@ function bootWorld(ctx, t, s) {
   // be unmistakably a person -- dim, but not a smudge.
   figure(ctx, t, "silhouette", 1700, 560, 1320, { alpha: 0.48 });
 
-  // Height leaves the lyric caption clear: captions are drawn at y=940 and an
-  // emphasised line is ~82px, so the window's foot has to stop above ~870.
-  const R = { x: 120, y: 80, w: 1660, h: 910 };
   const inK = at(t, s.at + 0.05, s.at + 0.65);
-  const SIDE = 340;
 
-  layer(ctx, 0.86 * inK, () => {
-    // shell
-    ctx.beginPath();
-    ctx.roundRect(R.x, R.y, R.w, R.h, 22);
-    ctx.fillStyle = "rgba(7,23,34,0.94)";
-    ctx.fill();
-    ctx.strokeStyle = "#1f3f52";
-    ctx.lineWidth = 1.4;
-    ctx.stroke();
+  // The shot's motion: the lyric on screen is typed into the composer, so the
+  // box and the words are one gesture.
+  const said = typewriter(TYPED_LINE, t, s.at + TYPING, TYPING_CPS);
+  const fill = said.length / TYPED_LINE.length;
+  const armed = at(t, s.at + TYPING + 0.1, s.at + TYPING + 0.6) * (said.length > 0 ? 1 : 0);
 
-    // ---- sidebar: who this window belongs to, and what has been said before
-    ctx.fillStyle = "rgba(5,17,26,0.9)";
-    ctx.fillRect(R.x, R.y, SIDE, R.h);
-    stroke(ctx, [[R.x + SIDE, R.y], [R.x + SIDE, R.y + R.h]], "#1f3f52", 1.2);
-    lockup(ctx, R.x + 26, R.y + 54, 22, 34, "#dfe6ef", "#43607d", 0.95);
-
-    // new chat
-    const nb = { x: R.x + 20, y: R.y + 88, w: SIDE - 40, h: 50 };
-    rect(ctx, nb.x, nb.y, nb.w, nb.h, "#0f2434", 8, "#274b60");
-    type(ctx, "+", nb.x + 18, nb.y + 33, 19, BRAND_SOFT, "MV Sans");
-    type(ctx, "New chat", nb.x + 44, nb.y + 33, 17, "#9fb4d8", "MV Sans");
-
-    type(ctx, "Recents", R.x + 28, nb.y + nb.h + 38, 13, "#3d5f76", "MV Mono");
-    RECENTS.forEach((title, i) => {
-      const ry = nb.y + nb.h + 60 + i * 38;
-      // one of them is this session's slot, still empty
-      const active = i === 0;
-      if (active) rect(ctx, R.x + 14, ry - 17, SIDE - 28, 34, "rgba(77,107,254,0.10)", 6);
-      type(ctx, title, R.x + 28, ry, 14.5, active ? "#a9bde0" : "#4a6b83", "MV Sans");
-    });
-
-    // who is waiting at the bottom
-    stroke(ctx, [[R.x, R.y + R.h - 60], [R.x + SIDE, R.y + R.h - 60]], "#1f3f52", 1.2);
-    disc(ctx, R.x + 34, R.y + R.h - 30, 10, "#2a4459", 1);
-    type(ctx, "you", R.x + 52, R.y + R.h - 25, 15, "#5b7590", "MV Sans");
-    disc(ctx, R.x + SIDE - 100, R.y + R.h - 30, 4, "#3d5f76", 1);
-    type(ctx, "silent", R.x + SIDE - 86, R.y + R.h - 25, 13, "#3d5f76", "MV Mono");
-
-    // ---- main: the empty conversation
-    const mx = R.x + SIDE;
-    const mw = R.w - SIDE;
-    type(ctx, "New chat", mx + 40, R.y + 58, 22, "#dfe6ef", "MV Sans");
-    // the ready chip, top right
-    rect(ctx, R.x + R.w - 196, R.y + 34, 162, 34, "rgba(77,107,254,0.10)", 17, "#2b4a6b");
-    disc(ctx, R.x + R.w - 176, R.y + 51, 4.5, BRAND_SOFT, 1);
-    type(ctx, "harness · ready", R.x + R.w - 162, R.y + 57, 14, "#9fb4d8", "MV Mono");
-    stroke(ctx, [[mx, R.y + 84], [R.x + R.w, R.y + 84]], "#1f3f52", 1.2);
-
-    // the mark in front: this is the thing you are talking to
-    const markY = R.y + R.h / 2 - 46;
-    drawWhale(ctx, mx + mw / 2, markY, 220, {
-      strokeK: 1, fillK: 1, color: BRAND, alpha: 0.42 + 0.1 * at(t, s.at + 1.2, s.at + 3.2),
-    });
-    halo(ctx, mx + mw / 2, markY, 300, 0.10, BRAND);
-
-    // The hint fades as the box starts filling: the room stops being empty the
-    // moment someone types into it.
-    const said = typewriter(TYPED_LINE, t, s.at + TYPING, TYPING_CPS);
-    const fill = said.length / TYPED_LINE.length;
-    layer(ctx, 1 - fill, () =>
-      type(ctx, "nothing has been said yet", mx + mw / 2, markY + 132, 14, "#3d5f76", "MV Mono", "center"),
-    );
-
-    // composer: the shot's only motion. The lyric that is on screen is also
-    // being written into the box, one character at a time.
-    const cb = { x: mx + 40, y: R.y + R.h - 144, w: mw - 80, h: 104 };
-    rect(ctx, cb.x, cb.y, cb.w, cb.h, "#0b2433", 12, "#24495b");
-    const baseY = cb.y + cb.h / 2 + 6;
-    if (said.length === 0) {
-      type(ctx, "发消息，/ 调用指令", cb.x + 30, baseY, 19, "#3b5a74", "MV Sans");
-    } else {
-      type(ctx, said, cb.x + 30, baseY, 20, "#cfd9ea", "MV Sans");
-      ctx.font = `400 20px "MV Sans"`;
-      chatCaret(ctx, cb.x + 32 + ctx.measureText(said).width, cb.y + cb.h / 2, 23, t, {
-        on: true, color: BRAND_SOFT, width: 2,
-      });
-    }
-    // the send affordance wakes up once there is something to send
-    const armed = at(t, s.at + TYPING + 0.1, s.at + TYPING + 0.6) * (said.length > 0 ? 1 : 0);
-    const send = { x: cb.x + cb.w - 58, y: cb.y + cb.h / 2 };
-    disc(ctx, send.x, send.y, 19, BRAND_SOFT, 0.5 + 0.45 * armed, false, 1.4 + armed * 0.8);
-    halo(ctx, send.x, send.y, 58, 0.18 + 0.22 * armed, BRAND);
+  clientWindow(ctx, CLIENT_R, t, {
+    ink: 0.86 * inK,
+    presence: "silent",
+    chip: { text: "harness · ready", on: true },
+    // the hint leaves as the box fills: the room stops being empty
+    hint: { text: "nothing has been said yet", alpha: 1 - fill },
+    composerText: said,
+    caret: said.length > 0,
+    sendK: armed,
+    markAlpha: 0.42 + 0.1 * at(t, s.at + 1.2, s.at + 3.2),
   });
 
   return { phase: "world", empty: true, recents: RECENTS.length };
 }
-
 export const BOOT_RENDER = Object.freeze({
   "boot-power": bootPower,
   "boot-layout": bootLayout,

@@ -7,13 +7,18 @@
 //
 // The floor is 42px at 1080p; nothing here goes below it.
 
-const DEFAULT = Object.freeze({ style: "display", size: 92, align: "center" });
+const DEFAULT = Object.freeze({
+  style: "display", size: 92, align: "center", anchor: [960, 900], maxWidth: 1400,
+});
 
 // Section-level defaults. Section 0 is the warning page (no lyric), section 1 is
 // the boot/interface section, so its words read as terminal output.
 const BY_SECTION = {
   0: { style: "none" },
   1: { style: "typed", size: 46, align: "left" },
+  // section 2 is set inside the client, whose words are all drawn by the shots
+  // themselves: the launch command types into the bar, the question into the box
+  2: { style: "embedded" },
 };
 
 /**
@@ -34,6 +39,8 @@ export const POWER_LINES = Object.freeze([3, 6, 8, 11]);
  * cases where the keyword cannot sit where the shot's ordinary line does.
  */
 export const LYRIC_BY_SHOT = Object.freeze({
+  // the launch command IS this shot: the bar types it, so the lyric layer keeps out
+  "title": { style: "embedded" },
   // bottom-left inside the window, where a shell would echo
   "boot-power": {
     style: "typed", size: 48, align: "left", anchor: [214, 916],
