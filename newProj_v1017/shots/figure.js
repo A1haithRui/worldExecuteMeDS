@@ -5,11 +5,16 @@
 import { loadImages, layer } from "../src/mv-draw.js";
 import { idle as portraitIdle } from "../src/engine/portrait.js";
 
-const { images } = loadImages({
+const { images, ready } = loadImages({
   lowlight: "/assets/character/v4/deepseek_bust_v4_lowlight.png",
   silhouette: "/assets/character/v4/deepseek_bust_v4_silhouette.png",
   bust: "/assets/character/deepseek_bust_v3.png",
 });
+
+/** Resolves when the bust images have decoded. The renderer must await this:
+ * without it the first frame can be drawn before the art exists, which shows up
+ * as a frame with no character in it and as a flaky determinism check. */
+export const figureReady = ready;
 
 /**
  * Draw the bust centred on (cx, cy) at the given height, with the idle bob.

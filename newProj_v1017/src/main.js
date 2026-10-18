@@ -8,6 +8,7 @@
 // function of t, which is what makes export deterministic.
 import { createStage, shakeAt } from "./engine/stage.js";
 import { setAudioFeatures, sampleAt } from "./engine/audio.js";
+import { figureReady } from "../shots/figure.js";
 import { drawLyric } from "./engine/lyric.js";
 import { lyricPlanFor } from "../shots/lyric-plan.js";
 import { clamp, mix, smooth } from "./engine/motion.js";
@@ -272,7 +273,7 @@ function tick() {
 
 // --- boot ------------------------------------------------------------------
 async function boot() {
-  await Promise.all([lyricsReady, featuresReady, fontReady]);
+  await Promise.all([lyricsReady, featuresReady, fontReady, figureReady]);
   config = await configReady;
   // In render mode the picture is all that matters: ffmpeg muxes the original
   // audio afterwards. Dropping the element's source stops the page pulling a

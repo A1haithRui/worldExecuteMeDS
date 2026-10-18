@@ -100,6 +100,19 @@
     <span class="sub">真正的问题是 <b>would you love me if I ran you</b>（你选的）。它同时扣住片名 <code>world.execute(me);</code> 和副歌那句"though we are trapped in this strange simulation"。</span>
   </div>
 
+  <div class="ask" style="border-left-color:#83e9e6">
+    <b>这一轮按你的四条意见精修了。</b>
+    <br>① 背景人物亮度翻倍（26% → 52%），标志加了炫光：热核 + 横向光晕（anamorphic）+ 八道缓慢旋转的光芒 + 呼吸光环。
+    <br>② 命令打完后的切点不再是硬切：画面被<b>收进标志</b>——光线向内汇聚、标志过曝泛滥整帧，下一镜再从同一个点<b>长回</b>成聊天窗口。两镜共用同一个"门口"坐标，所以读起来是连续的。
+    <br>③ 整体配色提亮：给底子和窗口加了"亮度档位"，第 2 段（聊天世界）比第 1 段（产品世界）亮约一档，色相不变——进"另一个世界"靠的是光，不是换色调。
+    <br>④ 进入镜的过渡有内容了：右上角出现 <b>连接成功 ✓</b> 的确认条（对号是一笔一笔画出来的），鼠标不再是"随便飘"，而是<b>明确移动到输入框</b>并留下点击波纹，直接衔接下一镜的打字。标志也改成持续脉动。
+  </div>
+
+  <div class="ask" style="border-left-color:#e0a06a">
+    <b>顺带修掉一个真 bug。</b>导出时出现过一次 <code>deterministic: NO</code>，查下来是：<code>loadImages</code> 返回的就绪 promise <b>没有任何地方 await</b>——人物图还在解码时第一帧就已经渲染，于是那一帧没有人物。现在渲染被卡在图片解码之后，连续 4 次冷启动都通过。这类 bug 偶发，而且画面看着"正常"，最容易被放过去。
+  </div>
+  </div>
+
   <div class="ask" style="border-left-color:#7f93ff">
     <b>顺手做的两件工程事。</b>一是把客户端窗口和人物抽成共享模块（<code>ui-client.js</code> / <code>figure.js</code>）——这一段的四镜全都在第 1 段那张窗口里，两份拷贝必然漂移。二是修了歌词归属规则：<code>lines</code> 为空的镜头不再继承上一镜的歌词（L12 从 16.0 持续到 20.0，跨过了 16.93 的切点，旧规则会让下一镜用错位置再画一次）。
   </div>

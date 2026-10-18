@@ -116,17 +116,34 @@ function point(ctx, x, y, white = false, alpha = 1, r = 7) {
     disc(ctx, x, y, r, white ? C.white : C.hot);
   });
 }
-function ground(ctx, t, focus = [1250, 440], quiet = false) {
-  ctx.fillStyle = C.bg;
+// Mix two #rrggbb strings. Needed because the ground's tone has to be lifted by a
+// number rather than swapped for another hard-coded palette.
+const mixHex = (a, b, k) => {
+  const pa = parseInt(a.slice(1), 16);
+  const pb = parseInt(b.slice(1), 16);
+  const r = Math.round(mix((pa >> 16) & 255, (pb >> 16) & 255, k));
+  const g = Math.round(mix((pa >> 8) & 255, (pb >> 8) & 255, k));
+  const bl = Math.round(mix(pa & 255, pb & 255, k));
+  return `#${((r << 16) | (g << 8) | bl).toString(16).padStart(6, "0")}`;
+};
+
+/**
+ * The room. `lift` raises the whole thing toward a lit interior without changing
+ * its hue, which is how the film moves from the product world's near-black into
+ * the chat world's blue without leaving the DeepSeek palette.
+ */
+function ground(ctx, t, focus = [1250, 440], quiet = false, lift = 0) {
+  const bg = mixHex(C.bg, "#0f2a3d", lift);
+  ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
   const g = ctx.createRadialGradient(...focus, 30, ...focus, 1100);
-  g.addColorStop(0, quiet ? "#0b2936" : "#103747");
-  g.addColorStop(0.6, "#08202d");
-  g.addColorStop(1, C.bg);
+  g.addColorStop(0, mixHex(quiet ? "#0b2936" : "#103747", "#2a6a8a", lift));
+  g.addColorStop(0.6, mixHex("#08202d", "#153c54", lift));
+  g.addColorStop(1, bg);
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
-  layer(ctx, quiet ? 0.16 : 0.28, () => {
-    ctx.fillStyle = "#0c3040";
+  layer(ctx, (quiet ? 0.16 : 0.28) * (1 + lift * 0.5), () => {
+    ctx.fillStyle = mixHex("#0c3040", "#1d5c7a", lift);
     ctx.beginPath();
     ctx.moveTo(1330, 0);
     ctx.lineTo(1730, 0);
@@ -138,7 +155,7 @@ function ground(ctx, t, focus = [1250, 440], quiet = false) {
   ctx.drawImage(texture, 0, 0, W, H);
   const vig = ctx.createRadialGradient(960, 520, 420, 960, 520, 1250);
   vig.addColorStop(0, "transparent");
-  vig.addColorStop(1, "#020b13a0");
+  vig.addColorStop(1, mixHex("#020b13", "#061726", lift) + "a0");
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, W, H);
 }
