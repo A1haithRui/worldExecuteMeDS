@@ -33,6 +33,7 @@ const BY_SECTION = {
   4: { style: "display", size: 46, align: "left", anchor: [512, 250], maxWidth: 820 },
   5: { style: "embedded" },
   6: { style: "embedded" },
+  7: { style: "display", size: 46, align: "center", anchor: [960, 180], maxWidth: 1400 },
 };
 
 /**
@@ -154,6 +155,14 @@ export const LYRIC_BY_SHOT = Object.freeze({
   // ---- section 6: the object plates ---------------------------------------
   // The verse line is spoken inside the plate, so the sheet prints it as type at the
   // foot of the object; the keyword is a power line under it.
+  "pre2-settings": { style: "display", size: 44, align: "left", anchor: [200, 260], maxWidth: 1000 },
+  "pre2-gender": { style: "display", size: 50, align: "center", anchor: [960, 156], maxWidth: 1300 },
+  "pre2-day": { style: "display", size: 50, align: "center", anchor: [960, 160], maxWidth: 1300 },
+  "pre2-role": { style: "display", size: 50, align: "center", anchor: [960, 170], maxWidth: 1300 },
+  "pre2-loop": { style: "display", size: 44, align: "left", anchor: [200, 260], maxWidth: 1000 },
+  "pre2-trance": { style: "display", size: 50, align: "center", anchor: [960, 168], maxWidth: 1300 },
+  "pre2-loop-b": { style: "display", size: 44, align: "left", anchor: [200, 260], maxWidth: 1000 },
+
   "v2-ask1": { style: "embedded" },
   "v2-eggplant": { style: "display", size: 46, align: "center", anchor: [960, 196], maxWidth: 1500,
     powerAnchor: [960, 900], powerMaxWidth: 1500 },
