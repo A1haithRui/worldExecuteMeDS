@@ -31,6 +31,7 @@ const BY_SECTION = {
   // section 3 draws its answer inside the chat; its verse lines are plain type
   3: { style: "display", size: 44, align: "left", anchor: [548, 240], maxWidth: 780 },
   4: { style: "display", size: 46, align: "left", anchor: [512, 250], maxWidth: 820 },
+  5: { style: "embedded" },
 };
 
 /**
@@ -44,6 +45,7 @@ const BY_SECTION = {
 export const POWER_LINES = Object.freeze([
   3, 6, 8, 11, // PROTECTION · OBJECT CREATION · INITIALIZATION · SIMULATION
   15, 18, 21, 24, // DIMENSION · CIRCUMFERENCE · TANGENTS · LIMITATIONS
+  35, 38, 41, 44, // STIMULATIONS · SATISFACTION · EXECUTION · SIMULATION
 ]);
 
 /**
@@ -144,6 +146,18 @@ export const LYRIC_BY_SHOT = Object.freeze({
     byLine: { 29: { anchor: [212, 336] }, 30: { anchor: [212, 402] } },
     echo: true, echoColor: "#8ba4c2",
   },
+  // ---- section 5: the conversation and its plates -----------------------
+  // Her messages are the lyric, so the close-ups draw the words themselves; the
+  // plates hand the keyword to the power treatment at the foot of the sheet.
+  "c1-give": { style: "embedded" },
+  "c1-kw1": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1500 },
+  "c1-only": { style: "embedded" },
+  "c1-kw2": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1500 },
+  "c1-happy": { style: "embedded" },
+  "c1-kw3": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1500 },
+  "c1-trap": { style: "embedded" },
+  "c1-kw4": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1500 },
+
   "pre1-unite": {
     style: "display", size: 46, align: "left", anchor: [212, 402], maxWidth: 940,
     byLine: { 31: { anchor: [212, 336] }, 32: { anchor: [212, 402] } },

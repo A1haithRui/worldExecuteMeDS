@@ -18,6 +18,7 @@ import { preroll } from "../shots/s00_preroll.js";
 import { SECTION2_RENDER } from "../shots/s02_title.js";
 import { SECTION3_RENDER } from "../shots/s03_geometry.js";
 import { SECTION4_RENDER } from "../shots/s04_settings.js";
+import { SECTION5_RENDER, SECTION5_READY } from "../shots/s05_chorus.js";
 
 const $ = (id) => document.getElementById(id);
 const stageCanvas = $("storyboardCanvas");
@@ -28,7 +29,10 @@ const shotName = $("shotName");
 const coverage = $("coverage");
 
 const stage = createStage(1920, 1080);
-const RENDER = { preroll, ...BOOT_RENDER, ...SECTION2_RENDER, ...SECTION3_RENDER, ...SECTION4_RENDER };
+const RENDER = {
+  preroll, ...BOOT_RENDER, ...SECTION2_RENDER, ...SECTION3_RENDER,
+  ...SECTION4_RENDER, ...SECTION5_RENDER,
+};
 
 const BASE_GRADE = Object.freeze({
   exposure: 1,
@@ -317,7 +321,7 @@ function tick() {
 
 // --- boot ------------------------------------------------------------------
 async function boot() {
-  await Promise.all([lyricsReady, featuresReady, fontReady, figureReady]);
+  await Promise.all([lyricsReady, featuresReady, fontReady, figureReady, SECTION5_READY]);
   config = await configReady;
   // In render mode the picture is all that matters: ffmpeg muxes the original
   // audio afterwards. Dropping the element's source stops the page pulling a
