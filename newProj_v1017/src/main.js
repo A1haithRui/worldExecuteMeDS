@@ -151,8 +151,32 @@ function drawShot(ctx, shot, t) {
   return { pending: shot.id };
 }
 
+/**
+ * The film's colour state over song time.
+ *
+ * The reference keeps its whole setup monochrome -- a chroma magnitude of about 1
+ * from its warning page through its last client shot -- and colour arrives only
+ * when the spark lights and the session launches (10.8 at that shot). We do the
+ * same with our own colour: sections 0 and 1 are steel grey, the launch in `title`
+ * brings the blue in, and from there it stays.
+ *
+ * The ramp is placed so the colour arrives with the light and is complete when the
+ * command finishes typing, rather than snapping on at a cut.
+ */
+const COLOUR_AT = 15.13; // the mark begins to light
+const COLOUR_DONE = 16.5; // the launch command has been entered
+const lerp = (a, b, k) => a + (b - a) * Math.max(0, Math.min(1, k));
+
+function saturationAt(t) {
+  if (t < 7.6949) return 0.08;
+  if (t < 11.3873) return lerp(0.08, 0.2, (t - 7.6949) / (11.3873 - 7.6949));
+  if (t < 15.0798) return lerp(0.2, 0.32, (t - 11.3873) / (15.0798 - 11.3873));
+  if (t < COLOUR_DONE) return lerp(0.32, 1, ((t - COLOUR_AT) / (COLOUR_DONE - COLOUR_AT)) ** 0.7);
+  return 1;
+}
+
 function gradeOptions(t, diag, shot) {
-  const o = { ...BASE_GRADE };
+  const o = { ...BASE_GRADE, sat: saturationAt(t) };
   if (diag && diag.grade) Object.assign(o, diag.grade);
 
   // Breathe with the music, but hold the shot still: the reference moves the

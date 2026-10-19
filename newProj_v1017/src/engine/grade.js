@@ -33,6 +33,10 @@ export const GRADE_DEFAULTS = Object.freeze({
   tintAmount: 0,
   fade: 0,
   fadeColor: "#02070d",
+  // 1 = the film's chosen colour. Lower values pull the finished frame toward
+  // grey without changing its hue, which is how the product world reads as
+  // colourless and the launch reads as the moment colour arrives.
+  sat: 1,
 });
 
 function makeNoiseTile(seed) {
@@ -253,6 +257,21 @@ export function createGrade(width = 1920, height = 1080, { noiseSeed = 71124 } =
       ctx.save();
       ctx.globalAlpha = clamp(o.fade);
       ctx.fillStyle = o.fadeColor;
+      ctx.fillRect(0, 0, width, height);
+      ctx.restore();
+    }
+
+    // --- colour state ------------------------------------------------------
+    // The product world has no colour at all; colour is what "running" looks
+    // like, so it arrives with the launch and not before. This is applied after
+    // everything else -- including the fade, and the words too, because the stage
+    // draws the lyrics before it calls render -- so the whole frame is colourless
+    // together rather than one element escaping the state.
+    if (o.sat < 0.999) {
+      ctx.save();
+      ctx.globalCompositeOperation = "saturation";
+      ctx.globalAlpha = 1 - clamp(o.sat);
+      ctx.fillStyle = "hsl(0, 0%, 50%)";
       ctx.fillRect(0, 0, width, height);
       ctx.restore();
     }
