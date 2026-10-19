@@ -19,6 +19,7 @@ import { SECTION2_RENDER } from "../shots/s02_title.js";
 import { SECTION3_RENDER } from "../shots/s03_geometry.js";
 import { SECTION4_RENDER } from "../shots/s04_settings.js";
 import { SECTION5_RENDER, SECTION5_READY } from "../shots/s05_chorus.js";
+import { SECTION6_RENDER } from "../shots/s06_plates.js";
 
 const $ = (id) => document.getElementById(id);
 const stageCanvas = $("storyboardCanvas");
@@ -31,7 +32,7 @@ const coverage = $("coverage");
 const stage = createStage(1920, 1080);
 const RENDER = {
   preroll, ...BOOT_RENDER, ...SECTION2_RENDER, ...SECTION3_RENDER,
-  ...SECTION4_RENDER, ...SECTION5_RENDER,
+  ...SECTION4_RENDER, ...SECTION5_RENDER, ...SECTION6_RENDER,
 };
 
 const BASE_GRADE = Object.freeze({

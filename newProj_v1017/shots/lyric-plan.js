@@ -32,6 +32,7 @@ const BY_SECTION = {
   3: { style: "display", size: 44, align: "left", anchor: [548, 240], maxWidth: 780 },
   4: { style: "display", size: 46, align: "left", anchor: [512, 250], maxWidth: 820 },
   5: { style: "embedded" },
+  6: { style: "embedded" },
 };
 
 /**
@@ -46,6 +47,7 @@ export const POWER_LINES = Object.freeze([
   3, 6, 8, 11, // PROTECTION · OBJECT CREATION · INITIALIZATION · SIMULATION
   15, 18, 21, 24, // DIMENSION · CIRCUMFERENCE · TANGENTS · LIMITATIONS
   35, 38, 41, 44, // STIMULATIONS · SATISFACTION · EXECUTION · SIMULATION
+  47, 50, 53, 56, // NUTRIENTS · ANTIOXIDANTS · ENJOYMENT · EXISTENCE
 ]);
 
 /**
@@ -149,6 +151,22 @@ export const LYRIC_BY_SHOT = Object.freeze({
   // ---- section 5: the conversation and its plates -----------------------
   // Her messages are the lyric, so the close-ups draw the words themselves; the
   // plates hand the keyword to the power treatment at the foot of the sheet.
+  // ---- section 6: the object plates ---------------------------------------
+  // The verse line is spoken inside the plate, so the sheet prints it as type at the
+  // foot of the object; the keyword is a power line under it.
+  "v2-ask1": { style: "embedded" },
+  "v2-eggplant": { style: "display", size: 46, align: "center", anchor: [960, 196], maxWidth: 1500,
+    powerAnchor: [960, 900], powerMaxWidth: 1500 },
+  "v2-ask2": { style: "embedded" },
+  "v2-tomato": { style: "display", size: 46, align: "center", anchor: [960, 196], maxWidth: 1500,
+    powerAnchor: [960, 900], powerMaxWidth: 1500 },
+  "v2-ask3": { style: "embedded" },
+  "v2-cat": { style: "display", size: 46, align: "center", anchor: [960, 196], maxWidth: 1500,
+    powerAnchor: [960, 900], powerMaxWidth: 1500 },
+  "v2-ask4": { style: "embedded" },
+  "v2-proof": { style: "display", size: 46, align: "center", anchor: [960, 196], maxWidth: 1500,
+    powerAnchor: [960, 900], powerMaxWidth: 1500 },
+
   "c1-give": { style: "embedded" },
   "c1-kw1": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1500 },
   "c1-only": { style: "embedded" },
