@@ -128,25 +128,25 @@ export const LYRIC_BY_SHOT = Object.freeze({
   // The window squeezes left to make room for the drawer, so the line sits in the
   // conversation area that is still visible.
   "pre1-drawer": {
-    style: "display", size: 46, align: "left", anchor: [512, 250], maxWidth: 820,
-    byLine: { 25: { anchor: [512, 236] }, 26: { anchor: [512, 300] } },
+    style: "display", size: 46, align: "left", anchor: [212, 402], maxWidth: 940,
+    byLine: { 25: { anchor: [212, 336] }, 26: { anchor: [212, 402] } },
     echo: true, echoColor: "#8ba4c2",
   },
   // The picture is in pieces behind it, and the words are the sharp thing: they are
   // drawn after the block break-up, so they simply survive it.
   "pre1-vision": {
-    style: "display", size: 52, align: "left", anchor: [512, 190], maxWidth: 540,
-    byLine: { 27: { anchor: [512, 190] }, 28: { anchor: [512, 258] } },
+    style: "display", size: 46, align: "left", anchor: [212, 402], maxWidth: 940,
+    byLine: { 27: { anchor: [212, 336] }, 28: { anchor: [212, 402] } },
     echo: true, echoColor: "#8ba4c2",
   },
   "pre1-date": {
-    style: "display", size: 50, align: "center", anchor: [960, 214], maxWidth: 1100,
-    byLine: { 29: { anchor: [960, 200] }, 30: { anchor: [960, 268] } },
+    style: "display", size: 46, align: "left", anchor: [212, 402], maxWidth: 940,
+    byLine: { 29: { anchor: [212, 336] }, 30: { anchor: [212, 402] } },
     echo: true, echoColor: "#8ba4c2",
   },
   "pre1-unite": {
-    style: "display", size: 48, align: "center", anchor: [960, 122], maxWidth: 1100,
-    byLine: { 31: { anchor: [960, 122] }, 32: { anchor: [960, 186] } },
+    style: "display", size: 46, align: "left", anchor: [212, 402], maxWidth: 940,
+    byLine: { 31: { anchor: [212, 336] }, 32: { anchor: [212, 402] } },
     echo: true, echoColor: "#8ba4c2",
   },
 });
