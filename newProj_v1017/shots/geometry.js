@@ -59,6 +59,7 @@ export const CONVERGE_RING = Object.freeze({ cx: 1150, cy: 452, r: 216 });
 export function pointCloud(ctx, R, t, opts = {}) {
   const { k = 1, grow = 1, points = POINTS, showLabels = true, converge = 0 } = opts;
   const lerp = (a, b, m) => a + (b - a) * m;
+  const n = points.length;
   const pos = points.map((p, i) => {
     // a slow individual orbit, so the scatter breathes instead of holding still
     const drift = {
@@ -68,35 +69,56 @@ export function pointCloud(ctx, R, t, opts = {}) {
     let px = R.x + p.x * R.w + drift.x;
     let py = R.y + p.y * R.h + drift.y;
     if (converge > 0) {
-      const a = (i / points.length) * Math.PI * 2 - Math.PI / 2;
+      // Settle onto an even polygon, not onto whichever arc the drift left them
+      // near: equal steps round the ring are what make the ending read as a shape
+      // being formed rather than a scatter giving up.
+      const a = (i / n) * Math.PI * 2 - Math.PI / 2;
       px = lerp(px, CONVERGE_RING.cx + Math.cos(a) * CONVERGE_RING.r, converge);
       py = lerp(py, CONVERGE_RING.cy + Math.sin(a) * CONVERGE_RING.r, converge);
     }
     return { ...p, px, py };
   });
-  // the ring the points are heading for, shown faintly once the gathering starts
+
+  // The ring they are heading for: it arrives with them and stays as the frame the
+  // next shot is built on.
   if (converge > 0.02) {
-    layer(ctx, converge * 0.4, () => {
+    layer(ctx, converge * 0.55, () => {
       ctx.beginPath();
       ctx.arc(CONVERGE_RING.cx, CONVERGE_RING.cy, CONVERGE_RING.r, 0, Math.PI * 2);
       ctx.strokeStyle = GIFT;
-      ctx.lineWidth = 1.6;
+      ctx.lineWidth = 1.8;
       ctx.stroke();
     });
   }
 
-  // edges first, so the nodes sit on top
+  // Edges first, so the nodes sit on top. As the points settle, the loose graph is
+  // replaced by the polygon the ring implies: the figure closes into a shape.
   EDGES.forEach(([a, b], i) => {
     const e = at(Math.max(0, grow - i * 0.08), 0, 0.34);
     if (e <= 0) return;
+    const fade = 1 - converge;
+    if (fade <= 0.01) return;
     const A = pos[a];
     const B = pos[b];
     const ex = A.px + (B.px - A.px) * e;
     const ey = A.py + (B.py - A.py) * e;
-    layer(ctx, 0.7 * k * Math.min(1, grow * 1.6), () =>
+    layer(ctx, 0.7 * k * Math.min(1, grow * 1.6) * fade, () =>
       stroke(ctx, [[A.px, A.py], [ex, ey]], GIFT, 1.6, 0.85),
     );
   });
+  if (converge > 0.01) {
+    // the polygon: neighbour to neighbour, drawn as the ring closes
+    const rim = at(converge, 0.25, 1);
+    if (rim > 0) {
+      layer(ctx, 0.75 * k * rim, () => {
+        for (let i = 0; i < n; i++) {
+          const A = pos[i];
+          const B = pos[(i + 1) % n];
+          stroke(ctx, [[A.px, A.py], [B.px, B.py]], GIFT, 1.7, 0.9);
+        }
+      });
+    }
+  }
 
   pos.forEach((p, i) => {
     const pop = at(Math.max(0, grow - i * 0.06), 0, 0.3);
@@ -155,7 +177,10 @@ export function tracedRing(ctx, cx, cy, r, t, opts = {}) {
 }
 
 /** The unit circle on the left, the wave it generates across the thread. */
-export const WAVE = Object.freeze({ amp: 0.26, period: 0.78, rate: 2.2 });
+// `cycles` is how many turns cross the band. Fewer turns and a shallower
+// amplitude are what make it possible to set a whole sentence on the wave: the
+// slope of a tall, tightly wound wave is too steep for type to stay readable on.
+export const WAVE = Object.freeze({ amp: 0.17, period: 0.8, rate: 2.2, cycles: 1.6 });
 /** The band the wave is drawn in; the lyric rides the same numbers. */
 export const BAND = Object.freeze({ x: 520, y: 210, w: 1260, h: 560 });
 
@@ -165,7 +190,7 @@ export function waveAt(R, u) {
   const amp = R.h * WAVE.amp;
   const x0 = R.x + R.w * 0.2;
   const span = R.w * WAVE.period;
-  const period = span / 2.4;
+  const period = span / WAVE.cycles;
   return { midY, amp, x0, span, period };
 }
 

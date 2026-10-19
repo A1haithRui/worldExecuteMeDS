@@ -12,7 +12,8 @@ import { BAND, WAVE, waveAt, PLOT_GEOM, plotY } from "./geometry.js";
 // The wave's own numbers, so the lyric can be laid on it rather than near it.
 const _w = waveAt(BAND, 1);
 const WAVE_BAND = Object.freeze({
-  span: _w.span, amp: _w.amp, midY: _w.midY, cx: _w.x0 + _w.span / 2,
+  span: _w.span, amp: _w.amp, midY: _w.midY, x0: _w.x0, period: _w.period,
+  cx: _w.x0 + _w.span / 2,
 });
 
 const DEFAULT = Object.freeze({
@@ -101,19 +102,22 @@ export const LYRIC_BY_SHOT = Object.freeze({
   // ride the crests as they travel.
   "v1-sine": {
     style: "curve", path: "sine", size: 46, color: "#eef3fb",
-    span: WAVE_BAND.span, waves: 2.4, amp: -WAVE_BAND.amp * 0.42, phaseRate: WAVE.rate,
-    maxRotate: 0.26, spread: false,
-    anchor: [WAVE_BAND.cx, WAVE_BAND.midY - 24],
+    span: WAVE_BAND.span, amp: -WAVE_BAND.amp, phaseRate: WAVE.rate,
+    pathX0: WAVE_BAND.x0, pathSpan: WAVE_BAND.period, pathWaves: 1,
+    maxRotate: 0.5, spread: false,
+    anchor: [WAVE_BAND.cx, WAVE_BAND.midY],
     powerAnchor: [1150, 786], powerMaxWidth: 1040,
   },
   // The limit's line is written along the curve that approaches it, and
   // LIMITATIONS lands on the limit itself.
   "v1-limit": {
     style: "curve", path: "plot", size: 46, color: "#eef3fb",
-    plotY, plotX0: PLOT_GEOM.x + 90, plotX1: PLOT_GEOM.x + PLOT_GEOM.w - 90, plotDY: -26,
+    plotY, plotLeft: PLOT_GEOM.x + 40, plotSpan: PLOT_GEOM.w - 80,
+    plotX0: PLOT_GEOM.x + 200, plotX1: PLOT_GEOM.x + PLOT_GEOM.w - 200, plotDY: -30,
     maxRotate: 0.24, spread: false,
     anchor: [1150, 470],
-    powerAnchor: [1150, PLOT_GEOM.y + PLOT_GEOM.h * 0.3 + 40], powerMaxWidth: 1120,
+    powerAnchor: [1150, PLOT_GEOM.y + PLOT_GEOM.h * 0.3 - 10], powerMaxWidth: 1120,
+    ruleY: PLOT_GEOM.y + PLOT_GEOM.h * 0.3,
   },
 });
 

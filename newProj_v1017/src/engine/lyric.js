@@ -222,7 +222,10 @@ function power(ctx, plan, t) {
   ctx.restore();
 
   if (plan.rule !== false) {
-    drawRule(ctx, x0, y + size * 0.3, total, t, line.start, {
+    // `ruleY` puts the line exactly where the shot's own geometry is -- on the
+    // limit when the shot is about a limit -- instead of a fixed offset under the
+    // text, which never lines up with anything.
+    drawRule(ctx, x0, plan.ruleY ?? y + size * 0.3, total, t, line.start, {
       color: IN.hot, height: 2.5, alpha: 0.6, dur: 0.5,
     });
   }
@@ -294,20 +297,27 @@ function curve(ctx, plan, t) {
   // words sit on the line rather than near it.
   if (path === "plot" && typeof plan.plotY === "function") {
     const maxRot = plan.maxRotate ?? 0.3;
-    const x0 = plan.plotX0 ?? anchor[0] - 500;
-    const x1 = plan.plotX1 ?? anchor[0] + 500;
-    ctx.textBaseline = "middle";
-    let px = x0;
+    // u must be the plot's own normalised position, not the text's. Measuring it
+    // against the text's own range is what put the words beside the curve rather
+    // than on it.
+    const uLeft = plan.plotLeft ?? plan.plotX0 ?? anchor[0] - 500;
+    const uSpan = plan.plotSpan ?? (plan.plotX1 ?? anchor[0] + 500) - uLeft;
+    const x0 = plan.plotX0 ?? uLeft;
+    const x1 = plan.plotX1 ?? uLeft + uSpan;
+    const uOf = (x) => Math.max(0, Math.min(1, (x - uLeft) / uSpan));
     const stepX = plan.spread === false ? 0 : (x1 - x0 - natural) / Math.max(1, chars.length - 1);
+    const fit = Math.min(natural + stepX * (chars.length - 1), x1 - x0);
+    let px = x0 + ((x1 - x0) - fit) / 2;
+    ctx.textBaseline = "middle";
     chars.forEach((c, i) => {
       if (i / Math.max(1, chars.length - 1) > e) return;
-      const u = (px - x0) / (x1 - x0);
-      const y = plan.plotY(u) + (plan.plotDY ?? 0);
-      const y2 = plan.plotY(Math.min(1, u + 0.02)) + (plan.plotDY ?? 0);
-      const rot = Math.max(-maxRot, Math.min(maxRot, Math.atan2(y2 - y, (x1 - x0) * 0.02)));
+      const cxg = px + widths[i] / 2;
+      const y = plan.plotY(uOf(cxg)) + (plan.plotDY ?? 0);
+      const y2 = plan.plotY(uOf(cxg + 6)) + (plan.plotDY ?? 0);
+      const rot = Math.max(-maxRot, Math.min(maxRot, Math.atan2(y2 - y, 6)));
       ctx.save();
       ctx.globalAlpha = env;
-      ctx.translate(px + widths[i] / 2, y);
+      ctx.translate(cxg, y);
       ctx.rotate(rot);
       ctx.textAlign = "center";
       ctx.fillText(c, 0, 0);
@@ -328,17 +338,30 @@ function curve(ctx, plan, t) {
   // The rotation is clamped: a line set on a wave is legible while it tilts with
   // the crests, and unreadable the moment it turns to face every slope.
   const maxRot = plan.maxRotate ?? 0.3;
+  // When the shot tells us where its own shape starts and how wide one turn is,
+  // the wave height is read at the glyph's real x. Indexing it by the glyph's
+  // position in the sentence is what made the words sit near the wave instead of
+  // on it -- the sentence's span is not the wave's span.
+  const pathX0 = plan.pathX0;
+  const pathSpan = plan.pathSpan;
+  const pathWaves = plan.pathWaves ?? waves;
+  const argAt = (cx) =>
+    pathX0 == null
+      ? ((cx - startX) / Math.max(1, natural)) * Math.PI * 2 * waves + phase
+      : ((cx - pathX0) / pathSpan) * Math.PI * 2 * pathWaves + phase;
+  const dArg = pathX0 == null ? (Math.PI * 2 * waves) / Math.max(1, natural) : (Math.PI * 2 * pathWaves) / pathSpan;
   ctx.textBaseline = "middle";
   let x = startX;
   chars.forEach((c, i) => {
     const u = i / Math.max(1, chars.length - 1);
     if (u <= e) {
-      const y = anchor[1] + Math.sin(u * Math.PI * 2 * waves + phase) * amp;
-      const slope =
-        (Math.cos(u * Math.PI * 2 * waves + phase) * amp * Math.PI * 2 * waves) / span;
+      const cxg = x + widths[i] / 2;
+      const a = argAt(cxg);
+      const y = anchor[1] + Math.sin(a) * amp;
+      const slope = Math.cos(a) * amp * dArg;
       ctx.save();
       ctx.globalAlpha = env;
-      ctx.translate(x + widths[i] / 2, y);
+      ctx.translate(cxg, y);
       ctx.rotate(Math.max(-maxRot, Math.min(maxRot, Math.atan(slope))));
       ctx.textAlign = "center";
       ctx.fillText(c, 0, 0);
