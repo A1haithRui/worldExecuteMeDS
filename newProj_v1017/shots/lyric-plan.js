@@ -7,6 +7,14 @@
 //
 // The floor is 42px at 1080p; nothing here goes below it.
 
+import { BAND, WAVE, waveAt, PLOT_GEOM, plotY } from "./geometry.js";
+
+// The wave's own numbers, so the lyric can be laid on it rather than near it.
+const _w = waveAt(BAND, 1);
+const WAVE_BAND = Object.freeze({
+  span: _w.span, amp: _w.amp, midY: _w.midY, cx: _w.x0 + _w.span / 2,
+});
+
 const DEFAULT = Object.freeze({
   style: "display", size: 92, align: "center", anchor: [960, 900], maxWidth: 1400,
 });
@@ -69,29 +77,43 @@ export const LYRIC_BY_SHOT = Object.freeze({
   },
 
   // ---- section 3: the answer, drawn inside the chat -----------------------
-  // The verse line sits at the top left of the conversation area, as plain type;
-  // the keyword at the foot of it is a power line and comes from POWER_LINES.
+  // The verse lines stack like a transcript: the line being sung sits low and the
+  // one before it stays above. Showing them one at a time made the shot feel as
+  // though it kept erasing itself.
   "v1-points": {
-    style: "display", size: 44, align: "left", anchor: [548, 240], maxWidth: 780,
+    style: "display", size: 44, align: "left", anchor: [548, 312], maxWidth: 780,
+    byLine: { 13: { anchor: [548, 240] }, 14: { anchor: [548, 312] } },
+    echo: true, echoColor: "#8ba4c2",
     powerAnchor: [1150, 778], powerMaxWidth: 1040,
   },
   // A ring is the one figure whose line is set on the figure itself: the top arc
-  // says "if I'm a circle", the bottom arc answers, and both read left to right.
+  // says "if I'm a circle", the bottom arc answers and runs the other way round so
+  // it still reads left to right.
   "v1-circle": {
-    style: "curve", path: "arc", size: 46, color: "#83e9e6", anchor: [1150, 452],
+    style: "curve", path: "arc", size: 46, color: "#eef3fb", anchor: [1150, 452],
     byLine: {
-      16: { arc: { cx: 1150, cy: 452, r: 246, mid: -Math.PI / 2 } },
-      17: { arc: { cx: 1150, cy: 452, r: 246, mid: Math.PI / 2, flip: true } },
+      16: { arc: { cx: 1150, cy: 452, r: 246, mid: -Math.PI / 2, dir: 1 } },
+      17: { arc: { cx: 1150, cy: 452, r: 246, mid: Math.PI / 2, dir: -1 } },
     },
     powerAnchor: [1150, 786], powerMaxWidth: 1000,
   },
+  // The wave carries its own line: same span, amplitude and phase, so the words
+  // ride the crests as they travel.
   "v1-sine": {
-    style: "display", size: 44, align: "left", anchor: [548, 232], maxWidth: 780,
+    style: "curve", path: "sine", size: 46, color: "#eef3fb",
+    span: WAVE_BAND.span, waves: 2.4, amp: -WAVE_BAND.amp * 0.42, phaseRate: WAVE.rate,
+    maxRotate: 0.26, spread: false,
+    anchor: [WAVE_BAND.cx, WAVE_BAND.midY - 24],
     powerAnchor: [1150, 786], powerMaxWidth: 1040,
   },
+  // The limit's line is written along the curve that approaches it, and
+  // LIMITATIONS lands on the limit itself.
   "v1-limit": {
-    style: "display", size: 44, align: "left", anchor: [548, 236], maxWidth: 780,
-    powerAnchor: [1150, 790], powerMaxWidth: 1040,
+    style: "curve", path: "plot", size: 46, color: "#eef3fb",
+    plotY, plotX0: PLOT_GEOM.x + 90, plotX1: PLOT_GEOM.x + PLOT_GEOM.w - 90, plotDY: -26,
+    maxRotate: 0.24, spread: false,
+    anchor: [1150, 470],
+    powerAnchor: [1150, PLOT_GEOM.y + PLOT_GEOM.h * 0.3 + 40], powerMaxWidth: 1120,
   },
 });
 

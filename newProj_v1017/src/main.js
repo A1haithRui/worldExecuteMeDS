@@ -250,6 +250,22 @@ function renderFrame(t) {
   // own plan: no band, no fixed baseline, so the picture can use the whole frame.
   stage.present(stageCanvas, t, opts, (c) => {
     if (!line) return;
+    // A shot may keep the line before the current one on screen: a transcript that
+    // holds its previous line reads as a conversation, while one line at a time
+    // reads as the shot erasing itself. Each line keeps its own placement, so the
+    // earlier one does not jump when the new one arrives.
+    // ...but not under a keyword: the shout is meant to land on its own.
+    if (lyricPlan.echo && line.index > 0 && lyricPlan.style !== "power") {
+      const prev = lines[line.index - 1];
+      if (prev && prev.text) {
+        const echoPlan = lyricPlanFor(shot, prev.index);
+        drawLyric(
+          c,
+          { ...echoPlan, line: { ...prev, end: Infinity }, color: lyricPlan.echoColor ?? "#8ba4c2" },
+          t,
+        );
+      }
+    }
     const drew = drawLyric(c, { ...lyricPlan, line }, t);
     if (drew != null) diag.lyric = { style: lyricPlan.style, line: line.index };
   });

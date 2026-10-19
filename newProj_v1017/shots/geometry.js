@@ -29,7 +29,14 @@ export function codeBlock(ctx, R, rows, opts = {}) {
   });
 }
 
-/** The point set: fixed coordinates, so the figure is the same in every render. */
+/**
+ * The point set. Positions come from a fixed table -- nothing here is random, so
+ * a still is reproducible -- but each one drifts on its own slow orbit: a frozen
+ * scatter reads as a diagram, and this is supposed to be alive.
+ *
+ * `converge` pulls every point onto a circle as the shot ends, so the set becomes
+ * the ring the next shot is built on and the cut between them is a continuation.
+ */
 export const POINTS = Object.freeze([
   { x: 0.1, y: 0.22, label: "p0" },
   { x: 0.26, y: 0.66, label: "p1" },
@@ -46,9 +53,37 @@ export const EDGES = Object.freeze([
   [0, 2], [2, 4], [4, 6], [1, 3], [3, 5], [5, 7], [2, 3], [4, 5],
 ]);
 
+/** Where the points settle: the ring of the next shot, in canvas coordinates. */
+export const CONVERGE_RING = Object.freeze({ cx: 1150, cy: 452, r: 216 });
+
 export function pointCloud(ctx, R, t, opts = {}) {
-  const { k = 1, grow = 1, points = POINTS, showLabels = true } = opts;
-  const pos = points.map((p) => ({ ...p, px: R.x + p.x * R.w, py: R.y + p.y * R.h }));
+  const { k = 1, grow = 1, points = POINTS, showLabels = true, converge = 0 } = opts;
+  const lerp = (a, b, m) => a + (b - a) * m;
+  const pos = points.map((p, i) => {
+    // a slow individual orbit, so the scatter breathes instead of holding still
+    const drift = {
+      x: Math.sin(t * 0.72 + i * 1.9) * 16 + Math.cos(t * 0.41 + i * 0.7) * 9,
+      y: Math.cos(t * 0.63 + i * 2.3) * 14 + Math.sin(t * 0.37 + i * 1.1) * 8,
+    };
+    let px = R.x + p.x * R.w + drift.x;
+    let py = R.y + p.y * R.h + drift.y;
+    if (converge > 0) {
+      const a = (i / points.length) * Math.PI * 2 - Math.PI / 2;
+      px = lerp(px, CONVERGE_RING.cx + Math.cos(a) * CONVERGE_RING.r, converge);
+      py = lerp(py, CONVERGE_RING.cy + Math.sin(a) * CONVERGE_RING.r, converge);
+    }
+    return { ...p, px, py };
+  });
+  // the ring the points are heading for, shown faintly once the gathering starts
+  if (converge > 0.02) {
+    layer(ctx, converge * 0.4, () => {
+      ctx.beginPath();
+      ctx.arc(CONVERGE_RING.cx, CONVERGE_RING.cy, CONVERGE_RING.r, 0, Math.PI * 2);
+      ctx.strokeStyle = GIFT;
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    });
+  }
 
   // edges first, so the nodes sit on top
   EDGES.forEach(([a, b], i) => {
@@ -120,16 +155,26 @@ export function tracedRing(ctx, cx, cy, r, t, opts = {}) {
 }
 
 /** The unit circle on the left, the wave it generates across the thread. */
+export const WAVE = Object.freeze({ amp: 0.26, period: 0.78, rate: 2.2 });
+/** The band the wave is drawn in; the lyric rides the same numbers. */
+export const BAND = Object.freeze({ x: 520, y: 210, w: 1260, h: 560 });
+
+/** The wave's own geometry, shared with the lyric so the words can ride it. */
+export function waveAt(R, u) {
+  const midY = R.y + R.h * 0.52;
+  const amp = R.h * WAVE.amp;
+  const x0 = R.x + R.w * 0.2;
+  const span = R.w * WAVE.period;
+  const period = span / 2.4;
+  return { midY, amp, x0, span, period };
+}
+
 export function sineBand(ctx, R, t, opts = {}) {
   const { alpha = 1, tangentAt = null, k = 1 } = opts;
-  const midY = R.y + R.h * 0.52;
-  const amp = R.h * 0.26;
-  const waveX0 = R.x + R.w * 0.2;
-  const waveW = R.w * 0.78;
-  const period = waveW / 2.4;
+  const { midY, amp, x0: waveX0, span: waveW, period } = waveAt(R, 1);
   const cyc = R.x + R.w * 0.09;
   const r = R.h * 0.2;
-  const phase = t * 0.9;
+  const phase = t * WAVE.rate;
 
   const waveY = (x) => midY - amp * Math.sin(((x - waveX0) / period) * Math.PI * 2 + phase);
 
@@ -187,17 +232,30 @@ export function sineBand(ctx, R, t, opts = {}) {
 }
 
 /**
- * A curve that never arrives, and the line where the answer was cut: approaching
- * infinity, the limit is wherever you stop.
+ * A curve that never arrives, and the line where the answer was cut.
+ *
+ * The plot advances as it is written -- `grow` is how much of it has been drawn --
+ * so the answer is being worked out in front of us rather than pasted in. It
+ * approaches the limit and never touches it; when the user presses Stop the
+ * advance halts, and that halt is the limit.
  */
+export const PLOT_GEOM = Object.freeze({ x: 540, y: 250, w: 1200, h: 520, k: 5.5 });
+const plotLimitY = () => PLOT_GEOM.y + PLOT_GEOM.h * 0.3;
+const plotBaseY = () => PLOT_GEOM.y + PLOT_GEOM.h * 0.82;
+/** y for a normalised position along the plot; shared with the lyric. */
+export function plotY(u) {
+  return plotLimitY() + (plotBaseY() - plotLimitY()) / (1 + u * PLOT_GEOM.k);
+}
+
 export function asymptotePlot(ctx, R, t, opts = {}) {
-  const { alpha = 1, k = 1, cut = 0 } = opts;
-  const baseY = R.y + R.h * 0.82;
-  const leftX = R.x + 40;
-  const rightX = R.x + R.w - 40;
-  const limitY = R.y + R.h * 0.3;
-  const curve = (u) => limitY + (baseY - limitY) / (1 + u * 5.5);
+  const { alpha = 1, k = 1, grow = 1, cut = false } = opts;
+  const baseY = plotBaseY();
+  const limitY = plotLimitY();
+  const leftX = PLOT_GEOM.x + 40;
+  const rightX = PLOT_GEOM.x + PLOT_GEOM.w - 40;
   const span = rightX - leftX;
+  const at8 = (u) => plotLimitY() + (plotBaseY() - plotLimitY()) / (1 + u * PLOT_GEOM.k);
+  const penX = leftX + span * Math.min(1, grow);
 
   layer(ctx, alpha * k, () => {
     // the limit: a horizon the curve keeps approaching
@@ -205,44 +263,36 @@ export function asymptotePlot(ctx, R, t, opts = {}) {
     ctx.setLineDash([9, 9]);
     stroke(ctx, [[leftX, limitY], [rightX, limitY]], "rgba(131,233,230,0.55)", 2);
     ctx.restore();
-    type(ctx, "y = ∞", rightX - 6, limitY - 14, 15, "rgba(131,233,230,0.8)", "MV Mono", "right");
 
     // axes
     stroke(ctx, [[leftX, baseY], [rightX, baseY]], "rgba(61,122,156,0.7)", 1.2);
-    stroke(ctx, [[leftX, R.y + 30], [leftX, baseY]], "rgba(61,122,156,0.7)", 1.2);
+    stroke(ctx, [[leftX, PLOT_GEOM.y + 30], [leftX, baseY]], "rgba(61,122,156,0.7)", 1.2);
 
-    // the curve, drawn only as far as the answer got
-    const end = cut > 0 ? leftX + span * Math.min(0.94, 0.2 + 0.74 * cut) : rightX;
+    // the curve, drawn only as far as it has been written
     ctx.beginPath();
-    for (let x = leftX; x <= end; x += 3) {
+    for (let x = leftX; x <= penX; x += 3) {
       const u = (x - leftX) / span;
-      x === leftX ? ctx.moveTo(x, curve(u)) : ctx.lineTo(x, curve(u));
+      x === leftX ? ctx.moveTo(x, at8(u)) : ctx.lineTo(x, at8(u));
     }
     ctx.strokeStyle = BRAND_SOFT;
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    if (cut > 0) {
-      // the cut: a vertical stop line, marked
+    // the pen: where the answer currently is
+    if (!cut && grow < 0.999) {
+      halo(ctx, penX, at8((penX - leftX) / span), 46, 0.5, GIFT);
+      disc(ctx, penX, at8((penX - leftX) / span), 5.5, GIFT, 1);
+    }
+
+    if (cut) {
+      // the cut: a vertical stop line, marked, and the rest left unwritten
       ctx.save();
       ctx.setLineDash([6, 6]);
-      stroke(ctx, [[end, R.y + 30], [end, baseY]], GIFT, 2);
+      stroke(ctx, [[penX, PLOT_GEOM.y + 30], [penX, baseY]], GIFT, 2);
       ctx.restore();
-      halo(ctx, end, curve((end - leftX) / span), 60, 0.35, GIFT);
-      type(ctx, "stop", end - 10, R.y + 22, 14, GIFT, "MV Mono", "right");
-      // faint continuation into the impossible
-      ctx.save();
-      ctx.setLineDash([4, 10]);
-      ctx.beginPath();
-      for (let x = end; x <= rightX; x += 3) {
-        const u = (x - leftX) / span;
-        x === end ? ctx.moveTo(x, curve(u)) : ctx.lineTo(x, curve(u));
-      }
-      ctx.strokeStyle = "rgba(127,147,255,0.35)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.restore();
+      halo(ctx, penX, at8((penX - leftX) / span), 60, 0.35, GIFT);
+      type(ctx, "stop", penX - 10, PLOT_GEOM.y + 22, 14, GIFT, "MV Mono", "right");
     }
   });
-  return { limitY, baseY, curve, leftX, span };
+  return { limitY, baseY, leftX, span, penX };
 }

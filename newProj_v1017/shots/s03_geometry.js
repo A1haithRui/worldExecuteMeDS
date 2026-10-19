@@ -16,7 +16,10 @@
 import { at, layer, stroke, disc, rect, type, halo, ground } from "../src/mv-draw.js";
 import { figure } from "./figure.js";
 import { clientWindow, cursorArrow, clickRipple, messageBubble, CLIENT_R } from "./ui-client.js";
-import { codeBlock, pointCloud, tracedRing, sineBand, asymptotePlot, GIFT_COLOR } from "./geometry.js";
+import {
+  codeBlock, pointCloud, tracedRing, sineBand, asymptotePlot,
+  waveAt, WAVE, PLOT_GEOM, GIFT_COLOR,
+} from "./geometry.js";
 
 const BRAND_SOFT = "#7f93ff";
 const GIFT = GIFT_COLOR;
@@ -85,17 +88,20 @@ function v1Points(ctx, t, s) {
   }
 
   const u = t - s.at;
-  codeBlock(ctx, { x: THREAD.x + 20, y: THREAD.y + 130, w: 360, h: 300 }, CODE_ROWS, {
+  codeBlock(ctx, { x: THREAD.x + 20, y: THREAD.y + 212, w: 360, h: 300 }, CODE_ROWS, {
     alpha: at(u, 0.5, 1.0),
     title: "point_set =",
   });
+  // The set drifts, and then gathers onto the ring the next shot is built on: the
+  // cut between them is the figure becoming the next figure, not a new diagram.
   pointCloud(ctx, { x: THREAD.x + 470, y: THREAD.y + 80, w: 700, h: 470 }, t, {
     k: 1,
     grow: (u - 0.35) / 0.9,
+    converge: easeOut(at(u, 2.6, 3.75)),
   });
   pop();
 
-  return { phase: "points", edges: 8 };
+  return { phase: "points", edges: 8, converge: Number(easeOut(at(u, 2.6, 3.75)).toFixed(3)) };
 }
 
 // ---------------------------------------------------------------------------
@@ -142,13 +148,9 @@ function v1Sine(ctx, t, s) {
   sineBand(ctx, BAND, t, { alpha: at(u, 0.1, 0.7), tangentAt: rest > 0 ? 0.62 : null });
 
   // the pointer comes to rest on the wave where the tangent is drawn
-  const midY = BAND.y + BAND.h * 0.52;
-  const amp = BAND.h * 0.26;
-  const waveX0 = BAND.x + BAND.w * 0.2;
-  const waveW = BAND.w * 0.78;
-  const period = waveW / 2.4;
+  const { midY, amp, x0: waveX0, span: waveW, period } = waveAt(BAND, 1);
   const tx = waveX0 + waveW * 0.62;
-  const ty = midY - amp * Math.sin(((tx - waveX0) / period) * Math.PI * 2 + t * 0.9);
+  const ty = midY - amp * Math.sin(((tx - waveX0) / period) * Math.PI * 2 + t * WAVE.rate);
   const arrive = easeOut(at(u, 0.9, 1.5));
   cursorArrow(ctx, 1720 + (tx - 1720) * arrive, 300 + (ty - 300) * arrive, 1.4, at(u, 0.8, 1.2));
 
@@ -160,15 +162,18 @@ function v1Sine(ctx, t, s) {
 // the user presses Stop and the cut becomes the line.
 // ---------------------------------------------------------------------------
 const PLOT = { x: 540, y: 250, w: 1200, h: 520 };
-const STOP_AT = 2.5;
+const STOP_AT = 2.6;
 
 function v1Limit(ctx, t, s) {
   ground(ctx, t, [1150, 470], true, LIFT);
   const g = answerWindow(ctx, t);
 
   const u = t - s.at;
-  const cut = easeOut(at(u, STOP_AT, STOP_AT + 0.5));
-  asymptotePlot(ctx, PLOT, t, { alpha: at(u, 0.1, 0.7), cut });
+  // it writes itself toward the limit; when the user presses Stop the writing
+  // halts, and where it halted is the limitation
+  const grow = easeOut(at(u, 0.35, STOP_AT + 0.2));
+  const cut = u >= STOP_AT;
+  asymptotePlot(ctx, PLOT, t, { alpha: at(u, 0.1, 0.7), grow, cut });
 
   // the pointer goes to the stop control and presses it
   const toStop = easeOut(at(u, 1.4, 2.3));
@@ -177,7 +182,7 @@ function v1Limit(ctx, t, s) {
   cursorArrow(ctx, from.x + (to.x - from.x) * toStop, from.y + (to.y - from.y) * toStop, 1.4, 1);
   clickRipple(ctx, to.x, to.y, t, s.at + STOP_AT, GIFT);
 
-  return { phase: "limit", cut: Number(cut.toFixed(3)) };
+  return { phase: "limit", grow: Number(grow.toFixed(3)), cut };
 }
 
 export const SECTION3_RENDER = Object.freeze({

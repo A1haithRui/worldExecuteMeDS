@@ -274,7 +274,7 @@ export const SHOTS = [
       15
     ],
     "picture": "portrait",
-    "moment": "答案开始：它把自己写成一组点——左侧是坐标表，右侧是散点，边在点之间一条条长出来；「维度」就是这些连接。",
+    "moment": "答案开始：它把自己写成一组点——坐标表在左，散点在右，点各自缓慢漂移，边一条条长出来；「维度」就是这些连接；最后点汇聚成一个圆环，直接变成下一镜的圆。",
     "momentState": "written",
     "inherits": "S07",
     "inheritCoverage": 0.92,
@@ -314,7 +314,7 @@ export const SHOTS = [
       21
     ],
     "picture": "portrait",
-    "moment": "它把自己写成一条正弦波：左边是生成它的单位圆，光标停在波上，一条切线在它脚下立起来。",
+    "moment": "它把自己写成一条正弦波：左边是生成它的单位圆，波快速向右走，歌词就坐在波上跟着一起起伏；光标停在波上，一条切线在它脚下立起来。",
     "momentState": "written",
     "inherits": "S09",
     "inheritCoverage": 0.98,
@@ -334,7 +334,7 @@ export const SHOTS = [
       24
     ],
     "picture": "plate",
-    "moment": "它说自己在趋近无穷：曲线永远够不到那条虚线的极限；用户按下停止，答案被切断的地方就成了极限。",
+    "moment": "它说自己在趋近无穷：曲线一笔一笔往前写，始终够不到那条虚线；歌词沿着曲线排，用户按下停止，写不下去的地方就是极限，LIMITATIONS 落在那条极限线上。",
     "momentState": "written",
     "inherits": "S10",
     "inheritCoverage": 0.95,

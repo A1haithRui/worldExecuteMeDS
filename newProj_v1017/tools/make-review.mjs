@@ -69,14 +69,42 @@ const ours = resolve(reviewDir, `${index}-${name}-ours.mp4`);
 const refOut = resolve(reviewDir, `${index}-${name}-reference.mp4`);
 const ab = resolve(reviewDir, `${index}-${name}-AB.mp4`);
 
-// 1. our section, cut together. A silent section (the preroll) has no audio
-// stream, so the audio-bearing concat is tried first and the video-only form is
-// used when the clips carry no sound.
+// 1. Our section, cut together.
+//
+// The clips cannot be concatenated as they stand. Each is encoded to AAC on its
+// own, and AAC pads every stream to a whole number of 1024-sample frames, so each
+// clip's audio came out 15-23 ms longer than its video. Concatenating four of them
+// put the sound 83 ms behind the picture, and the gap grows at every cut -- over a
+// full film it would be seconds. So each clip's audio is trimmed back to its exact
+// duration from the shot table before the join, and AAC is applied once, at the
+// end, to the whole thing.
+//
+// A silent section (the preroll) has no audio stream at all, which is what the
+// catch below is for.
+const { SHOTS_DERIVED } = await import("../shots/index.js");
+// The clip filenames carry their shot number (002_boot-power.mp4), and the table
+// is in shot order, so the number indexes the table directly.
+const exactDuration = (file) => {
+  const n = Number(String(file).split(/[\\/]/).pop().slice(0, 3));
+  const shot = SHOTS_DERIVED[n - 1];
+  return shot ? shot.until - shot.at : null;
+};
 const inputs = clips.flatMap((c) => ["-i", c]);
-const withAudio = clips.map((_, i) => `[${i}:v][${i}:a]`).join("");
+const audioParts = clips
+  .map((c, i) => {
+    const d = exactDuration(c);
+    return d == null ? null : `[${i}:a]atrim=0:${d.toFixed(6)},asetpts=PTS-STARTPTS[a${i}]`;
+  })
+  .filter(Boolean);
+const videoParts = clips.map((_, i) => `[${i}:v]`).join("");
 try {
-  run([...inputs, "-filter_complex", `${withAudio}concat=n=${clips.length}:v=1:a=1[v][a]`,
-    "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+  if (audioParts.length !== clips.length) throw new Error("some clip has no audio");
+  const graph =
+    `${audioParts.join(";")};` +
+    `${videoParts}concat=n=${clips.length}:v=1:a=0[v];` +
+    `${clips.map((_, i) => `[a${i}]`).join("")}concat=n=${clips.length}:v=0:a=1[a]`;
+  run([...inputs, "-filter_complex", graph, "-map", "[v]", "-map", "[a]",
+    "-c:v", "libx264", "-preset", "medium", "-crf", "18",
     "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", ours]);
 } catch {
   const videoOnly = clips.map((_, i) => `[${i}:v]`).join("");

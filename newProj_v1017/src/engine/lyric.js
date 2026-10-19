@@ -267,41 +267,79 @@ function curve(ctx, plan, t) {
   ctx.fillStyle = plan.color ?? IN.white;
 
   if (path === "arc" && arc) {
-    // Spread the glyphs over the arc the text itself needs, centred on arc.mid.
-    // `flip` turns a line set below the centre back the right way up so it still
-    // reads left to right.
+    // Glyphs run along the arc in `dir` (-1 for an arc below the centre, so the
+    // line still reads left to right instead of mirroring). Each glyph sits
+    // outward of the arc, which is the opposite side for the two directions.
+    const dir = arc.dir ?? 1;
     const theta = (natural + s * 0.14 * Math.max(0, chars.length - 1)) / arc.r;
     const stepA = theta / Math.max(1, chars.length - 1);
-    const start = arc.mid - theta / 2;
+    const mid = arc.mid;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     chars.forEach((c, i) => {
       if (i / Math.max(1, chars.length - 1) > e) return;
-      const a = start + stepA * i;
+      const a = mid + dir * (i - (chars.length - 1) / 2) * stepA;
       ctx.save();
       ctx.globalAlpha = env;
       ctx.translate(arc.cx + Math.cos(a) * arc.r, arc.cy + Math.sin(a) * arc.r);
-      ctx.rotate(a + (arc.flip ? -Math.PI / 2 : Math.PI / 2));
-      ctx.fillText(c, 0, -s * 0.28);
+      ctx.rotate(a + dir * Math.PI * 0.5);
+      ctx.fillText(c, 0, -dir * s * 0.3);
       ctx.restore();
     });
     ctx.restore();
     return theta * arc.r;
   }
 
-  const step = (span - natural) / Math.max(1, chars.length - 1);
-  const startX = anchor[0] - span / 2;
+  // A line laid on a growing plot: the y comes from the shot's own curve so the
+  // words sit on the line rather than near it.
+  if (path === "plot" && typeof plan.plotY === "function") {
+    const maxRot = plan.maxRotate ?? 0.3;
+    const x0 = plan.plotX0 ?? anchor[0] - 500;
+    const x1 = plan.plotX1 ?? anchor[0] + 500;
+    ctx.textBaseline = "middle";
+    let px = x0;
+    const stepX = plan.spread === false ? 0 : (x1 - x0 - natural) / Math.max(1, chars.length - 1);
+    chars.forEach((c, i) => {
+      if (i / Math.max(1, chars.length - 1) > e) return;
+      const u = (px - x0) / (x1 - x0);
+      const y = plan.plotY(u) + (plan.plotDY ?? 0);
+      const y2 = plan.plotY(Math.min(1, u + 0.02)) + (plan.plotDY ?? 0);
+      const rot = Math.max(-maxRot, Math.min(maxRot, Math.atan2(y2 - y, (x1 - x0) * 0.02)));
+      ctx.save();
+      ctx.globalAlpha = env;
+      ctx.translate(px + widths[i] / 2, y);
+      ctx.rotate(rot);
+      ctx.textAlign = "center";
+      ctx.fillText(c, 0, 0);
+      ctx.restore();
+      px += widths[i] + stepX;
+    });
+    ctx.restore();
+    return x1 - x0;
+  }
+
+  // `spread: false` keeps the phrase at its natural width: stretched across the
+  // whole wave it stops being a sentence and becomes a row of letters.
+  const step = plan.spread === false ? 0 : (span - natural) / Math.max(1, chars.length - 1);
+  const startX = anchor[0] - (natural + step * (chars.length - 1)) / 2;
+  // A travelling shape carries its line with it: phaseRate ties the type to the
+  // wave's own phase, so the words ride the crests instead of sitting beside them.
+  const phase = (plan.phaseRate ?? 0) * t + (plan.phase ?? 0);
+  // The rotation is clamped: a line set on a wave is legible while it tilts with
+  // the crests, and unreadable the moment it turns to face every slope.
+  const maxRot = plan.maxRotate ?? 0.3;
   ctx.textBaseline = "middle";
   let x = startX;
   chars.forEach((c, i) => {
     const u = i / Math.max(1, chars.length - 1);
     if (u <= e) {
-      const y = anchor[1] + Math.sin(u * Math.PI * 2 * waves) * amp;
-      const slope = Math.cos(u * Math.PI * 2 * waves) * amp * Math.PI * 2 * waves * (1 / span);
+      const y = anchor[1] + Math.sin(u * Math.PI * 2 * waves + phase) * amp;
+      const slope =
+        (Math.cos(u * Math.PI * 2 * waves + phase) * amp * Math.PI * 2 * waves) / span;
       ctx.save();
       ctx.globalAlpha = env;
       ctx.translate(x + widths[i] / 2, y);
-      ctx.rotate(Math.atan(slope));
+      ctx.rotate(Math.max(-maxRot, Math.min(maxRot, Math.atan(slope))));
       ctx.textAlign = "center";
       ctx.fillText(c, 0, 0);
       ctx.restore();
