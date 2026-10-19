@@ -30,6 +30,7 @@ const BY_SECTION = {
   2: { style: "embedded" },
   // section 3 draws its answer inside the chat; its verse lines are plain type
   3: { style: "display", size: 44, align: "left", anchor: [548, 240], maxWidth: 780 },
+  4: { style: "display", size: 46, align: "left", anchor: [512, 250], maxWidth: 820 },
 };
 
 /**
@@ -121,6 +122,32 @@ export const LYRIC_BY_SHOT = Object.freeze({
     anchor: [1150, 470],
     powerAnchor: [1150, PLOT_GEOM.y + PLOT_GEOM.h * 0.3 - 10], powerMaxWidth: 1120,
     ruleY: PLOT_GEOM.y + PLOT_GEOM.h * 0.3,
+  },
+
+  // ---- section 4: she is edited ------------------------------------------
+  // The window squeezes left to make room for the drawer, so the line sits in the
+  // conversation area that is still visible.
+  "pre1-drawer": {
+    style: "display", size: 46, align: "left", anchor: [512, 250], maxWidth: 820,
+    byLine: { 25: { anchor: [512, 236] }, 26: { anchor: [512, 300] } },
+    echo: true, echoColor: "#8ba4c2",
+  },
+  // The picture is in pieces behind it, and the words are the sharp thing: they are
+  // drawn after the block break-up, so they simply survive it.
+  "pre1-vision": {
+    style: "display", size: 52, align: "left", anchor: [512, 190], maxWidth: 540,
+    byLine: { 27: { anchor: [512, 190] }, 28: { anchor: [512, 258] } },
+    echo: true, echoColor: "#8ba4c2",
+  },
+  "pre1-date": {
+    style: "display", size: 50, align: "center", anchor: [960, 214], maxWidth: 1100,
+    byLine: { 29: { anchor: [960, 200] }, 30: { anchor: [960, 268] } },
+    echo: true, echoColor: "#8ba4c2",
+  },
+  "pre1-unite": {
+    style: "display", size: 48, align: "center", anchor: [960, 122], maxWidth: 1100,
+    byLine: { 31: { anchor: [960, 122] }, 32: { anchor: [960, 186] } },
+    echo: true, echoColor: "#8ba4c2",
   },
 });
 

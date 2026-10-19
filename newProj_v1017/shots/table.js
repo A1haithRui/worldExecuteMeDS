@@ -354,8 +354,8 @@ export const SHOTS = [
       26
     ],
     "picture": "ui",
-    "moment": "用户在小型控制面板切换信号模式；青波形改变采样方式，人物姿态固定。只动被操作的局部。",
-    "momentState": "inherited",
+    "moment": "用户拉开设置抽屉，窗口被压窄让位；她在会话里画的波形就是「电流」——选 AC 是一条正弦，切到 DC 就摊平成一条直线；两行歌词对应两次切换。",
+    "momentState": "written",
     "inherits": "S11",
     "inheritCoverage": 0.83,
     "state": "todo",
@@ -374,8 +374,8 @@ export const SHOTS = [
       28
     ],
     "picture": "portrait",
-    "moment": "可视区域缩成窄带，波形被遮住又露出；局部扫描越来越急，画面底色亮度保持稳定。",
-    "momentState": "inherited",
+    "moment": "用户把 Vision 关掉：整个画面碎成方块，只有歌词保持清晰；然后这个开关被来回拨动，越拨越快，界面跟着晃——「so dizzy」；最后被留在打开的状态。",
+    "momentState": "written",
     "inherits": "S12",
     "inheritCoverage": 0.83,
     "state": "todo",
@@ -394,8 +394,8 @@ export const SHOTS = [
       30
     ],
     "picture": "portrait",
-    "moment": "记忆索引向过去回卷，节点时间戳由近到远；取样点越过零刻度时，已看过的记录变空心。用声呐档案，不做历史建筑剪影。",
-    "momentState": "inherited",
+    "moment": "用户抓住 Knowledge date 往历史里拖，一拍退一格：铁塔、尖顶、柱廊、金字塔依次退到光标后面；被拖过去的时代失去颜色，只剩轮廓。",
+    "momentState": "written",
     "inherits": "S13",
     "inheritCoverage": 0.83,
     "state": "todo",
@@ -414,8 +414,8 @@ export const SHOTS = [
       32
     ],
     "picture": "plate",
-    "moment": "侧身角色在右，占高64%，朝左边两条相位接近的声道；到末尾声道第一次重合，发饰只沿原图显影。",
-    "momentState": "inherited",
+    "moment": "用户打开 Shared memory，把 Context depth 推到最深的尽头，然后按下 Done；那个青色的小点沉进她的蓝色核心里——两行字幕说的「unite」和「so deeply」就是这个动作。",
+    "momentState": "written",
     "inherits": "S14",
     "inheritCoverage": 0.96,
     "state": "todo",

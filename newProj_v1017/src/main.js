@@ -17,6 +17,7 @@ import { BOOT_RENDER } from "../shots/s01_boot.js";
 import { preroll } from "../shots/s00_preroll.js";
 import { SECTION2_RENDER } from "../shots/s02_title.js";
 import { SECTION3_RENDER } from "../shots/s03_geometry.js";
+import { SECTION4_RENDER } from "../shots/s04_settings.js";
 
 const $ = (id) => document.getElementById(id);
 const stageCanvas = $("storyboardCanvas");
@@ -27,7 +28,7 @@ const shotName = $("shotName");
 const coverage = $("coverage");
 
 const stage = createStage(1920, 1080);
-const RENDER = { preroll, ...BOOT_RENDER, ...SECTION2_RENDER, ...SECTION3_RENDER };
+const RENDER = { preroll, ...BOOT_RENDER, ...SECTION2_RENDER, ...SECTION3_RENDER, ...SECTION4_RENDER };
 
 const BASE_GRADE = Object.freeze({
   exposure: 1,
@@ -252,10 +253,12 @@ function renderFrame(t) {
     if (!line) return;
     // A shot may keep the line before the current one on screen: a transcript that
     // holds its previous line reads as a conversation, while one line at a time
-    // reads as the shot erasing itself. Each line keeps its own placement, so the
-    // earlier one does not jump when the new one arrives.
-    // ...but not under a keyword: the shout is meant to land on its own.
-    if (lyricPlan.echo && line.index > 0 && lyricPlan.style !== "power") {
+    // reads as the shot erasing itself. The echo is only drawn when the shot has
+    // given the previous line a place of its own -- otherwise it falls back to the
+    // current line's anchor and the two print on top of each other. And never under
+    // a keyword: the shout is meant to land on its own.
+    const echoSlot = lyricPlan.byLine && lyricPlan.byLine[line.index - 1];
+    if (lyricPlan.echo && echoSlot && lyricPlan.style !== "power") {
       const prev = lines[line.index - 1];
       if (prev && prev.text) {
         const echoPlan = lyricPlanFor(shot, prev.index);
