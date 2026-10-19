@@ -144,12 +144,15 @@ function v1Sine(ctx, t, s) {
   answerWindow(ctx, t);
 
   const u = t - s.at;
+  // The tangent sits well along the wave, past the end of the sentence that rides
+  // it: the two are the shot's whole idea, so they must not sit on top of each other.
+  const TANGENT_AT = 0.8;
   const rest = at(u, 1.5, 2.1);
-  sineBand(ctx, BAND, t, { alpha: at(u, 0.1, 0.7), tangentAt: rest > 0 ? 0.62 : null });
+  sineBand(ctx, BAND, t, { alpha: at(u, 0.1, 0.7), tangentAt: rest > 0 ? TANGENT_AT : null });
 
   // the pointer comes to rest on the wave where the tangent is drawn
   const { midY, amp, x0: waveX0, span: waveW, period } = waveAt(BAND, 1);
-  const tx = waveX0 + waveW * 0.62;
+  const tx = waveX0 + waveW * TANGENT_AT;
   const ty = midY - amp * Math.sin(((tx - waveX0) / period) * Math.PI * 2 + t * WAVE.rate);
   const arrive = easeOut(at(u, 0.9, 1.5));
   cursorArrow(ctx, 1720 + (tx - 1720) * arrive, 300 + (ty - 300) * arrive, 1.4, at(u, 0.8, 1.2));

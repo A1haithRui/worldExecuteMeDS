@@ -245,7 +245,7 @@ export function sineBand(ctx, R, t, opts = {}) {
       const tx = waveX0 + waveW * tangentAt;
       const ty = waveY(tx);
       const slope = (-amp * Math.cos(((tx - waveX0) / period) * Math.PI * 2 + phase) * Math.PI * 2) / period;
-      const half = R.w * 0.16;
+      const half = R.w * 0.11;
       const dx = half / Math.sqrt(1 + slope * slope);
       const dy = slope * dx;
       stroke(ctx, [[tx - dx, ty - dy], [tx + dx, ty + dy]], GIFT, 3);

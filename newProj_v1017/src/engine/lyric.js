@@ -331,7 +331,13 @@ function curve(ctx, plan, t) {
   // `spread: false` keeps the phrase at its natural width: stretched across the
   // whole wave it stops being a sentence and becomes a row of letters.
   const step = plan.spread === false ? 0 : (span - natural) / Math.max(1, chars.length - 1);
-  const startX = anchor[0] - (natural + step * (chars.length - 1)) / 2;
+  // Where the sentence begins. `pathStart` pins it to a point on the shape -- the
+  // sine shot starts its line where the wave leaves the unit circle, which keeps
+  // the words clear of the tangent the cursor lays down further along the wave.
+  const startX =
+    plan.pathStart != null
+      ? plan.pathStart
+      : anchor[0] - (natural + step * (chars.length - 1)) / 2;
   // A travelling shape carries its line with it: phaseRate ties the type to the
   // wave's own phase, so the words ride the crests instead of sitting beside them.
   const phase = (plan.phaseRate ?? 0) * t + (plan.phase ?? 0);

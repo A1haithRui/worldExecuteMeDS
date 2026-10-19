@@ -105,6 +105,9 @@ export const LYRIC_BY_SHOT = Object.freeze({
     span: WAVE_BAND.span, amp: -WAVE_BAND.amp, phaseRate: WAVE.rate,
     pathX0: WAVE_BAND.x0, pathSpan: WAVE_BAND.period, pathWaves: 1,
     maxRotate: 0.5, spread: false,
+    // start the sentence where the wave leaves the circle: half a period earlier,
+    // which also keeps it clear of the tangent further along
+    pathStart: WAVE_BAND.x0 + 10,
     anchor: [WAVE_BAND.cx, WAVE_BAND.midY],
     powerAnchor: [1150, 786], powerMaxWidth: 1040,
   },
