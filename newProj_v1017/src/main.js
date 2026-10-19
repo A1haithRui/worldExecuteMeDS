@@ -16,6 +16,7 @@ import { SHOTS_DERIVED, SOURCE, shotAt, shotById } from "../shots/index.js";
 import { BOOT_RENDER } from "../shots/s01_boot.js";
 import { preroll } from "../shots/s00_preroll.js";
 import { SECTION2_RENDER } from "../shots/s02_title.js";
+import { SECTION3_RENDER } from "../shots/s03_geometry.js";
 
 const $ = (id) => document.getElementById(id);
 const stageCanvas = $("storyboardCanvas");
@@ -26,7 +27,7 @@ const shotName = $("shotName");
 const coverage = $("coverage");
 
 const stage = createStage(1920, 1080);
-const RENDER = { preroll, ...BOOT_RENDER, ...SECTION2_RENDER };
+const RENDER = { preroll, ...BOOT_RENDER, ...SECTION2_RENDER, ...SECTION3_RENDER };
 
 const BASE_GRADE = Object.freeze({
   exposure: 1,

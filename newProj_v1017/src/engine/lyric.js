@@ -251,22 +251,47 @@ function margin(ctx, plan, t) {
   return w;
 }
 
-// 5. curve -- the line rides a sine, one glyph at a time.
+// 5. curve -- the line rides a shape: a sine, or an arc when the shot is a ring.
 function curve(ctx, plan, t) {
-  const { line, anchor, size = 64, span = 1100, amp = 46, waves = 1.25 } = plan;
+  const { line, anchor, size = 64, span = 1100, amp = 46, waves = 1.25, path = "sine", arc = null } = plan;
   const s = Math.max(SIZE_FLOOR, size);
   const chars = [...line.text];
   ctx.font = `400 ${s}px "MV Sans"`;
   const widths = chars.map((c) => ctx.measureText(c).width);
   const natural = widths.reduce((a, b) => a + b, 0);
-  const step = (span - natural) / Math.max(1, chars.length - 1);
-  const startX = anchor[0] - span / 2;
   const env = envelope(line, t);
   const k = clamp((t - line.start) / 0.4);
   const e = 1 - (1 - k) ** 3;
+
   ctx.save();
-  ctx.textBaseline = "middle";
   ctx.fillStyle = plan.color ?? IN.white;
+
+  if (path === "arc" && arc) {
+    // Spread the glyphs over the arc the text itself needs, centred on arc.mid.
+    // `flip` turns a line set below the centre back the right way up so it still
+    // reads left to right.
+    const theta = (natural + s * 0.14 * Math.max(0, chars.length - 1)) / arc.r;
+    const stepA = theta / Math.max(1, chars.length - 1);
+    const start = arc.mid - theta / 2;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    chars.forEach((c, i) => {
+      if (i / Math.max(1, chars.length - 1) > e) return;
+      const a = start + stepA * i;
+      ctx.save();
+      ctx.globalAlpha = env;
+      ctx.translate(arc.cx + Math.cos(a) * arc.r, arc.cy + Math.sin(a) * arc.r);
+      ctx.rotate(a + (arc.flip ? -Math.PI / 2 : Math.PI / 2));
+      ctx.fillText(c, 0, -s * 0.28);
+      ctx.restore();
+    });
+    ctx.restore();
+    return theta * arc.r;
+  }
+
+  const step = (span - natural) / Math.max(1, chars.length - 1);
+  const startX = anchor[0] - span / 2;
+  ctx.textBaseline = "middle";
   let x = startX;
   chars.forEach((c, i) => {
     const u = i / Math.max(1, chars.length - 1);

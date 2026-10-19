@@ -19,6 +19,8 @@ const BY_SECTION = {
   // section 2 is set inside the client, whose words are all drawn by the shots
   // themselves: the launch command types into the bar, the question into the box
   2: { style: "embedded" },
+  // section 3 draws its answer inside the chat; its verse lines are plain type
+  3: { style: "display", size: 44, align: "left", anchor: [548, 240], maxWidth: 780 },
 };
 
 /**
@@ -29,7 +31,10 @@ const BY_SECTION = {
  *
  * L3 PROTECTION - L6 OBJECT CREATION - L8 INITIALIZATION - L11 SIMULATION
  */
-export const POWER_LINES = Object.freeze([3, 6, 8, 11]);
+export const POWER_LINES = Object.freeze([
+  3, 6, 8, 11, // PROTECTION · OBJECT CREATION · INITIALIZATION · SIMULATION
+  15, 18, 21, 24, // DIMENSION · CIRCUMFERENCE · TANGENTS · LIMITATIONS
+]);
 
 /**
  * Per-shot placements. Coordinates are canvas pixels at 1920x1080 and are chosen
@@ -62,6 +67,32 @@ export const LYRIC_BY_SHOT = Object.freeze({
     style: "display", size: 104, align: "center", anchor: [1120, 772], maxWidth: 1160,
     rule: true, embeddedLines: [9],
   },
+
+  // ---- section 3: the answer, drawn inside the chat -----------------------
+  // The verse line sits at the top left of the conversation area, as plain type;
+  // the keyword at the foot of it is a power line and comes from POWER_LINES.
+  "v1-points": {
+    style: "display", size: 44, align: "left", anchor: [548, 240], maxWidth: 780,
+    powerAnchor: [1150, 778], powerMaxWidth: 1040,
+  },
+  // A ring is the one figure whose line is set on the figure itself: the top arc
+  // says "if I'm a circle", the bottom arc answers, and both read left to right.
+  "v1-circle": {
+    style: "curve", path: "arc", size: 46, color: "#83e9e6", anchor: [1150, 452],
+    byLine: {
+      16: { arc: { cx: 1150, cy: 452, r: 246, mid: -Math.PI / 2 } },
+      17: { arc: { cx: 1150, cy: 452, r: 246, mid: Math.PI / 2, flip: true } },
+    },
+    powerAnchor: [1150, 786], powerMaxWidth: 1000,
+  },
+  "v1-sine": {
+    style: "display", size: 44, align: "left", anchor: [548, 232], maxWidth: 780,
+    powerAnchor: [1150, 786], powerMaxWidth: 1040,
+  },
+  "v1-limit": {
+    style: "display", size: 44, align: "left", anchor: [548, 236], maxWidth: 780,
+    powerAnchor: [1150, 790], powerMaxWidth: 1040,
+  },
 });
 
 /**
@@ -71,7 +102,8 @@ export const LYRIC_BY_SHOT = Object.freeze({
 export function lyricPlanFor(shot, lineIndex = null) {
   const own = LYRIC_BY_SHOT[shot.id];
   const base = own ?? { ...DEFAULT, ...(BY_SECTION[shot.section] ?? {}) };
-  if (lineIndex != null && POWER_LINES.includes(lineIndex + 1)) {
+  const idx = lineIndex == null ? null : lineIndex + 1;
+  if (idx != null && POWER_LINES.includes(idx)) {
     return {
       ...base,
       style: "power",
@@ -83,5 +115,8 @@ export function lyricPlanFor(shot, lineIndex = null) {
       maxWidth: base.powerMaxWidth ?? base.maxWidth ?? 1200,
     };
   }
-  return base;
+  // A shot may place individual lines differently -- the ring sets its two verse
+  // lines on the top and bottom arcs.
+  const per = idx != null && base.byLine ? base.byLine[idx] : null;
+  return per ? { ...base, ...per } : base;
 }

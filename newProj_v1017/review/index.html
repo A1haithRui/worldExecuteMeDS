@@ -124,7 +124,30 @@
   <div class="ask" style="border-left-color:#7f93ff">
     <b>顺手做的两件工程事。</b>一是把客户端窗口和人物抽成共享模块（<code>ui-client.js</code> / <code>figure.js</code>）——这一段的四镜全都在第 1 段那张窗口里，两份拷贝必然漂移。二是修了歌词归属规则：<code>lines</code> 为空的镜头不再继承上一镜的歌词（L12 从 16.0 持续到 20.0，跨过了 16.93 的切点，旧规则会让下一镜用错位置再画一次）。
   </div>
-  <h2>⑥ 这一版按你的意见改了什么</h2>
+  <h2>⑥ 第 3 段：用数学回答（新增，15.2 秒）</h2>
+  <video controls preload="metadata" src="03-geometry-AB.mp4" poster="poster-geometry-ab.jpg"></video>
+  <div class="sub">左＝参考片（暖橙 + 米白，答案画在聊天窗里）　右＝我们（蓝 + 青，同一套做法）</div>
+  <div class="row" style="margin-top:14px">
+    <div class="box"><h3>我们这一整段</h3><video controls preload="metadata" src="03-geometry-ours.mp4"></video></div>
+    <div class="box"><h3>参考片同区间</h3><video controls preload="metadata" src="03-geometry-reference.mp4"></video></div>
+  </div>
+  <img src="stills-03-geometry.jpg" alt="第 3 段八个时间点">
+  <div class="sub">t=29.9 相机从标志里拉回来 · 32.9 点集长成维度 · 33.9 圆 · 35.6 光标走完圆周 · 36.6 周长 · 37.6 正弦波 · 39.0 切线 · 43.0 极限</div>
+
+  <div class="ask" style="border-left-color:#83e9e6">
+    <b>参考片这一段的做法，我照搬了结构、换成了我们的语言。</b>
+    <br>它的核心是：<b>答案是在聊天窗里"画"出来的几何图形</b>，不是旁白；诗意句用普通字体排在会话区左上，关键词放大；<b>用户的光标会跟图形互动</b>——沿圆周走一圈、停在波上、按下停止。<br>
+    我们对应：<b>蓝是她的，青是她给出的东西</b>（参考片是橙 / 米白）。四镜依次是：
+    <br>① <code>v1-points</code>：左侧坐标表 + 右侧散点，边一条条长出来——「维度」就是这些连接。
+    <br>② <code>v1-circle</code>：光标<b>沿圆周走一圈</b>，走过的地方<b>由蓝变青</b>；"If I'm a circle" 就<b>贴在圆弧上排</b>（这是你们之前定的 <code>curve</code> 处理第一次真正派上用场）。
+    <br>③ <code>v1-sine</code>：左边单位圆 + 横贯整条正弦波，光标停在波上，一条<b>切线</b>在它脚下立起来。
+    <br>④ <code>v1-limit</code>：曲线永远够不到那条虚线；用户<b>按下停止</b>，答案被切断的地方<b>就是极限</b>。
+  </div>
+
+  <div class="ask" style="border-left-color:#7f93ff">
+    <b>两处衔接。</b>一是这一段承接第 2 段末尾"坠入标志"——第一镜的相机从标志里<b>拉回来</b>（3.6→1.0），所以那个切点是连续的运镜，不是重新开始。二是会话标题从 <code>New chat</code> 变成 <code>me, as geometry</code>——她给自己的答案起了个名字。
+  </div>
+  <h2>⑦ 这一版按你的意见改了什么</h2>
 
   <div class="ask">
     <b>1. 术语：<code>world model</code> → <code>harness</code>。</b>启动页、标题栏、人格卡三处统一成 <code>deepseek / harness</code>。<br>
@@ -151,7 +174,7 @@
     <span class="sub">人物不透明度 <b>48%</b>、高度 1180px，填满画面右侧并出血；另外输入框会把这一句歌词<b>逐字打出来</b>（22 字/秒，正好在该句唱完时打完），空会话的提示语随输入淡出，发送按钮随之亮起。</span>
   </div>
 
-  <h2>⑦ 还想请你确认三件小事</h2>
+  <h2>⑧ 还想请你确认三件小事</h2>
 
   <div class="ask">
     <b>A. 终端行的文案。</b>现在是 <code>❯ dsh --boot</code> + <code>terminal ready</code>。<br>
@@ -167,7 +190,7 @@
     <b>C. 最后一镜的人物。</b>现在 24%。<br>
     <span class="sub">够不够"存在感"？再亮一点会更明显，但也会削弱"没点亮"的感觉。</span>
   </div>
-  <h2>⑧ 逐镜剪辑（想单独看某一镜时用）</h2>
+  <h2>⑨ 逐镜剪辑（想单独看某一镜时用）</h2>
   <table>
     <tr><th>镜头</th><th>歌曲时间</th><th>这一镜在讲什么</th><th>剪辑</th></tr>
     <tr><td><code>boot-power</code></td><td>0.00–4.00</td><td>电源接通，鲸鱼标志亮起，防护层扫过</td><td><a href="../shots/002_boot-power.mp4">002_boot-power.mp4</a></td></tr>
@@ -178,16 +201,20 @@
     <tr><td><code>chat-open</code></td><td>16.93–22.47</td><td>空白会话打开，指针划过，状态转 online</td><td><a href="../shots/007_chat-open.mp4">007_chat-open.mp4</a></td></tr>
     <tr><td><code>chat-type</code></td><td>22.47–26.16</td><td>假开场删掉，打出真正的问题</td><td><a href="../shots/008_chat-type.mp4">008_chat-type.mp4</a></td></tr>
     <tr><td><code>chat-think</code></td><td>26.16–29.39</td><td>问题送出，停止键亮起，镜头推入标志</td><td><a href="../shots/009_chat-think.mp4">009_chat-think.mp4</a></td></tr>
+    <tr><td><code>v1-points</code></td><td>29.39–33.31</td><td>点集长成维度：坐标表 + 散点 + 逐步连起来的边</td><td><a href="../shots/010_v1-points.mp4">010_v1-points.mp4</a></td></tr>
+    <tr><td><code>v1-circle</code></td><td>33.31–37.00</td><td>光标走完圆周，走过的地方由蓝变青</td><td><a href="../shots/011_v1-circle.mp4">011_v1-circle.mp4</a></td></tr>
+    <tr><td><code>v1-sine</code></td><td>37.00–40.70</td><td>单位圆生成正弦波，光标停在波上立起切线</td><td><a href="../shots/012_v1-sine.mp4">012_v1-sine.mp4</a></td></tr>
+    <tr><td><code>v1-limit</code></td><td>40.70–44.62</td><td>曲线趋近无穷，按下停止处就是极限</td><td><a href="../shots/013_v1-limit.mp4">013_v1-limit.mp4</a></td></tr>
   </table>
 
-  <h2>⑨ 想自己翻着看</h2>
+  <h2>⑩ 想自己翻着看</h2>
   <ul>
     <li><a href="../compareResult/index.html">对比页</a>：87 个镜头槽，左右同轴播放，逐镜对比，可搜可筛。（双击打开，不需要开服务）</li>
     <li><a href="../index.html">预览页</a>：全片时间轴，目前只有这一节能播，其余镜显示 "NOT RENDERED YET"。（需要先 <code>node server.mjs</code>）</li>
     <li><a href="../STORYBOARD.md">分镜表</a>：87 镜的时间、歌词行、叙事时刻、转场。</li>
   </ul>
 
-  <h2>⑩ 这一节的状态</h2>
+  <h2>⑪ 这一节的状态</h2>
   <table>
     <tr><th>项目</th><th>状态</th></tr>
     <tr><td>四镜画面</td><td class="ok">已实现并导出（720p30，带声音）</td></tr>
@@ -203,7 +230,7 @@
     <code>review/</code> 下的文件随每次出片更新。
   </p>
 </main>
-  <h2>⑪ 色彩状态：颜色是"世界开始运行"那一刻才出现的</h2>
+  <h2>⑫ 色彩状态：颜色是"世界开始运行"那一刻才出现的</h2>
   <img src="stills-colour-state.jpg" alt="色彩状态对照：无彩 → 点火 → 全彩">
   <div class="sub">t=3.5 / 10.6 / 14.9 无彩　·　t=15.6 点火中　·　t=16.5 点火完成　·　t=19.2 聊天世界全彩</div>
 
@@ -227,7 +254,7 @@
   <div class="ask" style="border-left-color:#7f93ff">
     <b>一处我们和参考片有意不同。</b>参考片在点火之后<b>又退回了接近中性</b>（10.8 → 4.0 → 1.9），也就是说它全片其实是"大面积灰 + 一处暖色峰值"。我们是<b>颜色来了就留下</b>（13.6 → 19），因为品牌蓝是这个片子的身份。两种读法都成立："闪一下又收回去"更像一次事件，"亮起来就一直是亮的"更像一个世界被打开。如果你想要前者，把第 2 段之后的 sat 压到 0.4 左右即可。
   </div>
-  <h2>⑫ 跨段检查：第 0–2 段放在一起</h2>
+  <h2>⑬ 跨段检查：第 0–2 段放在一起</h2>
   <img src="stills-00-02-cross.jpg" alt="第 0 至 2 段横切：12 个时间点">
   <div class="sub">第一行 t=−3.0（警告页）/ 1.2（启动）/ 3.5（PROTECTION）/ 5.6（装配）　第二行 t=8.6 / 10.6（人格卡）/ 12.4 / 14.9（空会话）　第三行 t=15.3 / 16.6（片名）/ 19.2（会话打开）/ 25.9（提问）</div>
 

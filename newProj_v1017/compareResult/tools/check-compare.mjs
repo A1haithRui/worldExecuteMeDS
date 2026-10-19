@@ -59,8 +59,22 @@ const info = await page.evaluate(async () => {
   const songR = vR.currentTime - cfg.right.preroll;
 
   // A slot we have not rendered yet must say so rather than show a broken player.
-  const missR = !!document.querySelector("#clipHostR .missing");
-  const missId = document.getElementById("clipId").textContent;
+  // The probe walks back from the last row to find one: it used to rely on
+  // whichever slot the page opened on being unrendered, which stopped being true
+  // as soon as that shot got built, and a check that fails because the work
+  // progressed is a broken check.
+  let missR = false;
+  let missId = "";
+  const allRows = [...document.querySelectorAll("#rows tbody tr.shot")];
+  for (let i = allRows.length - 1; i >= 0; i--) {
+    allRows[i].click();
+    await new Promise((r) => setTimeout(r, 450));
+    if (document.querySelector("#clipHostR .missing")) {
+      missR = true;
+      missId = document.getElementById("clipId").textContent;
+      break;
+    }
+  }
 
   // Then a slot we HAVE rendered: both sides should give a playable clip.
   document.querySelector('#rows tbody tr.shot[data-i="1"]').click();
