@@ -15,7 +15,7 @@
 import { at, layer, stroke, disc, rect, type, halo, ground } from "../src/mv-draw.js";
 import { clientWindow, cursorArrow, clickRipple } from "./ui-client.js";
 import { settingsDrawer, rowY, DRAWER } from "./ui-settings.js";
-import { scopeBody, breakIntoBlocks, timeBody, uniteBody } from "./s04_bodies.js";
+import { scopeBody, breakIntoBlocks, timeBody, uniteBody, uniteZoom } from "./s04_bodies.js";
 
 const GIFT = "#83e9e6";
 const DIM = "#8ba4c2";
@@ -25,7 +25,7 @@ const easeOut = (k) => 1 - (1 - k) ** 3;
 // The window keeps its frame but loses the sidebar, and gives up width to the
 // drawer: from here on the main area is the only thing that matters.
 const WIN = Object.freeze({ x: 120, y: 80, w: 1250, h: 910 });
-const BODY = Object.freeze({ x: WIN.x + 44, y: WIN.y + 152, w: WIN.w - 88, h: WIN.h - 322 });
+const BODY = Object.freeze({ x: WIN.x + 44, y: WIN.y + 132, w: WIN.w - 88, h: WIN.h - 196 });
 
 /** The window and the drawer, shared by all four shots. */
 function frame(ctx, t, drawerState, opts = {}) {
@@ -37,6 +37,9 @@ function frame(ctx, t, drawerState, opts = {}) {
     threadTitle: "me, as geometry",
     markSize: 0,
     sendMode: "stop",
+    // no composer in this section: nothing is being typed, and the space belongs
+    // to whatever the main area is doing
+    composer: false,
     ...(opts.window || {}),
   });
   settingsDrawer(ctx, t, drawerState, opts.drawer || {});
@@ -188,6 +191,10 @@ function pre1Unite(ctx, t, s) {
   y += (doneY() - y) * toDone;
   cursorArrow(ctx, x, y, 1.35, 1);
   clickRipple(ctx, doneX(), doneY(), t, s.at + 2.95, GIFT);
+
+  // and once it is sharp, the camera falls into the mark and carries us into the
+  // conversation that follows
+  uniteZoom(ctx, BODY, t, { k: at(u, 2.85, 3.6) ** 2.2 });
 
   return { phase: "unite", depth: Number(depth.toFixed(3)) };
 }

@@ -110,6 +110,7 @@ export function clientWindow(ctx, R, t, opts = {}) {
     recents = RECENTS,
     activeRecent = 0,
     placeholder = "发消息，/ 调用指令",
+    composer = true,
     composerText = "",
     caret = false,
     sendMode = "hollow",
@@ -198,20 +199,25 @@ export function clientWindow(ctx, R, t, opts = {}) {
     }
 
     // ---- composer
-    rect(ctx, cb.x, cb.y, cb.w, cb.h, T.composer, 14, T.composerEdge);
-    const baseY = cb.y + cb.h / 2 + 7;
-    if (!composerText) {
-      type(ctx, placeholder, cb.x + 34, baseY, 21, T.placeholder, "MV Sans");
-    } else {
-      type(ctx, composerText, cb.x + 34, baseY, 22, T.text, "MV Sans");
-      if (caret) {
-        ctx.font = `400 22px "MV Sans"`;
-        chatCaret(ctx, cb.x + 36 + ctx.measureText(composerText).width, cb.y + cb.h / 2, 25, t, {
-          on: true, color: BRAND_SOFT, width: 2.4,
-        });
+    // A shot may leave it out: with nothing being typed, the composer is dead
+    // weight at the foot of the frame, and dropping it gives the main area back a
+    // third of the height for whatever the shot is actually about.
+    if (composer !== false) {
+      rect(ctx, cb.x, cb.y, cb.w, cb.h, T.composer, 14, T.composerEdge);
+      const baseY = cb.y + cb.h / 2 + 7;
+      if (!composerText) {
+        type(ctx, placeholder, cb.x + 34, baseY, 21, T.placeholder, "MV Sans");
+      } else {
+        type(ctx, composerText, cb.x + 34, baseY, 22, T.text, "MV Sans");
+        if (caret) {
+          ctx.font = `400 22px "MV Sans"`;
+          chatCaret(ctx, cb.x + 36 + ctx.measureText(composerText).width, cb.y + cb.h / 2, 25, t, {
+            on: true, color: BRAND_SOFT, width: 2.4,
+          });
+        }
       }
+      sendButton(ctx, cb.x + cb.w - 62, cb.y + cb.h / 2, sendMode, sendK, t);
     }
-    sendButton(ctx, cb.x + cb.w - 62, cb.y + cb.h / 2, sendMode, sendK, t);
   });
 
   return { mx, mw, cb, markX, markY };

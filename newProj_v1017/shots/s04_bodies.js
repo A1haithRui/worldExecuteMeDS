@@ -146,34 +146,88 @@ export function breakIntoBlocks(ctx, amount, seed = 0, size = 44) {
 // from the vanishing point, and the year spins down under it.
 // ---------------------------------------------------------------------------
 const ERAS = Object.freeze([
-  { label: "A.D. 2026", kind: "tower" },
-  { label: "A.D. 1200", kind: "spire" },
-  { label: "A.D. 1", kind: "column" },
-  { label: "1000 B.C.", kind: "column" },
-  { label: "3000 B.C.", kind: "pyramid" },
+  { label: "A.D. 2026", kind: "skyline" },
+  { label: "A.D. 1200", kind: "cathedral" },
+  { label: "A.D. 1", kind: "colonnade" },
+  { label: "1000 B.C.", kind: "ziggurat" },
+  { label: "3000 B.C.", kind: "pyramids" },
 ]);
 
 function eraShape(ctx, kind, cx, cy, h, ink, lw) {
-  if (kind === "pyramid") {
-    stroke(ctx, [[cx - h * 0.62, cy + h * 0.4], [cx, cy - h * 0.6]], ink, lw);
-    stroke(ctx, [[cx + h * 0.62, cy + h * 0.4], [cx, cy - h * 0.6]], ink, lw);
-    stroke(ctx, [[cx - h * 0.62, cy + h * 0.4], [cx + h * 0.62, cy + h * 0.4]], ink, lw);
-  } else if (kind === "tower") {
-    stroke(ctx, [[cx - h * 0.18, cy + h * 0.45], [cx - h * 0.18, cy - h * 0.35]], ink, lw);
-    stroke(ctx, [[cx + h * 0.18, cy + h * 0.45], [cx + h * 0.18, cy - h * 0.35]], ink, lw);
-    stroke(ctx, [[cx - h * 0.18, cy - h * 0.35], [cx, cy - h * 0.62]], ink, lw);
-    stroke(ctx, [[cx + h * 0.18, cy - h * 0.35], [cx, cy - h * 0.62]], ink, lw);
-    stroke(ctx, [[cx - h * 0.34, cy + h * 0.45], [cx + h * 0.34, cy + h * 0.45]], ink, lw);
-  } else if (kind === "spire") {
-    stroke(ctx, [[cx - h * 0.22, cy + h * 0.45], [cx, cy - h * 0.6]], ink, lw);
-    stroke(ctx, [[cx + h * 0.22, cy + h * 0.45], [cx, cy - h * 0.6]], ink, lw);
-    stroke(ctx, [[cx - h * 0.22, cy + h * 0.45], [cx + h * 0.22, cy + h * 0.45]], ink, lw);
-  } else {
-    for (let i = -1; i <= 1; i++) {
-      stroke(ctx, [[cx + i * h * 0.3, cy + h * 0.45], [cx + i * h * 0.3, cy - h * 0.38]], ink, lw);
+  const g = cy + h * 0.5; // the ground line every era stands on
+  const s = h / 100;
+
+  // a horizon under each scene, so they all stand on something
+  stroke(ctx, [[cx - h * 0.85, g], [cx + h * 0.85, g]], ink, lw * 0.6, 0.4);
+
+  if (kind === "skyline") {
+    const towers = [
+      { x: -0.44, w: 0.2, ht: 0.6 },
+      { x: -0.08, w: 0.26, ht: 0.88 },
+      { x: 0.28, w: 0.18, ht: 0.48 },
+    ];
+    towers.forEach((tw) => {
+      const bx = cx + tw.x * h;
+      const bw = tw.w * h;
+      const bh = tw.ht * h;
+      stroke(ctx, [[bx, g], [bx, g - bh], [bx + bw, g - bh], [bx + bw, g]], ink, lw);
+      // a window grid: what makes a block read as modern rather than as a shape
+      for (let r = 1; r < 5; r++) {
+        const wy = g - bh + (bh * r) / 5;
+        for (let c = 1; c < 3; c++) {
+          const wx = bx + (bw * c) / 3;
+          stroke(ctx, [[wx, wy - 3 * s], [wx, wy + 3 * s]], ink, lw * 0.5, 0.45);
+        }
+      }
+    });
+    stroke(ctx, [[cx + 0.05 * h, g - 0.88 * h], [cx + 0.05 * h, g - 1.02 * h]], ink, lw * 0.7);
+  } else if (kind === "cathedral") {
+    // two towers, the nave roof, a rose window, a door
+    stroke(ctx, [[cx - 0.36 * h, g], [cx - 0.36 * h, g - 0.52 * h],
+                 [cx - 0.2 * h, g - 0.86 * h], [cx - 0.04 * h, g - 0.52 * h],
+                 [cx - 0.04 * h, g]], ink, lw);
+    stroke(ctx, [[cx + 0.04 * h, g], [cx + 0.04 * h, g - 0.52 * h],
+                 [cx + 0.2 * h, g - 0.86 * h], [cx + 0.36 * h, g - 0.52 * h],
+                 [cx + 0.36 * h, g]], ink, lw);
+    stroke(ctx, [[cx - 0.36 * h, g - 0.52 * h], [cx, g - 0.7 * h], [cx + 0.36 * h, g - 0.52 * h]], ink, lw);
+    ctx.beginPath();
+    ctx.arc(cx, g - 0.44 * h, 0.12 * h, 0, Math.PI * 2);
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = lw;
+    ctx.stroke();
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      stroke(ctx, [[cx, g - 0.44 * h],
+                   [cx + Math.cos(a) * 0.12 * h, g - 0.44 * h + Math.sin(a) * 0.12 * h]], ink, lw * 0.6, 0.7);
     }
-    stroke(ctx, [[cx - h * 0.54, cy - h * 0.38], [cx + h * 0.54, cy - h * 0.38]], ink, lw);
-    stroke(ctx, [[cx - h * 0.54, cy + h * 0.45], [cx + h * 0.54, cy + h * 0.45]], ink, lw);
+    stroke(ctx, [[cx - 0.06 * h, g], [cx - 0.06 * h, g - 0.16 * h],
+                 [cx + 0.06 * h, g - 0.16 * h], [cx + 0.06 * h, g]], ink, lw * 0.8);
+  } else if (kind === "colonnade") {
+    stroke(ctx, [[cx - 0.5 * h, g - 0.42 * h], [cx, g - 0.72 * h], [cx + 0.5 * h, g - 0.42 * h]], ink, lw);
+    stroke(ctx, [[cx - 0.5 * h, g - 0.42 * h], [cx + 0.5 * h, g - 0.42 * h]], ink, lw);
+    for (let i = 0; i < 5; i++) {
+      const px = cx + (-0.4 + i * 0.2) * h;
+      stroke(ctx, [[px, g - 0.42 * h], [px, g - 0.06 * h]], ink, lw);
+      stroke(ctx, [[px - 0.035 * h, g - 0.42 * h], [px + 0.035 * h, g - 0.42 * h]], ink, lw * 0.7);
+    }
+    stroke(ctx, [[cx - 0.52 * h, g - 0.06 * h], [cx + 0.52 * h, g - 0.06 * h]], ink, lw * 0.8);
+    stroke(ctx, [[cx - 0.58 * h, g], [cx + 0.58 * h, g]], ink, lw * 0.8);
+  } else if (kind === "ziggurat") {
+    let w = 0.44;
+    for (let i = 0; i < 4; i++) {
+      const y = g - (i + 1) * 0.17 * h;
+      stroke(ctx, [[cx - w * h, y], [cx - w * h, y + 0.17 * h]], ink, lw, 0.9);
+      stroke(ctx, [[cx + w * h, y], [cx + w * h, y + 0.17 * h]], ink, lw, 0.9);
+      stroke(ctx, [[cx - w * h, y], [cx + w * h, y]], ink, lw * 0.8);
+      w *= 0.72;
+    }
+    stroke(ctx, [[cx, g], [cx, g - 0.68 * h]], ink, lw * 0.7, 0.55);
+  } else {
+    // a pyramid field: two of different sizes and a low mastaba, so it has depth
+    stroke(ctx, [[cx - 0.62 * h, g], [cx - 0.3 * h, g - 0.74 * h], [cx + 0.02 * h, g]], ink, lw);
+    stroke(ctx, [[cx + 0.06 * h, g], [cx + 0.3 * h, g - 0.46 * h], [cx + 0.54 * h, g]], ink, lw);
+    stroke(ctx, [[cx - 0.74 * h, g - 0.1 * h], [cx - 0.74 * h, g],
+                 [cx - 0.54 * h, g], [cx - 0.54 * h, g - 0.1 * h]], ink, lw * 0.8);
   }
 }
 
@@ -295,15 +349,36 @@ export function uniteBody(ctx, R, t, opts = {}) {
       disc(ctx, px, py, 1.2 + 1.6 * (1 - ph), GIFT, (1 - ph) * (0.25 + 0.7 * depth));
     }
 
-    // the mark itself: the halo is the readout of how deep this goes
+    // the mark itself, and the whole point of the shot: as the context deepens the
+    // mark comes into focus. It starts as a smudge and resolves to a hard printed
+    // edge, so the slider reads as understanding rather than as a light getting
+    // brighter. The glow is secondary; the focus is the story.
     const glow = 0.25 + 0.75 * depth;
-    halo(ctx, cx, cy, size * (0.9 + 0.9 * glow), 0.28 + 0.5 * glow, BRAND);
-    halo(ctx, cx, cy, size * (0.5 + 0.4 * glow), 0.5 + 0.45 * glow, GIFT);
+    const blur = (1 - depth) * 14;
     ctx.save();
-    ctx.shadowColor = "rgba(77,107,254,0.95)";
-    ctx.shadowBlur = 24 + 70 * glow;
+    ctx.beginPath();
+    ctx.roundRect(R.x + 1, R.y + 1, R.w - 2, R.h - 2, 13);
+    ctx.clip();
+    halo(ctx, cx, cy, size * (0.9 + 0.9 * glow), 0.18 + 0.34 * glow, BRAND);
+    ctx.restore();
+
+    ctx.save();
+    // the surrounding blur is part of the mark: the halo's softness and the mark's
+    // own softness resolve together
+    ctx.filter = `blur(${blur.toFixed(2)}px)`;
+    halo(ctx, cx, cy, size * (0.5 + 0.4 * glow), 0.35 + 0.4 * glow, GIFT);
     drawWhale(ctx, cx, cy, size, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.92 + 0.08 * unity });
     ctx.restore();
+
+    // once it is fully in focus, a second pass of the same mark lands sharp and
+    // adds the bloom, so the arrival is visible even in a still
+    if (depth > 0.985) {
+      ctx.save();
+      ctx.shadowColor = "rgba(77,107,254,0.95)";
+      ctx.shadowBlur = 34 + 70 * glow;
+      drawWhale(ctx, cx, cy, size, { strokeK: 1, fillK: 1, color: BRAND, alpha: 1 });
+      ctx.restore();
+    }
 
     // the depth readout under it
     type(
@@ -311,6 +386,28 @@ export function uniteBody(ctx, R, t, opts = {}) {
       cx, cy + size * 0.78, 17, GIFT, "MV Mono", "center",
     );
     type(ctx, "context depth", R.x + 26, R.y + 34, 16, DIM, "MV Mono");
+    ctx.restore();
+  });
+}
+
+/**
+ * The hand-off out of the section: once the mark is fully sharp, the camera falls
+ * into it. Drawn outside the panel's clip so it can leave the frame, and scaled
+ * about the mark so the mark itself is what fills the screen.
+ */
+export function uniteZoom(ctx, R, t, opts = {}) {
+  const { k = 0 } = opts;
+  if (k <= 0.001) return;
+  const cx = R.x + R.w * 0.5;
+  const cy = R.y + R.h * 0.46;
+  const scale = 1 + k ** 2.4 * 11;
+  layer(ctx, Math.min(1, k * 3), () => {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(scale, scale);
+    ctx.translate(-cx, -cy);
+    halo(ctx, cx, cy, 190 * (1 + k * 6), 0.4 + 0.4 * k, BRAND);
+    drawWhale(ctx, cx, cy, 190, { strokeK: 1, fillK: 1, color: BRAND, alpha: 1 });
     ctx.restore();
   });
 }
