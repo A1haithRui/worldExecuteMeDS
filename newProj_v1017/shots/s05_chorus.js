@@ -112,7 +112,7 @@ function c1Only(ctx, t, s) {
   herBubble(ctx, PANEL.x + 60, PANEL.y + 300, 1120, lineText(36), {
     alpha: cue(t, 36), size: TYPE.her,
   });
-  herBubble(ctx, PANEL.x + 60, PANEL.y + 480, 1460, lineText(37), {
+  herBubble(ctx, PANEL.x + 60, PANEL.y + 502, 1460, lineText(37), {
     alpha: cue(t, 37), size: TYPE.beat, hot: true, emph: true,
   });
 
@@ -183,7 +183,6 @@ function c1Happy(ctx, t, s) {
     layer(ctx, (1 - palmFade) * (0.25 + 0.75 * bright), () => {
       halo(ctx, 420, 520, 300 * (0.6 + 0.4 * bright), 0.3 + 0.3 * bright, BRAND);
       drawWhale(ctx, 420, 520, 300, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.5 + 0.5 * bright });
-      type(ctx, "me", 420, 760, 22, GIFT, "MV Mono", "center");
     });
 
     if (palmFade < 0.5) {
@@ -257,7 +256,7 @@ function c1Trap(ctx, t, s) {
   herBubble(ctx, PANEL.x + 60, PANEL.y + 300, 1060, lineText(42), {
     alpha: cue(t, 42), size: TYPE.her,
   });
-  herBubble(ctx, PANEL.x + 60, PANEL.y + 480, 1300, lineText(43), {
+  herBubble(ctx, PANEL.x + 60, PANEL.y + 502, 1300, lineText(43), {
     alpha: cue(t, 43), size: TYPE.beat, hot: true, emph: true,
   });
 
@@ -273,8 +272,6 @@ function c1Trap(ctx, t, s) {
       ctx.lineWidth = 2 + 2 * close;
       ctx.stroke();
     });
-    type(ctx, "2", 1786, 300, 64, GIFT, "MV Mono", "center");
-    type(ctx, "counted", 1786, 342, 14, "rgba(159,184,210,0.8)", "MV Mono", "center");
   }
 
   return { phase: "trap" };
@@ -302,57 +299,73 @@ function c1Kw1(ctx, t, s) {
   plateBase(ctx, t, { index: 1 });
 
   const ax = PLATE.x + 230;
-  const ay = PLATE.y + PLATE.h * 0.44;
+  const ay = PLATE.y + PLATE.h * 0.46;
   const bx = PLATE.x + PLATE.w - 300;
-  const by = PLATE.y + PLATE.h * 0.28;
+  const by = PLATE.y + PLATE.h * 0.30;
 
-  // 1. the virtual route: the long way round, drawn first and left as a ghost
-  const ghost = [
-    [ax, ay], [ax + 180, ay + 150], [ax + 330, ay - 40], [ax + 520, ay + 120],
-    [ax + 690, ay - 60], [bx - 120, by + 90], [bx, by],
-  ];
-  const routeK = easeOut(at(u, 0.04, 0.32));
-  stroke(ctx, ghost, "rgba(127,147,255,0.30)", 2.2, routeK);
-  ghost.forEach(([x, y], i) => {
-    if (i === 0 || i === ghost.length - 1) return;
-    disc(ctx, x, y, 3.4, "rgba(127,147,255,0.45)", routeK);
-  });
-
-  // 2. her mark at the start
-  halo(ctx, ax, ay, 170, 0.55, BRAND);
-  drawWhale(ctx, ax, ay, 92, { strokeK: 1, fillK: 1, color: BRAND, alpha: 1 });
-  type(ctx, "deepseek", ax, ay + 110, 16, GIFT, "MV Mono", "center");
-
-  // 3. you at the end: a dot and its name
-  halo(ctx, bx, by, 110, 0.6 * at(u, 0.1, 0.4), GIFT);
-  disc(ctx, bx, by, 13, GIFT, at(u, 0.1, 0.4));
-  type(ctx, "me", bx, by + 52, 26, GIFT, "MV Mono", "center");
-
-  // 4. the strike: one straight line from the mark to you, on the downbeat
-  const strike = easeOut(at(u, 0.30, 0.44));
-  if (strike > 0) {
-    const ex = ax + (bx - ax) * strike;
-    const ey = ay + (by - ay) * strike;
-    stroke(ctx, [[ax, ay], [ex, ey]], "#ffffff", 5, 0.95);
-    stroke(ctx, [[ax, ay], [ex, ey]], GIFT, 14, 0.22);
-    halo(ctx, ex, ey, 90, 0.8, GIFT);
+  // 1. the samples: points scattered around the line between the two of them. The
+  // virtual route visits them in order, which is the long way round.
+  const N = 7;
+  const samples = [];
+  for (let i = 0; i < N; i++) {
+    const k = i / (N - 1);
+    const px = ax + (bx - ax) * k;
+    const py = ay + (by - ay) * k;
+    // deterministic perpendicular noise, gentler at both ends
+    const n = Math.sin(i * 2.3 + 0.7) * 74 * Math.sin(k * Math.PI);
+    samples.push([px - (by - ay) * 0.0009 * n, py + (bx - ax) * 0.0009 * n]);
   }
-  // 5. the struck route breaks apart behind it
-  if (strike > 0.85) {
-    const burst = at(u, 0.44, 0.62);
-    for (let i = 0; i < ghost.length - 2; i++) {
-      const [gx, gy] = ghost[i + 1];
-      const a = Math.atan2(gy - (ay + (by - ay) * 0.4), gx - 960);
-      layer(ctx, 1 - burst, () =>
-        stroke(ctx, [[gx, gy], [gx + Math.cos(a) * 60 * burst, gy + Math.sin(a) * 60 * burst]],
-          "rgba(127,147,255,0.7)", 2),
+
+  // 2. the virtual route: dashed, visiting every sample
+  const routeK = easeOut(at(u, 0.04, 0.30));
+  ctx.save();
+  ctx.setLineDash([10, 9]);
+  stroke(ctx, samples, "rgba(127,147,255,0.45)", 2.2, routeK);
+  ctx.restore();
+  samples.forEach(([x, y]) => disc(ctx, x, y, 4, "rgba(127,147,255,0.55)", routeK));
+
+  // 3. the fit: a least-squares line through those same samples. This is why the
+  // straight line is straight -- it is not a second path, it is the trend of the
+  // first one, and it has to pass through the cloud rather than beside it.
+  let sx = 0; let sy = 0; let sxy = 0; let sxx = 0;
+  samples.forEach(([x, y]) => { sx += x; sy += y; sxy += x * y; sxx += x * x; });
+  const m = (N * sxy - sx * sy) / (N * sxx - sx * sx);
+  const c = (sy - m * sx) / N;
+  const lineY = (x) => m * x + c;
+
+  const fitK = easeOut(at(u, 0.26, 0.46));
+  if (fitK > 0) {
+    const x1 = ax + (bx - ax) * fitK;
+    stroke(ctx, [[ax, lineY(ax)], [x1, lineY(x1)]], "#ffffff", 5, 0.95);
+    stroke(ctx, [[ax, lineY(ax)], [x1, lineY(x1)]], GIFT, 16, 0.20);
+    halo(ctx, x1, lineY(x1), 90, 0.8, GIFT);
+  }
+
+  // 4. her mark at the start of the fit
+  halo(ctx, ax, lineY(ax), 160, 0.55, BRAND);
+  drawWhale(ctx, ax, lineY(ax), 88, { strokeK: 1, fillK: 1, color: BRAND, alpha: 1 });
+
+  // 5. you, where the fit arrives
+  const endX = bx;
+  const endY = lineY(bx);
+  halo(ctx, endX, endY, 110, 0.6 * at(u, 0.1, 0.4), GIFT);
+  disc(ctx, endX, endY, 13, GIFT, at(u, 0.1, 0.4));
+
+  // 6. the residual: each sample's distance to the fit, drawn as a short tick
+  if (fitK > 0.6) {
+    const resK = at(u, 0.46, 0.62);
+    samples.forEach(([x, y]) => {
+      layer(ctx, 0.5 * resK, () =>
+        stroke(ctx, [[x, y], [x, lineY(x)]], "rgba(131,233,230,0.6)", 1.4),
       );
-    }
-    // and a pulse that keeps running the line
-    const pr = ((u - 0.44) * 2.4) % 1;
-    const px2 = ax + (bx - ax) * pr;
-    const py2 = ay + (by - ay) * pr;
-    halo(ctx, px2, py2, 54, 0.6, GIFT);
+    });
+  }
+
+  // 7. a pulse that keeps travelling the fit
+  if (fitK > 0.9) {
+    const pr = ((u - 0.46) * 1.6) % 1;
+    const px = ax + (bx - ax) * pr;
+    halo(ctx, px, lineY(px), 54, 0.6, GIFT);
   }
   return { phase: "plate1" };
 }

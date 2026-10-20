@@ -38,7 +38,10 @@ export function herBubble(ctx, x, y, w, text, opts = {}) {
   const fit = Math.min(size, (size * (w - pad * 2)) / Math.max(1, measured));
   const textW = (measured * fit) / size;
   const bw = Math.min(w, textW + pad * 2);
-  const bh = headH + fit * 1.5 + pad * 0.9;
+  // The tick lives INSIDE the bubble. Drawn under it, the next bubble sat on top of
+  // it and every "Delivered" was half covered.
+  const tickH = tick ? 34 : 0;
+  const bh = headH + fit * 1.5 + pad * 0.9 + tickH;
 
   layer(ctx, alpha, () => {
     ctx.save();
@@ -57,7 +60,7 @@ export function herBubble(ctx, x, y, w, text, opts = {}) {
     type(ctx, text, x + pad, y + headH + fit * 1.06, fit, "#f2f6fb", SERIF);
 
     if (tick) {
-      type(ctx, "✓ Delivered", x + pad, y + bh + 28, TYPE.meta, "rgba(139,164,194,0.75)", "MV Mono");
+      type(ctx, "✓ Delivered", x + pad, y + bh - 14, TYPE.meta, "rgba(139,164,194,0.75)", "MV Mono");
     }
   });
   return bh;
