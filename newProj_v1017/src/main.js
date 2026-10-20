@@ -18,7 +18,7 @@ import { preroll } from "../shots/s00_preroll.js";
 import { SECTION2_RENDER } from "../shots/s02_title.js";
 import { SECTION3_RENDER } from "../shots/s03_geometry.js";
 import { SECTION4_RENDER } from "../shots/s04_settings.js";
-import { SECTION5_RENDER, SECTION5_READY } from "../shots/s05_chorus.js";
+import { SECTION5_RENDER, SECTION5_READY, ART_READY as SECTION5_ART } from "../shots/s05_chorus.js";
 import { SECTION6_RENDER } from "../shots/s06_plates.js";
 import { SECTION7_RENDER } from "../shots/s07_identity.js";
 
@@ -323,7 +323,7 @@ function tick() {
 
 // --- boot ------------------------------------------------------------------
 async function boot() {
-  await Promise.all([lyricsReady, featuresReady, fontReady, figureReady, SECTION5_READY]);
+  await Promise.all([lyricsReady, featuresReady, fontReady, figureReady, SECTION5_READY, SECTION5_ART]);
   config = await configReady;
   // In render mode the picture is all that matters: ffmpeg muxes the original
   // audio afterwards. Dropping the element's source stops the page pulling a

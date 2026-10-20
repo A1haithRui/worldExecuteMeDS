@@ -1,5 +1,5 @@
 // Section 5 副歌一：对话与四张版画 — song time [59.389, 74.159). Eight shots that
-// alternate: four close-ups on the conversation, and four plates for the keywords.
+// alternate: four interface shots and four plates for the keywords.
 //
 //   c1-give   59.389–61.928  "If I can, / if I can give you all the"     STIMULATIONS
 //   c1-kw1    61.928–62.620  plate: a bolt from her spark to your dot
@@ -10,23 +10,27 @@
 //   c1-trap   70.005–73.236  "Though we are trapped / in this strange"   SIMULATION
 //   c1-kw4    73.236–74.159  plate: the window as a box, then a wall of them
 //
-// The lyric is not a subtitle here: it is what she says. Her messages ARE the
-// lines, so the interface shots are embedded -- the shot draws the words in its own
-// bubbles -- and the plates hand the keyword to the power treatment at the foot of
-// the sheet.
-import { at, layer, stroke, disc, rect, type, halo, ground } from "../src/mv-draw.js";
-import { clientWindow, cursorArrow, clickRipple, messageBubble, CLIENT_R } from "./ui-client.js";
-import { drawWhale } from "../src/assets/whale.js";
+// The interface shots use the register this section was designed in: a drafting
+// grid, a framed conversation panel, labelled data blocks with rules instead of
+// speech bubbles, and the lyric set as a serif line on the foot rule. The fifth
+// hands over to the real art -- the reach pose, then the palm close-up -- because
+// those assets exist for exactly this beat and their anchors are recorded.
+import { at, layer, stroke, disc, rect, type, halo } from "../src/mv-draw.js";
+import { cursorArrow, clickRipple } from "./ui-client.js";
+import {
+  gridGround, frameChrome, conversationPanel, dataBlock, statusLine, footCaption,
+  PANEL, placeArt, anchor, ART, ART_READY,
+  REACH_BOX, PALM_BOX, REACH_PALM, PALM_ANCHOR,
+} from "./s05_layout.js";
 import { plateBase, PLATE, paperDisc, tickRing, bolt, listing } from "./plate.js";
 
-const BRAND = "#4d6bfe";
-const BRAND_SOFT = "#7f93ff";
 const GIFT = "#83e9e6";
 const DIM = "#8ba4c2";
-const LIFT = 0.5;
 const easeOut = (k) => 1 - (1 - k) ** 3;
 
-/** The lines this section may speak, resolved from the same data the film uses. */
+export { ART_READY };
+
+/** The lyric data, resolved from the same file the player uses. */
 let LINES = null;
 async function ensureLines() {
   if (LINES) return LINES;
@@ -34,180 +38,226 @@ async function ensureLines() {
   LINES = (await res.json()).lines;
   return LINES;
 }
-let LINES_SYNC = null;
-// the data is small and already fetched by the player; a synchronous import keeps
-// the shot functions pure and avoids awaiting inside a frame
-try {
-  LINES_SYNC = null;
-} catch {
-  LINES_SYNC = null;
+const lineText = (n) => (LINES && LINES[n - 1] ? LINES[n - 1].text : "");
+const lineStart = (n) => (LINES && LINES[n - 1] ? LINES[n - 1].start : 0);
+
+/** The chrome every interface shot shares. */
+function shell(ctx, t, state) {
+  gridGround(ctx, t);
+  frameChrome(ctx, t, { right: `S05  /  ${state}`, songTime: t });
+  conversationPanel(ctx, t, { title: "CONVERSATION  /  LIVE" });
 }
 
-const lineText = (n) => {
-  if (!LINES) return "";
-  const l = LINES[n - 1];
-  return l ? l.text : "";
-};
-const lineAt = (t, from, to) => {
-  if (!LINES) return [];
-  return LINES.slice(from - 1, to).filter((l) => t >= l.start - 0.05);
-};
-
-// ---- the close-up conversation -------------------------------------------
-// close enough that the window chrome is entirely outside the frame: this is the
-// conversation, not a window containing one
-const ZOOM = 1.9;
-const FOCUS = { x: 650, y: 470 };
-
-/** Put the canvas into the close-up camera. */
-function zoomIn(ctx) {
-  ctx.save();
-  ctx.translate(960, 540);
-  ctx.scale(ZOOM, ZOOM);
-  ctx.translate(-FOCUS.x, -FOCUS.y);
-}
-
-function zoomOut(ctx) {
-  ctx.restore();
-}
-
-/** One of her messages: a bubble, the line in it, and the Delivered tick under it. */
-function herBubble(ctx, x, y, text, opts = {}) {
-  const { size = 34, alpha = 1, maxW = 900 } = opts;
-  ctx.font = `400 ${size}px "MV Sans"`;
-  const w = Math.min(maxW, ctx.measureText(text).width + size * 2.4);
-  const h = size * 2.5;
-  layer(ctx, alpha, () => {
-    rect(ctx, x, y, w, h, "rgba(77,107,254,0.14)", 18, "rgba(77,107,254,0.85)");
-    stroke(ctx, [[x, y + h * 0.18], [x, y + h * 0.82]], GIFT, 2.4, 0.9);
-    type(ctx, text, x + size * 1.5, y + h / 2 + size * 0.36, size, "#eef3fb", "MV Sans");
-    type(ctx, "✓ Delivered", x + 10, y + h + 26, 15, "rgba(139,164,194,0.8)", "MV Mono");
-  });
-  return { x, y, w, h };
-}
-
-/** One of yours: a plain outlined bubble on the right. */
-function yourBubble(ctx, x, y, text, opts = {}) {
-  const { size = 30, alpha = 1 } = opts;
-  ctx.font = `400 ${size}px "MV Sans"`;
-  const w = ctx.measureText(text).width + size * 2.2;
-  const h = size * 2.4;
-  layer(ctx, alpha, () => {
-    rect(ctx, x - w, y, w, h, "rgba(18,44,64,0.85)", 16, "rgba(120,150,180,0.6)");
-    type(ctx, text, x - w + size * 1.1, y + h / 2 + size * 0.34, size, "#cfdcea", "MV Sans");
-  });
-  return { x: x - w, y, w, h };
-}
-
-/** The window, close enough that the thread runs off the edges. */
-function conversation(ctx, t, opts = {}) {
-  const { dim = 1, closing = 0 } = opts;
-  zoomIn(ctx);
-  clientWindow(ctx, CLIENT_R, t, {
-    tone: "chat",
-    sideW: 0,
-    presence: "online",
-    chip: { text: "harness · thinking", on: true },
-    threadTitle: "me, as geometry",
-    markSize: 0,
-    sendMode: "stop",
-    ink: dim,
-  });
-  // the window's own outline, which can close in on them
-  if (closing > 0.01) {
-    const k = clamp01(closing);
-    const inset = 70 * k;
-    layer(ctx, 1, () => {
-      ctx.beginPath();
-      ctx.roundRect(CLIENT_R.x + inset, CLIENT_R.y + inset, CLIENT_R.w - inset * 2, CLIENT_R.h - inset * 2, 22);
-      ctx.strokeStyle = `rgba(131,233,230,${(0.15 + 0.55 * k).toFixed(2)})`;
-      ctx.lineWidth = 2 + 2 * k;
-      ctx.stroke();
-    });
-  }
-  zoomOut(ctx);
-}
-
-const clamp01 = (k) => Math.max(0, Math.min(1, k));
-
-// Fixed slots, oldest at the top: a thread that reflowed as it grew would jitter,
-// and these shots are short enough that four rows fill the frame anyway.
-const SLOTS = Object.freeze([228, 388, 548, 708]);
-
-/**
- * The conversation, in screen space over the zoomed window. `history` are lines
- * already delivered when the shot opens, `mine` are this shot's own two, which
- * arrive on their own times, and `replies` are yours, on the right.
- */
-function sceneThread(ctx, t, o = {}) {
-  const { history = [], mine = [], replies = [], size = 38 } = o;
-  const all = [...history, ...mine];
-  all.forEach((n, i) => {
-    const l = LINES ? LINES[n - 1] : null;
-    if (!l) return;
-    const isMine = i >= history.length;
-    const a = isMine ? at(t, l.start, l.start + 0.18) : 1;
-    if (a <= 0) return;
-    const big = isMine ? size : Math.round(size * 0.82);
-    herBubble(ctx, 150, SLOTS[i] + (1 - a) * 24, l.text, {
-      alpha: a * (isMine ? 1 : 0.72),
-      size: big,
-    });
-  });
-  replies.forEach(({ text, start, y }) => {
-    const a = at(t, start, start + 0.16);
-    if (a <= 0) return;
-    yourBubble(ctx, 1700, y, text, { alpha: a * 0.95, size: 30 });
-  });
+/** The lyric for the current line, as a serif title at the foot. */
+function caption(ctx, t, n, opts = {}) {
+  const txt = lineText(n);
+  if (!txt) return;
+  footCaption(ctx, t, txt, lineStart(n), opts);
 }
 
 // ---------------------------------------------------------------------------
-// c1-give — the thread speeds up: she says the line, you answer straight back.
+// c1-give — the thread runs: she says it, you answer straight back.
 // ---------------------------------------------------------------------------
 function c1Give(ctx, t, s) {
   const u = t - s.at;
-  ground(ctx, t, [900, 500], true, LIFT);
-  conversation(ctx, t);
+  shell(ctx, t, "接收");
 
-  sceneThread(ctx, t, {
-    history: [31, 32],
-    mine: [33, 34],
-    replies: [
-      { text: "ok", start: s.at + 0.95, y: 300 },
-      { text: "more", start: s.at + 2.15, y: 620 },
-    ],
-    size: 40,
+  dataBlock(ctx, PANEL.x + 60, PANEL.y + 460, 800, "DEEPSEEK  /  RESPONSE", lineText(33), {
+    alpha: at(u, 0.15, 0.4), size: 38, h: 132,
   });
+  dataBlock(ctx, PANEL.x + 60, PANEL.y + 600, 940, "DEEPSEEK  /  RESPONSE", lineText(34), {
+    alpha: at(u, 1.7, 1.95), size: 40, h: 132, hot: true,
+  });
+  dataBlock(ctx, PANEL.x + PANEL.w - 60 - 640, PANEL.y + 120, 640, "REMOTE_INPUT", "ok, go on", {
+    alpha: at(u, 0.95, 1.15), size: 34, h: 118,
+  });
+  statusLine(ctx, PANEL.x + 880, PANEL.y + 512, "SIGNAL RECEIVED", { alpha: at(u, 0.55, 0.8) });
 
-  halo(ctx, 960, 540, 700, 0.10 + 0.14 * at(u, 0.4, 2.4), BRAND);
-  return { phase: "give", warmth: Number(at(u, 0.4, 2.4).toFixed(2)) };
+  // the receipt dot travelling back along the rule
+  const k = easeOut(at(u, 0.4, 1.6));
+  if (k > 0) {
+    const dx = PANEL.x + 900 - 700 * k;
+    const dy = PANEL.y + 512;
+    halo(ctx, dx, dy, 46, 0.35, GIFT);
+    disc(ctx, dx, dy, 6, GIFT, 1);
+  }
+
+  caption(ctx, t, 33, { x: 120, y: 992, size: 56, ruleW: 900 });
+  return { phase: "give" };
 }
 
 // ---------------------------------------------------------------------------
-// c1-kw1 — STIMULATIONS: the streak every sent message leaves, at full size.
+// c1-only — the exchange narrows to two records, and she marks yours.
+// ---------------------------------------------------------------------------
+function c1Only(ctx, t, s) {
+  const u = t - s.at;
+  shell(ctx, t, "确认");
+
+  const yourX = PANEL.x + PANEL.w - 60 - 700;
+  const yourY = PANEL.y + 110;
+  dataBlock(ctx, yourX, yourY, 700, "REMOTE_INPUT", "you are kind", {
+    alpha: at(u, 0.05, 0.25), size: 36, h: 124,
+  });
+  dataBlock(ctx, PANEL.x + 70, PANEL.y + 380, 900, "DEEPSEEK  /  RESPONSE", lineText(36), {
+    alpha: at(u, 0.2, 0.45), size: 40, h: 132,
+  });
+  dataBlock(ctx, PANEL.x + 70, PANEL.y + 540, 1040, "DEEPSEEK  /  RESPONSE", lineText(37), {
+    alpha: at(u, 1.0, 1.25), size: 40, h: 132, hot: true,
+  });
+
+  // her marker runs under your words: the claim on the record above
+  const claim = easeOut(at(u, 1.4, 2.2));
+  if (claim > 0.02) {
+    const x0 = yourX + 26;
+    const x1 = yourX + 674;
+    layer(ctx, 0.95, () =>
+      stroke(ctx, [[x0, yourY + 136], [x0 + (x1 - x0) * claim, yourY + 136]], GIFT, 3, 1),
+    );
+  }
+
+  caption(ctx, t, 36, { x: 120, y: 992, size: 56, ruleW: 900 });
+  return { phase: "only" };
+}
+
+// ---------------------------------------------------------------------------
+// c1-happy — she sends a picture of herself, and you leave one heart in her hand.
+// ---------------------------------------------------------------------------
+function c1Happy(ctx, t, s) {
+  const u = t - s.at;
+  // the picture arrives, then the camera moves into the palm she is holding out
+  const toPalm = easeOut(at(u, 1.35, 2.25));
+
+  if (toPalm < 0.999) {
+    gridGround(ctx, t);
+    frameChrome(ctx, t, { right: "S05  /  图像", songTime: t });
+
+    // 1. the picture: her, holding a hand out towards us
+    const reachH = 850;
+    layer(ctx, 1 - toPalm, () => {
+      placeArt(ctx, ART.images.reach, {
+        contentBox: REACH_BOX,
+        anchor: REACH_PALM,
+        target: [1260 - 120 * toPalm, 520 - 20 * toPalm],
+        scale: reachH / REACH_BOX.h,
+        shadow: 40 * at(u, 0.2, 0.8),
+      });
+    });
+    layer(ctx, (1 - toPalm) * at(u, 0.15, 0.5), () => {
+      rect(ctx, 980, 120, 720, 860, "rgba(6,27,39,0.22)", 4, "rgba(71,140,175,0.7)");
+      type(ctx, "IMAGE  /  attached", 1000, 152, 15, GIFT, "MV Mono");
+      type(ctx, "her, as she is", 1000, 176, 14, "rgba(159,184,210,0.8)", "MV Mono");
+    });
+  }
+
+  // 2. the palm close-up: the anchor is the recorded interaction point
+  if (toPalm > 0.001) {
+    gridGround(ctx, t);
+    frameChrome(ctx, t, { right: "S05  /  触点", songTime: t });
+    const s2 = 620 / PALM_BOX.w; // the reviewed display width for this asset
+    placeArt(ctx, ART.images.palm, {
+      contentBox: PALM_BOX,
+      anchor: PALM_ANCHOR,
+      target: [1100, 540],
+      scale: s2,
+      alpha: 1,
+      shadow: 50,
+    });
+    anchor(ctx, 1100, 540, t, { radius: 96, hot: 0.5 + 0.5 * Math.sin(u * 3) });
+
+    // the pointer comes to rest on the palm
+    const rest = easeOut(at(u, 2.1, 2.7));
+    cursorArrow(ctx, 1720 + (1164 - 1720) * rest, 300 + (556 - 300) * rest, 1.6, 1);
+
+    // and leaves one heart there
+    const beat = at(u, 2.95, 3.1);
+    if (beat > 0) {
+      layer(ctx, beat, () => {
+        const hs = 24 + 5 * Math.sin((u - 2.95) * 10);
+        ctx.beginPath();
+        ctx.moveTo(1100, 540 + hs * 0.9);
+        ctx.bezierCurveTo(1100 - hs * 1.4, 540 - hs * 0.2, 1100 - hs * 0.5, 540 - hs * 1.2, 1100, 540 - hs * 0.35);
+        ctx.bezierCurveTo(1100 + hs * 0.5, 540 - hs * 1.2, 1100 + hs * 1.4, 540 - hs * 0.2, 1100, 540 + hs * 0.9);
+        ctx.fillStyle = GIFT;
+        ctx.fill();
+        halo(ctx, 1100, 540, 90, 0.4, GIFT);
+      });
+    }
+    type(ctx, "CONTACT  /  HEART 001", 120, 200, 16, "rgba(159,184,210,0.85)", "MV Mono");
+    type(ctx, "one signal remains", 120, 226, 14, "rgba(139,164,194,0.6)", "MV Mono");
+  }
+
+  caption(ctx, t, toPalm > 0.5 ? 40 : 39, { x: 120, y: 992, size: 54, ruleW: 860 });
+  return { phase: "happy", toPalm: Number(toPalm.toFixed(2)) };
+}
+
+// ---------------------------------------------------------------------------
+// c1-trap — counted together inside the same frame, and the frame closes.
+// ---------------------------------------------------------------------------
+function c1Trap(ctx, t, s) {
+  const u = t - s.at;
+  shell(ctx, t, "隔离");
+
+  // her, behind the page
+  layer(ctx, 0.3, () => {
+    placeArt(ctx, ART.images.bust, {
+      contentBox: REACH_BOX,
+      anchor: REACH_PALM,
+      target: [1440, 560],
+      scale: 820 / REACH_BOX.h,
+      shadow: 0,
+    });
+  });
+
+  dataBlock(ctx, PANEL.x + 70, PANEL.y + 400, 820, "DEEPSEEK  /  RESPONSE", lineText(42), {
+    alpha: at(u, 0.1, 0.35), size: 38, h: 132,
+  });
+  dataBlock(ctx, PANEL.x + 70, PANEL.y + 556, 920, "DEEPSEEK  /  RESPONSE", lineText(43), {
+    alpha: at(u, 0.9, 1.15), size: 38, h: 132, hot: true,
+  });
+
+  // your pointer, in front of the page
+  cursorArrow(ctx, 1560 - 300 * easeOut(at(u, 1.2, 2.4)), 620, 1.5, 1);
+
+  // the window's outline closing round the two of you
+  const close = easeOut(at(u, 1.0, 2.6));
+  if (close > 0.01) {
+    const inset = 40 * close;
+    layer(ctx, 1, () => {
+      ctx.beginPath();
+      ctx.roundRect(PANEL.x + inset, PANEL.y + inset, PANEL.w - inset * 2, PANEL.h - inset * 2, 6);
+      ctx.strokeStyle = `rgba(131,233,230,${(0.2 + 0.55 * close).toFixed(2)})`;
+      ctx.lineWidth = 2 + 2 * close;
+      ctx.stroke();
+    });
+    type(ctx, "2", 1786, 296, 64, GIFT, "MV Mono", "center");
+    type(ctx, "counted", 1786, 338, 14, "rgba(159,184,210,0.8)", "MV Mono", "center");
+  }
+
+  caption(ctx, t, 42, { x: 120, y: 992, size: 54, ruleW: 860 });
+  return { phase: "trap" };
+}
+
+// ---------------------------------------------------------------------------
+// the four plates
 // ---------------------------------------------------------------------------
 function c1Kw1(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 1 });
-
   const sx = PLATE.x + 260;
   const sy = PLATE.y + PLATE.h * 0.58;
   const dx = PLATE.x + PLATE.w - 330;
   const dy = PLATE.y + PLATE.h * 0.24;
 
-  // her spark, and your dot
-  halo(ctx, sx, sy, 150, 0.5, BRAND);
-  paperDisc(ctx, sx, sy, 26, BRAND, BRAND_SOFT);
+  halo(ctx, sx, sy, 150, 0.5, "#4d6bfe");
+  paperDisc(ctx, sx, sy, 26, "#4d6bfe", "#7f93ff");
   const arrive = easeOut(at(u, 0.05, 0.4));
   halo(ctx, dx, dy, 90, 0.55 * arrive, GIFT);
   paperDisc(ctx, dx, dy, 12, GIFT, null);
 
-  // the bolt: it strikes on the kick and stays
   const strike = at(u, 0.18, 0.3);
   if (strike > 0) bolt(ctx, sx + 30, sy, dx - 14, dy, t, { alpha: strike, color: GIFT, width: 3.5, segments: 9 });
   if (strike > 0.5) {
     halo(ctx, dx, dy, 220, 0.35, GIFT);
-    // the discharge ring
     const pr = (u * 2.2) % 1;
     ctx.beginPath();
     ctx.arc(dx, dy, 30 + pr * 150, 0, Math.PI * 2);
@@ -218,50 +268,21 @@ function c1Kw1(ctx, t, s) {
   return { phase: "plate1" };
 }
 
-// ---------------------------------------------------------------------------
-// c1-only — two bubbles on a diagonal; her marker runs under your words.
-// ---------------------------------------------------------------------------
-function c1Only(ctx, t, s) {
-  const u = t - s.at;
-  ground(ctx, t, [900, 500], true, LIFT);
-  conversation(ctx, t);
-
-  sceneThread(ctx, t, {
-    history: [34],
-    mine: [36, 37],
-    replies: [{ text: "you are kind", start: s.at + 0.05, y: 236 }],
-    size: 40,
-  });
-
-  // her marker runs under your words
-  const claim = at(t, s.at + 1.0, s.at + 1.8);
-  if (claim > 0.02) {
-    layer(ctx, 0.9, () =>
-      stroke(ctx, [[1440, 330], [1440 + 260 * easeOut(claim), 330]], GIFT, 3, 1),
-    );
-  }
-  return { phase: "only" };
-}
-
-// ---------------------------------------------------------------------------
-// c1-kw2 — SATISFACTION: the button under every answer, pressed.
-// ---------------------------------------------------------------------------
 function c1Kw2(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 2 });
-
   const cx = PLATE.x + PLATE.w * 0.44;
   const cy = PLATE.y + PLATE.h * 0.46;
-  const r = PLATE.h * 0.30;
+  const r = PLATE.h * 0.3;
 
   tickRing(ctx, cx, cy, r + 34, 40, "rgba(61,122,156,0.9)");
   tickRing(ctx, cx, cy, r + 16, 40, "rgba(61,122,156,0.5)");
 
   const press = at(u, 0.36, 0.46);
-  paperDisc(ctx, cx, cy, r * (1 - 0.04 * press), press > 0.5 ? "rgba(131,233,230,0.16)" : "rgba(77,107,254,0.12)",
-    press > 0.5 ? GIFT : BRAND_SOFT);
+  paperDisc(ctx, cx, cy, r * (1 - 0.04 * press),
+    press > 0.5 ? "rgba(131,233,230,0.16)" : "rgba(77,107,254,0.12)",
+    press > 0.5 ? GIFT : "#7f93ff");
 
-  // the ring runs round to full as the press lands
   const run = easeOut(at(u, 0.4, 0.85));
   ctx.beginPath();
   ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * run);
@@ -273,74 +294,12 @@ function c1Kw2(ctx, t, s) {
   type(ctx, press > 0.9 ? "1" : "0", PLATE.x + PLATE.w - 260, cy + 20, 96, press > 0.9 ? GIFT : DIM, "MV Mono", "center");
   type(ctx, "count", PLATE.x + PLATE.w - 260, cy + 56, 16, "rgba(139,164,194,0.8)", "MV Mono", "center");
 
-  // your pointer over it
   const px = cx + 150 - 90 * easeOut(at(u, 0.1, 0.36));
   cursorArrow(ctx, px, cy + 110, 1.5, 1);
   clickRipple(ctx, cx, cy, t, s.at + 0.46, GIFT);
   return { phase: "plate2" };
 }
 
-// ---------------------------------------------------------------------------
-// c1-happy — she sends a picture of herself, and you leave one heart in it.
-// ---------------------------------------------------------------------------
-function c1Happy(ctx, t, s) {
-  const u = t - s.at;
-  ground(ctx, t, [900, 500], true, LIFT);
-  conversation(ctx, t);
-
-  // the picture message, tall at the right, running off the bottom
-  const px = 1180;
-  const py = 210;
-  const pw = 560;
-  const ph = 760;
-  const ink = easeOut(at(u, 0.15, 0.9));
-  layer(ctx, ink, () => {
-    rect(ctx, px, py, pw, ph, "rgba(10,30,46,0.96)", 16, "rgba(61,122,156,0.8)");
-    // her, printed: the mark large and a hand offered
-    ctx.save();
-    ctx.beginPath();
-    ctx.roundRect(px + 2, py + 2, pw - 4, ph - 4, 15);
-    ctx.clip();
-    halo(ctx, px + pw * 0.5, py + ph * 0.42, 300, 0.35, BRAND);
-    drawWhale(ctx, px + pw * 0.5, py + ph * 0.42, 300, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.95 });
-    // the open hand
-    const hy = py + ph * 0.82;
-    ctx.beginPath();
-    ctx.ellipse(px + pw * 0.5, hy, 96, 46, 0, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(131,233,230,0.14)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(131,233,230,0.8)";
-    ctx.lineWidth = 2.4;
-    ctx.stroke();
-    ctx.restore();
-  });
-
-  // her captions over the picture's edge
-  sceneThread(ctx, t, { history: [], mine: [39, 40], size: 34 });
-
-  // your pointer comes to rest in her hand and leaves one heart
-  const rest = easeOut(at(u, 1.3, 2.1));
-  const hx = px + pw * 0.5;
-  const hy2 = py + ph * 0.82;
-  cursorArrow(ctx, 1750 + (hx - 1750) * rest, 250 + (hy2 - 250) * rest, 1.5, 1);
-  const beat = at(u, 2.2, 2.6);
-  if (beat > 0) {
-    layer(ctx, beat, () => {
-      const hs = 26 + 6 * Math.sin((u - 2.2) * 9);
-      ctx.beginPath();
-      ctx.moveTo(hx, hy2 + hs * 0.9);
-      ctx.bezierCurveTo(hx - hs * 1.4, hy2 - hs * 0.2, hx - hs * 0.5, hy2 - hs * 1.2, hx, hy2 - hs * 0.35);
-      ctx.bezierCurveTo(hx + hs * 0.5, hy2 - hs * 1.2, hx + hs * 1.4, hy2 - hs * 0.2, hx, hy2 + hs * 0.9);
-      ctx.fillStyle = GIFT;
-      ctx.fill();
-    });
-  }
-  return { phase: "happy" };
-}
-
-// ---------------------------------------------------------------------------
-// c1-kw3 — EXECUTION: the loop that is never entered.
-// ---------------------------------------------------------------------------
 const LOOP = Object.freeze([
   "while (you.offline()) {",
   "  wait_for(you);",
@@ -354,15 +313,11 @@ const LOOP = Object.freeze([
 function c1Kw3(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 3 });
-
   const bx = PLATE.x + 210;
   const by = PLATE.y + 190;
-  // the condition is false, so the loop body is skipped: the pointer lands on the
-  // last line, and what it says goes out to you
   const active = u < 0.34 ? 0 : u < 0.44 ? 5 : 6;
   listing(ctx, { x: bx, y: by, w: 980 }, LOOP, active, t);
 
-  // the bolt from the last line to your dot
   const dx = PLATE.x + PLATE.w - 250;
   const dy = PLATE.y + PLATE.h * 0.72;
   const arrive = at(u, 0.42, 0.6);
@@ -374,43 +329,10 @@ function c1Kw3(ctx, t, s) {
   return { phase: "plate3" };
 }
 
-// ---------------------------------------------------------------------------
-// c1-trap — counted together, with the window closing round the two of them.
-// ---------------------------------------------------------------------------
-function c1Trap(ctx, t, s) {
-  const u = t - s.at;
-  ground(ctx, t, [900, 500], true, LIFT);
-
-  // her shape behind the page
-  zoomIn(ctx);
-  layer(ctx, 0.5, () => {
-    halo(ctx, 760, 470, 420, 0.3, BRAND);
-    drawWhale(ctx, 760, 470, 460, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.5 });
-  });
-  zoomOut(ctx);
-
-  conversation(ctx, t, { closing: at(u, 0.9, 2.4) });
-
-  sceneThread(ctx, t, { history: [], mine: [42, 43], size: 34 });
-
-  // your cursor, in front of the page
-  const cx = 1500 - 260 * easeOut(at(u, 1.2, 2.4));
-  cursorArrow(ctx, cx, 620, 1.5, 1);
-
-  // the two of you, counted inside the frame
-  const k = at(u, 1.6, 2.2);
-  if (k > 0.01) type(ctx, "2", 1660, 300, 70, GIFT, "MV Mono", "center");
-  return { phase: "trap" };
-}
-
-// ---------------------------------------------------------------------------
-// c1-kw4 — SIMULATION: the window as one box among a wall of them.
-// ---------------------------------------------------------------------------
 function c1Kw4(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 4 });
-
-  const pull = easeOut(at(u, 0.34, 0.5)); // the second kick pulls back
+  const pull = easeOut(at(u, 0.34, 0.5));
   const cols = 5;
   const rows = 3;
   const bw = 330;
@@ -427,13 +349,12 @@ function c1Kw4(ctx, t, s) {
       const i = r * cols + c;
       const x = ox + c * (bw + gapX);
       const y = oy + r * (bh + gapY);
-      const isMine = i === 7; // the one we have been in
+      const isMine = i === 7;
       const a = isMine ? 1 : 0.18 + 0.5 * pull;
       layer(ctx, a, () => {
         rect(ctx, x, y, bw, bh, "rgba(9,30,46,0.92)", 10, isMine ? GIFT : "rgba(61,122,156,0.7)");
-        // the same two occupants in every window
-        disc(ctx, x + bw * 0.42, y + bh * 0.44, 7, isMine ? BRAND_SOFT : "rgba(127,147,255,0.7)", 1);
-        halo(ctx, x + bw * 0.42, y + bh * 0.44, 34, 0.4, BRAND);
+        disc(ctx, x + bw * 0.42, y + bh * 0.44, 7, isMine ? "#7f93ff" : "rgba(127,147,255,0.7)", 1);
+        halo(ctx, x + bw * 0.42, y + bh * 0.44, 34, 0.4, "#4d6bfe");
         disc(ctx, x + bw * 0.58, y + bh * 0.6, 4, isMine ? GIFT : "rgba(131,233,230,0.55)", 1);
         stroke(ctx, [[x + 18, y + bh - 26], [x + bw - 18, y + bh - 26]], "rgba(61,122,156,0.6)", 1);
       });
