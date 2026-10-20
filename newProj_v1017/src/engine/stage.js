@@ -25,6 +25,16 @@ function resetCtx(ctx, width, height) {
   ctx.globalAlpha = 1;
   ctx.globalCompositeOperation = "source-over";
   ctx.filter = "none";
+  // Shadow and dash are part of the frame's state and have to go with it. A shot
+  // that set a shadow and did not put it back made the NEXT frame render differently
+  // -- which is exactly the bug the determinism check exists to catch, and it only
+  // showed up when two shots were rendered in sequence rather than alone.
+  ctx.shadowBlur = 0;
+  ctx.shadowColor = "rgba(0,0,0,0)";
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+  ctx.setLineDash([]);
+  ctx.lineDashOffset = 0;
   ctx.clearRect(0, 0, width, height);
 }
 

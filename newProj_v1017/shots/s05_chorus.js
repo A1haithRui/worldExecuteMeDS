@@ -19,7 +19,7 @@ import { at, layer, stroke, disc, rect, type, halo } from "../src/mv-draw.js";
 import { cursorArrow, clickRipple } from "./ui-client.js";
 import {
   gridGround, frameChrome, conversationPanel,
-  PANEL, placeArt, anchor, ART, ART_READY,
+  PANEL, placeArt, anchor, scaledArt, ART, ART_READY,
   REACH_BOX, PALM_BOX, REACH_PALM, PALM_ANCHOR,
 } from "./s05_layout.js";
 import { herBubble, yourBubble, lyricBubble, TYPE } from "./s05_bubble.js";
@@ -30,6 +30,7 @@ const BRAND = "#4d6bfe";
 const GIFT = "#83e9e6";
 const DIM = "#8ba4c2";
 const easeOut = (k) => 1 - (1 - k) ** 3;
+const clamp01 = (k) => Math.max(0, Math.min(1, k));
 
 export { ART_READY };
 
@@ -273,110 +274,237 @@ function c1Trap(ctx, t, s) {
 
 // ---------------------------------------------------------------------------
 // the four plates
+//
+// Each one has to hit harder than the interface around it, so each is built on a
+// single strong event rather than a diagram: a route that is drawn and then cut
+// straight through, a press that fills, a loop that skips its own body, and a grid
+// of windows that load.
+// ---------------------------------------------------------------------------
+
+/** A faint rule of the sheet, so a plate reads as printed rather than drawn. */
+function plateRule(ctx, y, alpha = 0.5) {
+  stroke(ctx, [[PLATE.x + 12, y], [PLATE.x + PLATE.w - 12, y]], "rgba(71,140,175,0.5)", 1, alpha);
+}
+
+// ---------------------------------------------------------------------------
+// c1-kw1 — STIMULATIONS: the message she sends is a straight line through a maze.
 // ---------------------------------------------------------------------------
 function c1Kw1(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 1 });
-  const sx = PLATE.x + 260;
-  const sy = PLATE.y + PLATE.h * 0.58;
-  const dx = PLATE.x + PLATE.w - 330;
-  const dy = PLATE.y + PLATE.h * 0.24;
 
-  halo(ctx, sx, sy, 150, 0.5, "#4d6bfe");
-  paperDisc(ctx, sx, sy, 26, "#4d6bfe", "#7f93ff");
-  const arrive = easeOut(at(u, 0.05, 0.4));
-  halo(ctx, dx, dy, 90, 0.55 * arrive, GIFT);
-  paperDisc(ctx, dx, dy, 12, GIFT, null);
+  const ax = PLATE.x + 230;
+  const ay = PLATE.y + PLATE.h * 0.44;
+  const bx = PLATE.x + PLATE.w - 300;
+  const by = PLATE.y + PLATE.h * 0.28;
 
-  const strike = at(u, 0.18, 0.3);
-  if (strike > 0) bolt(ctx, sx + 30, sy, dx - 14, dy, t, { alpha: strike, color: GIFT, width: 3.5, segments: 9 });
-  if (strike > 0.5) {
-    halo(ctx, dx, dy, 220, 0.35, GIFT);
-    const pr = (u * 2.2) % 1;
-    ctx.beginPath();
-    ctx.arc(dx, dy, 30 + pr * 150, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(131,233,230,${((1 - pr) * 0.5).toFixed(3)})`;
-    ctx.lineWidth = 2;
-    ctx.stroke();
+  // 1. the virtual route: the long way round, drawn first and left as a ghost
+  const ghost = [
+    [ax, ay], [ax + 180, ay + 150], [ax + 330, ay - 40], [ax + 520, ay + 120],
+    [ax + 690, ay - 60], [bx - 120, by + 90], [bx, by],
+  ];
+  const routeK = easeOut(at(u, 0.04, 0.32));
+  stroke(ctx, ghost, "rgba(127,147,255,0.30)", 2.2, routeK);
+  ghost.forEach(([x, y], i) => {
+    if (i === 0 || i === ghost.length - 1) return;
+    disc(ctx, x, y, 3.4, "rgba(127,147,255,0.45)", routeK);
+  });
+
+  // 2. her mark at the start
+  halo(ctx, ax, ay, 170, 0.55, BRAND);
+  drawWhale(ctx, ax, ay, 92, { strokeK: 1, fillK: 1, color: BRAND, alpha: 1 });
+  type(ctx, "deepseek", ax, ay + 110, 16, GIFT, "MV Mono", "center");
+
+  // 3. you at the end: a dot and its name
+  halo(ctx, bx, by, 110, 0.6 * at(u, 0.1, 0.4), GIFT);
+  disc(ctx, bx, by, 13, GIFT, at(u, 0.1, 0.4));
+  type(ctx, "me", bx, by + 52, 26, GIFT, "MV Mono", "center");
+
+  // 4. the strike: one straight line from the mark to you, on the downbeat
+  const strike = easeOut(at(u, 0.30, 0.44));
+  if (strike > 0) {
+    const ex = ax + (bx - ax) * strike;
+    const ey = ay + (by - ay) * strike;
+    stroke(ctx, [[ax, ay], [ex, ey]], "#ffffff", 5, 0.95);
+    stroke(ctx, [[ax, ay], [ex, ey]], GIFT, 14, 0.22);
+    halo(ctx, ex, ey, 90, 0.8, GIFT);
+  }
+  // 5. the struck route breaks apart behind it
+  if (strike > 0.85) {
+    const burst = at(u, 0.44, 0.62);
+    for (let i = 0; i < ghost.length - 2; i++) {
+      const [gx, gy] = ghost[i + 1];
+      const a = Math.atan2(gy - (ay + (by - ay) * 0.4), gx - 960);
+      layer(ctx, 1 - burst, () =>
+        stroke(ctx, [[gx, gy], [gx + Math.cos(a) * 60 * burst, gy + Math.sin(a) * 60 * burst]],
+          "rgba(127,147,255,0.7)", 2),
+      );
+    }
+    // and a pulse that keeps running the line
+    const pr = ((u - 0.44) * 2.4) % 1;
+    const px2 = ax + (bx - ax) * pr;
+    const py2 = ay + (by - ay) * pr;
+    halo(ctx, px2, py2, 54, 0.6, GIFT);
   }
   return { phase: "plate1" };
 }
 
+// ---------------------------------------------------------------------------
+// c1-kw2 — SATISFACTION: the press is big, and the count goes 0 to 1 out loud.
+// ---------------------------------------------------------------------------
 function c1Kw2(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 2 });
-  const cx = PLATE.x + PLATE.w * 0.44;
-  const cy = PLATE.y + PLATE.h * 0.46;
-  const r = PLATE.h * 0.3;
 
-  tickRing(ctx, cx, cy, r + 34, 40, "rgba(61,122,156,0.9)");
-  tickRing(ctx, cx, cy, r + 16, 40, "rgba(61,122,156,0.5)");
+  const cx = PLATE.x + PLATE.w * 0.42;
+  const cy = PLATE.y + PLATE.h * 0.44;
+  const r = PLATE.h * 0.31;
 
-  const press = at(u, 0.36, 0.46);
-  paperDisc(ctx, cx, cy, r * (1 - 0.04 * press),
-    press > 0.5 ? "rgba(131,233,230,0.16)" : "rgba(77,107,254,0.12)",
-    press > 0.5 ? GIFT : "#7f93ff");
+  tickRing(ctx, cx, cy, r + 40, 48, "rgba(61,122,156,0.9)");
+  tickRing(ctx, cx, cy, r + 18, 48, "rgba(61,122,156,0.45)");
 
-  const run = easeOut(at(u, 0.4, 0.85));
+  const press = at(u, 0.34, 0.44);
+  const run = easeOut(at(u, 0.38, 0.9));
+  const lit = run;
+
+  // the disc, filling as the ring closes
+  paperDisc(ctx, cx, cy, r * (1 - 0.05 * press),
+    lit > 0 ? `rgba(131,233,230,${(0.06 + 0.16 * lit).toFixed(2)})` : "rgba(77,107,254,0.10)",
+    lit > 0 ? GIFT : "#7f93ff");
   ctx.beginPath();
   ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * run);
   ctx.strokeStyle = GIFT;
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 7;
   ctx.stroke();
+  halo(ctx, cx, cy, r * 1.2, 0.25 + 0.45 * lit, GIFT);
 
-  type(ctx, "this answer helped", cx, cy + 10, 26, press > 0.5 ? GIFT : "#cfe0ee", "MV Sans", "center");
-  type(ctx, press > 0.9 ? "1" : "0", PLATE.x + PLATE.w - 260, cy + 20, 96, press > 0.9 ? GIFT : DIM, "MV Mono", "center");
-  type(ctx, "count", PLATE.x + PLATE.w - 260, cy + 56, 16, "rgba(139,164,194,0.8)", "MV Mono", "center");
+  // the words, as large as the disc allows
+  const label = "this answer helped";
+  ctx.font = `600 60px "MV Serif"`;
+  const lw = ctx.measureText(label).width;
+  const size = Math.min(60, (60 * (r * 1.7)) / Math.max(1, lw));
+  type(ctx, label, cx, cy + size * 0.34, size, lit > 0.4 ? "#ffffff" : "#cfe0ee", "MV Serif", "center");
 
-  const px = cx + 150 - 90 * easeOut(at(u, 0.1, 0.36));
-  cursorArrow(ctx, px, cy + 110, 1.5, 1);
-  clickRipple(ctx, cx, cy, t, s.at + 0.46, GIFT);
+  // the count, huge, punching from 0 to 1
+  const punch = easeOut(at(u, 0.5, 0.78));
+  const shown = run > 0.92 ? 1 : 0;
+  const cs = 190 + 60 * Math.sin(Math.min(1, punch) * Math.PI);
+  layer(ctx, 1, () => {
+    ctx.save();
+    if (shown === 1) {
+      ctx.shadowColor = "rgba(131,233,230,0.9)";
+      ctx.shadowBlur = 50;
+    }
+    type(ctx, String(shown), PLATE.x + PLATE.w - 250, cy + cs * 0.26, cs, shown ? GIFT : "rgba(139,164,194,0.55)", "MV Mono", "center");
+    ctx.restore();
+  });
+  type(ctx, "count", PLATE.x + PLATE.w - 250, cy + 96, 18, "rgba(139,164,194,0.8)", "MV Mono", "center");
+
+  const px = cx + 190 - 120 * easeOut(at(u, 0.08, 0.34));
+  cursorArrow(ctx, px, cy + 150, 1.7, 1);
+  clickRipple(ctx, cx, cy, t, s.at + 0.44, GIFT);
   return { phase: "plate2" };
 }
 
+// ---------------------------------------------------------------------------
+// c1-kw3 — EXECUTION: the loop, as large as it will go, skipping its own body.
+// ---------------------------------------------------------------------------
 const LOOP = Object.freeze([
-  "while (you.offline()) {",
-  "  wait_for(you);",
-  "  love = love + 1;",
+  "while (you.presence != \"online\") {",
+  "  love = love + solve(you);",
+  "  send(love, you);",
+  "  wait(you.reply);",
+  "  run++",
   "}",
-  "// not today",
-  "run(world.execute(me));",
-  "tell(you, everything);",
+  "say(love);",
 ]);
+
+/** The listing, sized to fill the sheet, with the keyword lit. */
+function bigListing(ctx, R, lines, active, t, opts = {}) {
+  const { size = 54, hot = "love" } = opts;
+  const lh = size * 1.62;
+  const re = new RegExp(`(${hot})`, "i");
+  lines.forEach((line, i) => {
+    const y = R.y + i * lh;
+    const on = i === active;
+    if (on) {
+      rect(ctx, R.x - 26, y - size * 1.02, R.w + 52, lh * 0.98, "rgba(77,107,254,0.18)", 8,
+        "rgba(77,107,254,0.75)");
+      // her mark sits at the head of the live line
+      drawWhale(ctx, R.x - 54, y - size * 0.34, size * 0.72, {
+        strokeK: 1, fillK: 1, color: "#4d6bfe", alpha: 1,
+      });
+    }
+    type(ctx, String(i + 1).padStart(2, "0"), R.x, y, size * 0.62,
+      on ? GIFT : "rgba(139,164,194,0.5)", "MV Mono");
+    // the line is drawn in pieces so the keyword can be lit
+    const parts = line.split(re);
+    let x = R.x + size * 1.5;
+    parts.forEach((part) => {
+      if (!part) return;
+      const isHot = part.toLowerCase() === hot.toLowerCase();
+      type(ctx, part, x, y, size, isHot ? GIFT : on ? "#ffffff" : "rgba(207,224,238,0.78)",
+        "MV Mono");
+      ctx.font = `400 ${size}px "MV Mono"`;
+      x += ctx.measureText(part).width;
+    });
+  });
+}
 
 function c1Kw3(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 3 });
-  const bx = PLATE.x + 210;
-  const by = PLATE.y + 190;
-  const active = u < 0.34 ? 0 : u < 0.44 ? 5 : 6;
-  listing(ctx, { x: bx, y: by, w: 980 }, LOOP, active, t);
+
+  const bx = PLATE.x + 90;
+  const by = PLATE.y + 118;
+  // the condition is false, so the body is skipped: the pointer lands on line 06,
+  // then says line 07 to you
+  const active = u < 0.3 ? 0 : u < 0.42 ? 5 : 6;
+  bigListing(ctx, { x: bx, y: by, w: 1000 }, LOOP, active, t, { size: 52 });
 
   const dx = PLATE.x + PLATE.w - 250;
-  const dy = PLATE.y + PLATE.h * 0.72;
-  const arrive = at(u, 0.42, 0.6);
+  const dy = PLATE.y + PLATE.h * 0.74;
+  const arrive = at(u, 0.4, 0.58);
   if (arrive > 0) {
-    bolt(ctx, bx + 1080, by + 6 * 42 + 8, dx - 20, dy, t, { alpha: arrive, color: GIFT, width: 3, segments: 7 });
-    halo(ctx, dx, dy, 110, 0.5 * arrive, GIFT);
-    paperDisc(ctx, dx, dy, 12, GIFT, null);
+    // the line leaves the listing and goes to you, hard
+    bolt(ctx, bx + 1180, by + 6 * 52 * 1.62 + 30, dx - 24, dy, t, {
+      alpha: arrive, color: GIFT, width: 5, segments: 7,
+    });
+    halo(ctx, dx, dy, 150, 0.6 * arrive, GIFT);
+    paperDisc(ctx, dx, dy, 16, GIFT, null);
+    type(ctx, "you", dx, dy + 66, 22, GIFT, "MV Mono", "center");
+    // a shock wave, so the delivery has weight
+    const pr = ((u - 0.58) * 1.8) % 1;
+    if (pr > 0) {
+      ctx.beginPath();
+      ctx.arc(dx, dy, 30 + pr * 220, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(131,233,230,${((1 - pr) * 0.55).toFixed(3)})`;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
   }
   return { phase: "plate3" };
 }
 
+// ---------------------------------------------------------------------------
+// c1-kw4 — SIMULATION: a wall of windows, each one loading her.
+// ---------------------------------------------------------------------------
 function c1Kw4(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 4 });
-  const pull = easeOut(at(u, 0.34, 0.5));
+
+  const pull = easeOut(at(u, 0.34, 0.52));
   const cols = 5;
   const rows = 3;
+  // the wall stops above the keyword: at full card height it ran into it
   const bw = 330;
-  const bh = 250;
+  const bh = 196;
   const gapX = 26;
-  const gapY = 22;
+  const gapY = 20;
   const wallW = cols * bw + (cols - 1) * gapX;
   const wallH = rows * bh + (rows - 1) * gapY;
   const ox = 960 - wallW / 2;
-  const oy = PLATE.y + PLATE.h * 0.46 - wallH / 2;
+  const oy = PLATE.y + 150;
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
@@ -384,18 +512,48 @@ function c1Kw4(ctx, t, s) {
       const x = ox + c * (bw + gapX);
       const y = oy + r * (bh + gapY);
       const isMine = i === 7;
-      const a = isMine ? 1 : 0.18 + 0.5 * pull;
+      const a = isMine ? 1 : 0.16 + 0.52 * pull;
+      // each window loads on its own beat, so the wall fills up rather than
+      // switching on at once
+      const load = clamp01((u - 0.05 - i * 0.022) / 0.34);
+
       layer(ctx, a, () => {
         rect(ctx, x, y, bw, bh, "rgba(9,30,46,0.92)", 10, isMine ? GIFT : "rgba(61,122,156,0.7)");
-        disc(ctx, x + bw * 0.42, y + bh * 0.44, 7, isMine ? "#7f93ff" : "rgba(127,147,255,0.7)", 1);
-        halo(ctx, x + bw * 0.42, y + bh * 0.44, 34, 0.4, "#4d6bfe");
-        disc(ctx, x + bw * 0.58, y + bh * 0.6, 4, isMine ? GIFT : "rgba(131,233,230,0.55)", 1);
-        stroke(ctx, [[x + 18, y + bh - 26], [x + bw - 18, y + bh - 26]], "rgba(61,122,156,0.6)", 1);
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(x + 2, y + 2, bw - 4, bh - 4, 9);
+        ctx.clip();
+        if (load > 0.02) {
+          // her, inside the window: the same art in every one of them
+          // a portrait inside the window, not a wall of faces: small enough
+          // that the card still reads as a window
+          const artH = bh * 1.16;
+          const s2 = artH / REACH_BOX.h;
+          ctx.globalAlpha = (0.16 + 0.34 * load) * (isMine ? 1 : 0.8);
+          const portrait = scaledArt(ART.images.bust, ART.images.bust.width * s2, ART.images.bust.height * s2);
+          ctx.drawImage(
+            portrait,
+            x + bw / 2 - portrait.width / 2,
+            y + bh - artH * 0.86,
+          );
+          ctx.globalAlpha = 1;
+        }
+        // the loading bar: fills, then hands over to the figure
+        const barW = bw - 40;
+        const barY = y + bh - 28;
+        stroke(ctx, [[x + 20, barY], [x + 20 + barW, barY]], "rgba(30,58,80,0.9)", 3);
+        stroke(ctx, [[x + 20, barY], [x + 20 + barW * load, barY]],
+          isMine ? GIFT : "rgba(131,233,230,0.7)", 3);
+        ctx.restore();
+        if (isMine) {
+          // the one we are in says so
+          type(ctx, "you are here", x + 20, y + 40, 14, GIFT, "MV Mono");
+        }
       });
     }
   }
   if (pull > 0.5) {
-    type(ctx, "one of many", 960, PLATE.y + PLATE.h - 40, 20, "rgba(139,164,194,0.85)", "MV Mono", "center");
+    type(ctx, "one of many", 960, PLATE.y + PLATE.h - 44, 20, "rgba(139,164,194,0.85)", "MV Mono", "center");
   }
   return { phase: "plate4" };
 }

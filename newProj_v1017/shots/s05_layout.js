@@ -152,6 +152,29 @@ export const REACH_PALM = Object.freeze({ x: 440 - 128, y: 1128 - 128 });
 export const PALM_ANCHOR = Object.freeze({ x: 432 - 128, y: 296 - 128 });
 
 /**
+ * A character asset pre-scaled once into an offscreen canvas.
+ *
+ * Drawing a 1342x1704 image down into a 330px card looks like a plain drawImage
+ * call but is not: Chromium picks a different resampling path on the first draw than
+ * on later ones, so the same frame rendered twice came out slightly different and
+ * the determinism check caught it. Scaling once into a bitmap and blitting that
+ * bitmap takes the choice away.
+ */
+const scaledCache = new Map();
+export function scaledArt(img, width, height) {
+  if (!img) return null;
+  const key = `${img.src}#${Math.round(width)}x${Math.round(height)}`;
+  const hit = scaledCache.get(key);
+  if (hit) return hit;
+  const c = document.createElement("canvas");
+  c.width = Math.max(1, Math.round(width));
+  c.height = Math.max(1, Math.round(height));
+  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+  scaledCache.set(key, c);
+  return c;
+}
+
+/**
  * Draw a character asset so that a named point in the source lands on a named point
  * in the frame. The v4 notes record those anchors; using them is the difference
  * between the pointer resting on her palm and resting near it.
