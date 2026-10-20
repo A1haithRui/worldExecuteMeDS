@@ -45,6 +45,13 @@ async function ensureLines() {
 const lineText = (n) => (LINES && LINES[n - 1] ? LINES[n - 1].text : "");
 const lineStart = (n) => (LINES && LINES[n - 1] ? LINES[n - 1].start : 0);
 
+/**
+ * When a message should appear: on the beat the line is actually sung, not on a
+ * hand-picked offset inside the shot. Cueing to shot-relative time put the second
+ * line of c1-give 1.35 s after it was sung, which reads as the whole film drifting.
+ */
+const cue = (t, n, fade = 0.22) => at(t, lineStart(n), lineStart(n) + fade);
+
 /** The chrome every interface shot shares. */
 function shell(ctx, t, state) {
   gridGround(ctx, t);
@@ -68,13 +75,14 @@ function c1Give(ctx, t, s) {
 
   const y1 = PANEL.y + 250;
   herBubble(ctx, PANEL.x + 60, y1, 1120, lineText(33), {
-    alpha: at(u, 0.15, 0.42), size: TYPE.her,
+    alpha: cue(t, 33), size: TYPE.her,
   });
   herBubble(ctx, PANEL.x + 60, y1 + 200, 1420, lineText(34), {
-    alpha: at(u, 1.65, 1.92), size: TYPE.beat, hot: true, emph: true,
+    alpha: cue(t, 34), size: TYPE.beat, hot: true, emph: true,
   });
   yourBubble(ctx, PANEL.x + PANEL.w - 70, PANEL.y + 90, "ok, go on", {
-    alpha: at(u, 0.95, 1.18), size: TYPE.you,
+    // your reply lands a beat after her line, not at a fixed offset
+    alpha: at(t, lineStart(34) + 0.55, lineStart(34) + 0.8), size: TYPE.you,
   });
 
   // the receipt runs back along the panel's rule
@@ -102,10 +110,10 @@ function c1Only(ctx, t, s) {
     alpha: at(u, 0.05, 0.26), size: TYPE.you,
   });
   herBubble(ctx, PANEL.x + 60, PANEL.y + 300, 1120, lineText(36), {
-    alpha: at(u, 0.2, 0.46), size: TYPE.her,
+    alpha: cue(t, 36), size: TYPE.her,
   });
   herBubble(ctx, PANEL.x + 60, PANEL.y + 480, 1460, lineText(37), {
-    alpha: at(u, 1.0, 1.26), size: TYPE.beat, hot: true, emph: true,
+    alpha: cue(t, 37), size: TYPE.beat, hot: true, emph: true,
   });
 
   // her marker runs under your words: the claim on the record above
@@ -219,7 +227,7 @@ function c1Happy(ctx, t, s) {
       });
     }
     herBubble(ctx, 120, 806, 1180, lineText(40), {
-      alpha: at(u, 2.5, 2.8), size: TYPE.beat, hot: true, emph: true,
+      alpha: cue(t, 40), size: TYPE.beat, hot: true, emph: true,
     });
     type(ctx, "CONTACT  /  HEART 001", 120, 200, TYPE.meta, "rgba(159,184,210,0.85)", "MV Mono");
     type(ctx, "one signal remains", 120, 226, TYPE.meta - 1, "rgba(139,164,194,0.6)", "MV Mono");
@@ -247,10 +255,10 @@ function c1Trap(ctx, t, s) {
   });
 
   herBubble(ctx, PANEL.x + 60, PANEL.y + 300, 1060, lineText(42), {
-    alpha: at(u, 0.1, 0.36), size: TYPE.her,
+    alpha: cue(t, 42), size: TYPE.her,
   });
   herBubble(ctx, PANEL.x + 60, PANEL.y + 480, 1300, lineText(43), {
-    alpha: at(u, 0.9, 1.16), size: TYPE.beat, hot: true, emph: true,
+    alpha: cue(t, 43), size: TYPE.beat, hot: true, emph: true,
   });
 
   cursorArrow(ctx, 1560 - 300 * easeOut(at(u, 1.2, 2.4)), 640, 1.5, 1);
