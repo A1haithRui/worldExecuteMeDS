@@ -232,7 +232,7 @@ function eraShape(ctx, kind, cx, cy, h, ink, lw) {
 }
 
 export function timeBody(ctx, R, t, opts = {}) {
-  const { year = 2026, speed = 1 } = opts;
+  const { year = 2026, speed = 1, elapsed = 0 } = opts;
   layer(ctx, 1, () => {
     rect(ctx, R.x, R.y, R.w, R.h, "rgba(5,20,33,0.95)", 14, "rgba(61,122,156,0.6)");
     const vx = R.x + R.w * 0.5;
@@ -261,17 +261,24 @@ export function timeBody(ctx, R, t, opts = {}) {
       );
     }
 
-    // 2. the eras, flying toward us in perspective
-    const N = 5;
+    // 2. the eras, each flying past exactly once
+    //
+    // They used to wrap on a loop, so the same pyramid came round twice in one shot
+    // and the travel read as a cycle instead of a journey. Now each era has its own
+    // window: five passed, five seen, in order.
+    const N = ERAS.length;
+    const PASS = 0.78; // how long one era takes to cross
+    const STAGGER = 0.56; // the gap between one starting and the next
     for (let i = 0; i < N; i++) {
-      const z = (t * 0.5 * speed + i / N) % 1; // 0 = far, 1 = at the glass
+      const z = (elapsed - i * STAGGER) / PASS;
+      if (z <= 0 || z >= 1) continue;
       const s = 0.22 + z * z * 2.6;
       const px = vx + (i % 2 === 0 ? -1 : 1) * (R.w * 0.16) * (0.4 + z);
       const py = vy + Math.sin(i * 2.1 + z * 2.4) * R.h * 0.16 * (0.5 + z);
       const h = 150 * s;
       const ink = z > 0.82 ? "rgba(131,233,230,0.95)" : `rgba(127,147,255,${(0.25 + 0.6 * (1 - z)).toFixed(2)})`;
       ctx.save();
-      ctx.globalAlpha = Math.min(1, 0.25 + z * 1.2);
+      ctx.globalAlpha = Math.min(1, (0.25 + z * 1.2) * (1 - Math.max(0, z - 0.9) * 8));
       eraShape(ctx, ERAS[i].kind, px, py, h, ink, 1.4 + 2.2 * z);
       if (z > 0.55) {
         type(ctx, ERAS[i].label, px, py + h * 0.72, 13 + 12 * z, ink, "MV Mono", "center");

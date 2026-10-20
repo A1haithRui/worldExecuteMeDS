@@ -62,6 +62,17 @@ const doneY = () => DRAWER.y + DRAWER.h - 62 + 20;
 const AC_TO_DC = 1.15;
 const DC_TO_AC = 2.35;
 
+const BEAT = 0.461555; // the track's beat period
+
+// The knowledge date is dragged a notch per beat. Where it ends up has to be
+// carried into the following shot: resetting it to the default made the slider
+// snap back to the right at the cut, which reads as an undo.
+const DATE_START = 0.86;
+const DATE_STEP = 0.085;
+const DATE_SHOT_LEN = 3.6924; // pre1-date's duration
+const DATE_STEPS = Math.max(0, Math.floor((DATE_SHOT_LEN - 0.3) / BEAT));
+const DATE_END = Math.max(0, DATE_START - DATE_STEPS * DATE_STEP);
+
 function pre1Drawer(ctx, t, s) {
   const u = t - s.at;
   ground(ctx, t, [800, 480], true, LIFT);
@@ -144,19 +155,17 @@ function pre1Vision(ctx, t, s) {
 // ---------------------------------------------------------------------------
 // pre1-date — drag the knowledge date back and fall through the record.
 // ---------------------------------------------------------------------------
-const BEAT = 0.461555;
-
 function pre1Date(ctx, t, s) {
   const u = t - s.at;
   ground(ctx, t, [800, 480], true, LIFT);
 
   const steps = Math.max(0, Math.floor((u - 0.3) / BEAT));
-  const date = Math.max(0, Math.min(1, 0.86 - steps * 0.085));
+  const date = Math.max(0, Math.min(1, DATE_START - steps * DATE_STEP));
   // the year runs between the two ends the drawer names
   const year = Math.round(2026 - (1 - date) * (2026 + 3000) * 0.62);
 
   frame(ctx, t, { current: 0, vision: 1, date, memory: 0, depth: 0.16 });
-  timeBody(ctx, BODY, t, { year, speed: 1 + steps * 0.06 });
+  timeBody(ctx, BODY, t, { year, speed: 1 + steps * 0.06, elapsed: u });
 
   // the pointer keeps its hold on the knob and drags it, a notch a beat
   cursorArrow(ctx, dateKnobX(date) + 20, dateKnobY() + 28, 1.35, 1);
@@ -176,7 +185,7 @@ function pre1Unite(ctx, t, s) {
   const unity = easeOut(at(u, 1.5, 3.0));
   const done = easeOut(at(u, 2.85, 3.05));
 
-  frame(ctx, t, { current: 0, vision: 1, date: 0.86, memory, depth });
+  frame(ctx, t, { current: 0, vision: 1, date: DATE_END, memory, depth });
   uniteBody(ctx, BODY, t, { depth, unity, memory });
 
   // the pointer walks the two controls and presses Done
