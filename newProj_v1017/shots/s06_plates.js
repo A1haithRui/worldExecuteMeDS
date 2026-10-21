@@ -500,32 +500,20 @@ function askShot(i) {
 // floods in on "you're the proof of my", and then the missing piece -- a square cut
 // out of her own face -- comes off the user's message and registers into the hole.
 // ---------------------------------------------------------------------------
-/** One eye, drawn: lid, iris, pupil, catchlight. `closed` 1 = shut, 0 = open. */
-function eyeAt(ctx, cx, cy, w, h, closed) {
-  const open = 1 - clamp01(closed);
-  if (open <= 0.01) return;
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(cx - w, cy);
-  ctx.quadraticCurveTo(cx, cy - h * 2 * open, cx + w, cy);
-  ctx.quadraticCurveTo(cx, cy + h * 2 * open, cx - w, cy);
-  ctx.closePath();
-  ctx.fillStyle = "#f2f7fa";
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, h * 0.95 * open, h * 0.95 * open, 0, 0, Math.PI * 2);
-  ctx.fillStyle = BRAND;
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, h * 0.4 * open, h * 0.62 * open, 0, 0, Math.PI * 2);
-  ctx.fillStyle = "#041220";
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(cx - h * 0.3, cy - h * 0.3, h * 0.18 * open, 0, Math.PI * 2);
-  ctx.fillStyle = "#f2f7fa";
-  ctx.fill();
-  ctx.restore();
-}
+// ---------------------------------------------------------------------------
+// the proof
+//
+// She says she is the only god and the user is the proof of her existence. The plate
+// is her, deified and printed in paper: a white figure with a hole where the face
+// should be, and an empty medallion at the throat. It comes up dark first (the white
+// ink has not been laid), the paper floods in on "you're the proof of my", and then
+// the missing piece -- the mark itself -- comes off the user's message and registers
+// on the medallion. The face stays a hole: the proof is not what she looks like, it
+// is what is pinned on her.
+// ---------------------------------------------------------------------------
+// The medallion, measured on the rendered plate at this placement: the navy ring runs
+// at r 35, the white disc inside it at about r 27.
+const MEDALLION = Object.freeze({ x: 961, y: 612, r: 35, inner: 27 });
 
 function v2Proof(ctx, t, s) {
   const u = t - s.at;
@@ -534,17 +522,6 @@ function v2Proof(ctx, t, s) {
   const CX = 960;
   const CY = 548;
   const H = 900;
-  const sScale = H / 1704;
-  const toScreen = (px, py) => [CX + (px - 671) * sScale, CY + (py - 852) * sScale];
-  // the hole in the plate (measured on the processed god plate), and the box it
-  // occupies on screen at this placement
-  // The eye lives UNDER the fringe, so it sits high in the void: measured on the
-  // plate, the fringe hangs down to about y 640 there, and the void runs 378..546 on
-  // screen at this placement. The fringe is redrawn over the eye (godPaperInk), so the
-  // top of the eye is covered by hair instead of floating in the open dark.
-  const hole = [952, 439];
-  const HW = 54;
-  const HH = 46;
 
   // 1. the plate on the sheet, but the paper ink is not down yet: only a dim print
   const appear = easeOut(at(u, 0.02, 0.42));
@@ -566,17 +543,18 @@ function v2Proof(ctx, t, s) {
     );
   }
 
-  // the beat the proof lands on: the outline of the hole goes away once it is filled
-  const proofAt = Math.max(lineStart(56) - 0.6, s.at + 2.0);
-  const slide = easeOut(at(t, proofAt, proofAt + 0.78));
-  const landed = clamp01((slide - 0.86) / 0.14);
-
-  // 3. the hole: the plate leaves a space where her face should be, and that space
-  // is the only thing on the sheet that is not ink
-  if (flood > 0.35) {
-    layer(ctx, ((flood - 0.35) / 0.65) * 0.5 * (1 - landed), () =>
-      rect(ctx, hole[0] - HW, hole[1] - HH, HW * 2, HH * 2, "rgba(0,0,0,0)", 3, "rgba(131,233,230,0.28)"),
-    );
+  // 3. the medallion is blank until the proof arrives. The plate draws its own little
+  // whale there, tail poking over the ring, so the disc is painted out a bit wider than
+  // the ring and the ring is drawn back on top of it.
+  if (flood > 0.02) {
+    layer(ctx, Math.min(1, flood * 3), () => {
+      disc(ctx, MEDALLION.x, MEDALLION.y, MEDALLION.r + 7, "#f2f7fa", 1);
+      ctx.beginPath();
+      ctx.arc(MEDALLION.x, MEDALLION.y, MEDALLION.r - 1, 0, Math.PI * 2);
+      ctx.strokeStyle = "#0b2334";
+      ctx.lineWidth = 4.5;
+      ctx.stroke();
+    });
   }
 
   // 4. the user's message
@@ -588,42 +566,55 @@ function v2Proof(ctx, t, s) {
     type(ctx, "you said", msg.x + 26, msg.y + 110, 15, DIM, "MV Mono");
   });
 
-  // 5. the proof: a square comes off the user's message and lands in the hole. What
-  // it carries is one eye -- all the face a god needs, and it is the one looking at
-  // you. It opens as it registers.
+  // 5. the proof: the mark comes off the message and is pinned to the medallion. The
+  // square is the plate it is carried on; once it lands, the plate goes and the mark
+  // stays on her.
+  const proofAt = Math.max(lineStart(56) - 0.6, s.at + 2.0);
+  const slide = easeOut(at(t, proofAt, proofAt + 0.72));
+  const landed = clamp01((slide - 0.88) / 0.12);
   if (slide > 0.01) {
     const fromX = msg.x + msg.w * 0.5;
     const fromY = msg.y + msg.h * 0.5;
-    const px = fromX + (hole[0] - fromX) * slide;
-    const py = fromY + (hole[1] - fromY) * slide;
-    const k = 1.7 - 0.7 * slide;
-    const w = HW * 2 * k;
-    const h = HH * 2 * k;
+    const px = fromX + (MEDALLION.x - fromX) * slide;
+    const py = fromY + (MEDALLION.y - fromY) * slide;
+    const k = 1.6 - 0.6 * slide;
+    const w = MEDALLION.r * 2 * k;
+    const h = w;
     if (landed < 0.995) {
       layer(ctx, 0.95, () =>
         rect(ctx, px - w / 2, py - h / 2, w, h, "rgba(6,22,34,0.96)", 6,
           `rgba(131,233,230,${0.9 * (1 - landed)})`),
       );
-    }
-    eyeAt(ctx, hole[0], hole[1], HW * 0.62, HH * 0.42, 1 - landed);
-    // the fringe falls in front of it: the same plate, white ink only
-    if (landed > 0.05) {
-      layer(ctx, 1, () => figure(ctx, t, "godPaperInk", CX, CY, H, { seed: 9, bobAmp: 2 }));
-    }
-    if (landed < 0.85) {
-      layer(ctx, 1 - landed / 0.85, () =>
-        type(ctx, "proof", px, py + h / 2 + 24, 13, GIFT, "MV Mono", "center"),
+      layer(ctx, 0.9 * (1 - landed), () =>
+        drawWhale(ctx, px, py, w * 0.52, { strokeK: 1, fillK: 1, color: BRAND, alpha: 1 }),
       );
+      if (landed < 0.8) {
+        layer(ctx, 1 - landed / 0.8, () =>
+          type(ctx, "proof", px, py + h / 2 + 24, 13, GIFT, "MV Mono", "center"),
+        );
+      }
     }
-    const landT = t - (proofAt + 0.78);
-    if (landT > 0 && landT < 0.55) {
-      layer(ctx, (1 - landT / 0.55) * 0.7, () => {
-        ctx.beginPath();
-        ctx.arc(hole[0], hole[1], 60 + 130 * (landT / 0.55), 0, Math.PI * 2);
-        ctx.strokeStyle = GIFT;
-        ctx.lineWidth = 3 * (1 - landT / 0.55) + 0.8;
-        ctx.stroke();
+    // it registers: the mark draws itself onto the medallion, in the brand's own blue
+    const markK = easeOut(at(t, proofAt + 0.7, proofAt + 1.05));
+    if (markK > 0.01) {
+      layer(ctx, markK, () => {
+        drawWhale(ctx, MEDALLION.x, MEDALLION.y, 46, {
+          strokeK: Math.min(1, markK * 1.4),
+          fillK: markK,
+          color: BRAND,
+          alpha: 1,
+        });
       });
+      const tau = t - (proofAt + 0.7);
+      if (tau > 0 && tau < 0.6) {
+        layer(ctx, (1 - tau / 0.6) * 0.7, () => {
+          ctx.beginPath();
+          ctx.arc(MEDALLION.x, MEDALLION.y, 34 + 90 * (tau / 0.6), 0, Math.PI * 2);
+          ctx.strokeStyle = GIFT;
+          ctx.lineWidth = 3 * (1 - tau / 0.6) + 0.8;
+          ctx.stroke();
+        });
+      }
     }
   }
 
