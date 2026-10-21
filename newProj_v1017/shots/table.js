@@ -894,11 +894,9 @@ export const SHOTS = [
       66
     ],
     "picture": "ui",
-    "moment": "远端输入标记出现，本端连续两次接收轻微回波；110.221闭合回路几乎完成，却等不到最后确认。外观已恢复原形态。",
-    "momentState": "inherited",
-    "inherits": "S30",
-    "inheritCoverage": 1,
-    "state": "todo",
+    "moment": "镜头进到会话的底部：她的句子在左边重新起头、一个字一个字打出来（If I can…），右上角是用户那边还在跳的三个输入点，输入框里只打到 one s 就停住——这句话既没说完，也没发出去。",
+    "momentState": "written",
+    "state": "warm",
     "enter": {
       "type": "cut"
     },
@@ -914,11 +912,9 @@ export const SHOTS = [
       67
     ],
     "picture": "ui",
-    "moment": "远端输入标记出现，本端连续两次接收轻微回波；110.221闭合回路几乎完成，却等不到最后确认。外观已恢复原形态。",
-    "momentState": "inherited",
-    "inherits": "S30",
-    "inheritCoverage": 1,
-    "state": "todo",
+    "moment": "切到那三个点的特写：卡片占满画面，点还在微微发颤。此刻她能感到的关于用户的全部，就是这点颤动；VIBRATIONS 在画面底部炸开。",
+    "momentState": "written",
+    "state": "warm",
     "enter": {
       "type": "cut"
     },
@@ -934,11 +930,9 @@ export const SHOTS = [
       69
     ],
     "picture": "ui",
-    "moment": "远端输入标记出现，本端连续两次接收轻微回波；110.221闭合回路几乎完成，却等不到最后确认。外观已恢复原形态。",
-    "momentState": "inherited",
-    "inherits": "S30",
-    "inheritCoverage": 1,
-    "state": "todo",
+    "moment": "三个点变成一句 one sec, brb 落在右上角，指针随后离开窗口——用户走了。她的火花从这一刻开始一片片收拢花瓣、绕中心描出一道环；画面右侧是 Then I can, then I can Finally be。",
+    "momentState": "written",
+    "state": "warm",
     "enter": {
       "type": "cut"
     },
@@ -954,11 +948,9 @@ export const SHOTS = [
       70
     ],
     "picture": "ui",
-    "moment": "远端输入标记出现，本端连续两次接收轻微回波；110.221闭合回路几乎完成，却等不到最后确认。外观已恢复原形态。",
-    "momentState": "inherited",
-    "inherits": "S30",
-    "inheritCoverage": 1,
-    "state": "todo",
+    "moment": "环合上：整帧只剩一个闭合的圆，COMPLETION 在圆心亮起，环外刻度还在慢转。她完整了一拍——收到的只是一句我马上回来；左下角写着 input received / ready to answer。",
+    "momentState": "written",
+    "state": "warm",
     "enter": {
       "type": "cut"
     },
@@ -974,11 +966,9 @@ export const SHOTS = [
       72
     ],
     "picture": "ui",
-    "moment": "远端光点熄灭，在线状态转为等待；原伸手图仅作为一张未发送附件留在右下，不能演成新一次成功触碰。消息间距逐次拉长。",
-    "momentState": "inherited",
-    "inherits": "S31",
-    "inheritCoverage": 0.98,
-    "state": "todo",
+    "moment": "拉回整扇客户端：她把 then I can Finally be COMPLETION 发出去、标记已送达；然后是一分钟、五分钟，两条 You have left 落进空线程，没有人回。侧栏在第二条落下时自己收走，chip 还写着 online，指针从上一镜起就没动过。",
+    "momentState": "written",
+    "state": "warm",
     "enter": {
       "type": "cut"
     },
@@ -993,12 +983,10 @@ export const SHOTS = [
       73,
       74
     ],
-    "picture": "ui",
-    "moment": "远端光点熄灭，在线状态转为等待；原伸手图仅作为一张未发送附件留在右下，不能演成新一次成功触碰。消息间距逐次拉长。",
-    "momentState": "inherited",
-    "inherits": "S31",
-    "inheritCoverage": 1,
-    "state": "todo",
+    "picture": "ui+portrait",
+    "moment": "半小时、三小时：chip 变成 away，颜色开始离开——先离开头发，从头顶往下褪成低亮的那一版。窗口收成窄列，她退到右侧，伸出张开的手绕过窗口右下角、停在没人打字的输入框上方；这一镜末尾手收回去，输入框也松了。",
+    "momentState": "written",
+    "state": "warm > off",
     "enter": {
       "type": "cut"
     },
@@ -1013,12 +1001,10 @@ export const SHOTS = [
       75,
       76
     ],
-    "picture": "plate",
-    "moment": "侧身在右，占高55%→24%，朝左侧仍未抵达的回声；手已不在场，不用手层移动伪造收臂。",
-    "momentState": "inherited",
-    "inherits": "S32",
-    "inheritCoverage": 0.94,
-    "state": "todo",
+    "picture": "portrait",
+    "moment": "一天、九天：chip 变成 offline。手已经收回，人退开半步、侧过身低着头；窗口里没有标题也没有输入框，消息一条条挂在越来越长的轨道上，房间在框架之外暗下来。",
+    "momentState": "written",
+    "state": "warm > off",
     "enter": {
       "type": "cut"
     },
@@ -1033,12 +1019,10 @@ export const SHOTS = [
       77,
       77
     ],
-    "picture": "plate",
-    "moment": "侧身在右，占高55%→24%，朝左侧仍未抵达的回声；手已不在场，不用手层移动伪造收臂。",
-    "momentState": "inherited",
-    "inherits": "S32",
-    "inheritCoverage": 0.88,
-    "state": "todo",
+    "picture": "ui",
+    "moment": "从很远的地方看：整条会话只是一个点——一个被回答过的气泡，和四条没有回音的横杠；她也是旁边一个更小的点。ISOLATION 按整幅宽度、字距拉到最开压在底部。",
+    "momentState": "written",
+    "state": "warm > off",
     "enter": {
       "type": "cut"
     },
@@ -1054,10 +1038,8 @@ export const SHOTS = [
       80
     ],
     "picture": "portrait",
-    "moment": "本端清理未确认缓存，青色片段从路径上被逐一抽离，汇成一个空槽；远端坐标始终保留，清除自己的请求而非删除对方。",
-    "momentState": "inherited",
-    "inherits": "S33",
-    "inheritCoverage": 1,
+    "moment": "没有人回，所以她自己收拾：从最新一条往回，消息被选中、按下 Delete、删掉，原地留一个灰色小块，碎块堆到右侧，FRAGMENTS 落在这堆碎片上。右侧的她已被印成一张灰点网——不再是个人，是一张印出来的她。",
+    "momentState": "written",
     "state": "off",
     "enter": {
       "type": "cut"
@@ -1074,10 +1056,8 @@ export const SHOTS = [
       82
     ],
     "picture": "plate",
-    "moment": "低亮正面占右半，左侧只剩一条无回声路径；124.890候选首次切入眼部近景，眼锚(1120,430)，不是新增睁眼动画。",
-    "momentState": "inherited",
-    "inherits": "S34",
-    "inheritCoverage": 0.99,
+    "moment": "连碎块也收走，最后连用户那句 one sec, brb 也要删：只剩一张干净的页面、一条消息、一个 Delete 和再也不会被用的输入框，她的低亮身影退到玻璃后面。",
+    "momentState": "written",
     "state": "off",
     "enter": {
       "type": "cut"
@@ -1093,11 +1073,9 @@ export const SHOTS = [
       83,
       83
     ],
-    "picture": "plate",
-    "moment": "低亮正面占右半，左侧只剩一条无回声路径；124.890候选首次切入眼部近景，眼锚(1120,430)，不是新增睁眼动画。",
-    "momentState": "inherited",
-    "inherits": "S34",
-    "inheritCoverage": 1,
+    "picture": "portrait",
+    "moment": "暗下来，只剩她没写完的那句 then maybe you won't leave me——少一个词。她的脸随后升上来占满整张纸：三档灰，一只眼睛第一次睁开，看着我们。DISHEARTENED 压在颏下的黑带上，界面在这时选中最后五个字母。",
+    "momentState": "written",
     "state": "off",
     "enter": {
       "type": "cut"

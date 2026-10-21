@@ -1,7 +1,7 @@
 # 交接文档 — worldExecuteMe · DeepSeek 版 MV
 
 > 给接力的新会话：这份文档是全部上下文。请先读完再动手。
-> 最后更新：2026-10-20，第 0–7 段完成，第 8 段起未做。
+> 最后更新：2026-10-21，第 0–8 段完成（51 镜），第 9 段起未做。
 
 ---
 
@@ -12,6 +12,7 @@
 - 项目目录：`G:\CODE\worldExecuteMe\newProj_v1017\`
 - 参考片（Claude 版，已拆解研究）：`G:\CODE\worldExecuteMe\world-execute-me-lyric-mv\`
 - 参考片的拆解资料：`G:\CODE\worldExecuteMe\claude-version-study\`
+  （里面有**逐镜剪辑** `shots/041_c2-typing.mp4` … `shots/087_down-last.mp4`，看参考片最省事的方式就是抽这些镜的帧）
 - **上一代项目（素材宝库，务必参考）**：`G:\CODE\worldExecuteMe\newProj_v1014\`
 
 用户是**非技术背景**的中文使用者：给建议要带理由，不要甩裸路径，审查素材必须**双击可开**。
@@ -23,17 +24,17 @@
 | 规则 | 内容 |
 |---|---|
 | 确定性 | 每一帧必须是歌曲时间 `t` 的纯函数。导出结束会自检 `deterministic: yes/no`，**必须永远是 yes** |
-| 时间轴 | `shots/table.js` 的 87 个镜头边界、`data/storyboard-v1.json`、歌词时间戳 = **数据源，不许改** |
+| 时间轴 | `shots/table.js` 的 87 个镜头边界、`data/storyboard-v1.json`、歌词时间戳 = **数据源，不许改**（`moment` 文字属于设计，可以重写；`momentState` 要跟着改 `written`） |
 | 字幕 | **没有底部字幕条**（"直接梭哈"）。歌词是画面的一部分，用 `src/engine/lyric.js` 的 8 种处理之一 |
-| 配色 | 深蓝体系。第 0、1 段**无彩（钢灰）**，颜色在片名镜"点火"时进来，之后保持全彩 |
-| 无侧边栏 | 从第 4 段起客户端**不显示左侧边栏**；第 4 段还去掉了输入框 |
+| 配色 | 深蓝体系。第 0、1 段**无彩（钢灰）**，颜色在片名镜"点火"时进来；**第 8 段又把它整段送走**（见 §7） |
+| 无侧边栏 | 从第 4 段起客户端**不显示左侧边栏**；第 8 段又把侧栏**动画挤出窗口**一次（`sideSlide`） |
 | 审查素材 | 任何画面改动后，**立刻**重出 `shots/*.mp4` 并重建 `review/`，否则用户看到的是旧的 |
 | 音画同步 | 动画关键帧要**按歌词实际开唱时间**（`lines[n].start`），不要按镜头内手挑的秒数 |
 | 不要碰 | `world-execute-me-dsh-pv/`、`world-execute-me-lyric-mv/` |
 
 ---
 
-## 3. 当前进度：40 / 87 镜
+## 3. 当前进度：51 / 87 镜
 
 | 段 | 标题 | 时间 | 镜数 | 状态 |
 |---|---|---|---|---|
@@ -42,19 +43,19 @@
 | 2 | 标题与第一个问题 | 15.08–29.39 | 4 | ✅ |
 | 3 | 主歌一：用数学回答 | 29.39–44.62 | 4 | ✅ |
 | 4 | 导歌一：设定被切换 | 44.62–59.39 | 4 | ✅ |
-| 5 | 副歌一：对话与四张版画 | 59.39–74.16 | 8 | ✅（4 项小修待做，见 §7） |
+| 5 | 副歌一：对话与四张版画 | 59.39–74.16 | 8 | ✅ |
 | 6 | 主歌二：三个名词三张版画 | 74.16–88.93 | 8 | ✅ |
 | 7 | 导歌二：设定改的是她本人 | 88.93–103.70 | 7 | ✅ |
-| 8 | 副歌二到空线程 | 103.70–125.62 | 11 | ⬜ **下一段** |
-| 9 | 越界、第一个错误、扩散 | 125.62–… | 9 | ⬜ |
+| 8 | 副歌二到空线程 | 103.70–125.62 | 11 | ✅（本轮） |
+| 9 | 越界、第一个错误、扩散 | 125.62–148.01 | 9 | ⬜ **下一段** |
 | 10 | EXECUTION：一台机器，十二圈 | | 4 | ⬜ |
 | 11 | 数数与最后一声 | | 7 | ⬜ |
 | 12 | 最后副歌：四张版画原位重印，但坏了 | | 7 | ⬜ |
 | 13 | LOVE 四句 | | 4 | ⬜ |
 | 14 | 结尾：逆向开机 | | 5 | ⬜ |
 
-已渲染：`shots/001_preroll.mp4` … `shots/040_pre2-loop-b.mp4`
-叙事时刻：已写 40 / 87
+已渲染：`shots/001_preroll.mp4` … `shots/051_alone-eye.mp4`
+叙事时刻：已写 51 / 87（`node tools/build-storyboard.mjs` 会报）
 
 ---
 
@@ -65,7 +66,8 @@ newProj_v1017/
   shots/
     table.js          87 镜数据表（id, at, until, lines, moment, ...）★不要改时间
     index.js          SHOTS_DERIVED / shotAt / barBeat / validate
-    lyric-plan.js     每镜的歌词处理方案（含 byLine 逐行覆盖、echo 回显）
+    lyric-plan.js     每镜的歌词处理方案（含 byLine 逐行覆盖、echo 回显、POWER_LINES）
+    lines.js          ★歌词数据的运行时访问（lineText / lineStart / typedSlice）
     s00_preroll.js    第 0 段
     s01_boot.js       第 1 段 4 镜
     s02_title.js      第 2 段 4 镜
@@ -79,26 +81,39 @@ newProj_v1017/
     plate.js          版画底（平纸 + 套色边框）+ tickRing / bolt / listing
     s06_plates.js     第 6 段 8 镜（剪影填字符 + 校样）
     s07_identity.js   第 7 段 7 镜（身份设置 + 三张控制版画）
-    figure.js         角色 PNG 加载（bust / lowlight / silhouette）
-    ui-client.js      客户端窗口（chip / 气泡 / 光标 / 发送键；composer:false 可关输入框）
+    s08_look.js       ★第 8 段词汇表：颜色离场 gradeAt/room、消息行/轨道、打字点、
+                      sparkRing（花瓣合环）、drawReach（分层伸手）、drawEye、dotFigure
+                      （灰点网）、selectionBox / deleteChip / stub、composerFoot、chipPill
+    s08_input.js      ★第 8 段 41–44 镜（输入：typing / dots / brb / complete）
+    s08_left.js       ★第 8 段 45–48 镜（离开：online / away / offline / isolation）
+    s08_alone.js      ★第 8 段 49–51 镜（空线程：erase / empty / eye）
+    figure.js         角色 PNG 加载（bust / lowlight / silhouette / profile）+ figureImages
+    ui-client.js      客户端窗口（chip / 气泡 / 光标 / 发送键；composer:false 关输入框；
+                      sideSlide 把侧栏挤出窗口；整窗裁剪）
   src/
     main.js           renderFrame；RENDER 表注册每一镜；门禁 Promise.all
-    engine/lyric.js   8 种歌词处理：typed/display/power/stamp/margin/curve/embedded/none
+    engine/lyric.js   8 种歌词处理；★powerLayout() 导出（镜头要在关键词上叠东西时用它）
     engine/stage.js   合成 + 转场 + 调色；resetCtx（每帧重置）
-    engine/grade.js   调色；含 sat（色彩状态 = 全片由灰到彩）
+    engine/grade.js   调色；含 sat（色彩状态）
     mv-draw.js        at/layer/stroke/disc/rect/type/halo/ground/loadImages
     assets/whale.js   drawWhale(ctx, cx, cy, width, opts) 官方鲸鱼 path
   tools/
     export.mjs        --from --to --fps --width --height --out | --stills --times
     make-review.mjs   --name --from --to --shots --index → review/ 三件套
     build-storyboard.mjs  生成 STORYBOARD.md + data/shots.js|json
+    check-engine.mjs  引擎纯函数 48 项回归（不碰浏览器）
+    check-time-windows.mjs  静态扫 at(t,a,b) 反窗口
   review/
     index.html        ★人类审查入口，双击打开
     NN-name-{AB,ours,reference}.mp4 / poster-*.jpg / stills-*.jpg
     check-review.mjs 审查页自检
   compareResult/     两片同时间轴对比页 + check-compare.mjs（11 项）
-  assets/character/  官方鲸鱼 + 角色四姿势（bust/eye/profile/reach）+ v4 掌心特写
+  assets/character/  官方鲸鱼 + 角色四姿势（bust/eye/profile/reach）+ v4：
+                     bust_v4_lowlight / bust_v4_silhouette / palm 掌心特写 /
+                     ★reach_v4_body_layer + reach_v4_hand_layer（伸手分层）
   data/lyrics.json   129 行歌词时间（数据源）
+  out/s08ref/        ★第 8 段的工作资料（未入库）：REF-TIMING.md 是参考片 11 镜的
+                     逐镜时序表（元素消失时刻、时间标记顺序、删除细节、睁眼构图）
 ```
 
 ---
@@ -117,10 +132,13 @@ node tools/export.mjs --from <秒> --to <秒> --stills out/x --times 1.0,2.0
 # 重建一段的审查三件套
 node tools/make-review.mjs --name <名> --from <秒> --to <秒> --shots 0NN,0MM --index <段号>
 
-# 自检
+# 自检（三项，全过才算完）
 node review/check-review.mjs
-cd compareResult; node tools/check-compare.mjs
-cd ..; node tools/build-storyboard.mjs
+cd compareResult; node tools/check-compare.mjs; cd ..
+node tools/build-storyboard.mjs
+
+# 额外保险
+node tools/check-engine.mjs
 ```
 
 ffmpeg：`G:\CODE\worldExecuteMe\world-execute-me-lyric-mv\node_modules\ffmpeg-static\ffmpeg.exe`
@@ -130,7 +148,7 @@ ffmpeg：`G:\CODE\worldExecuteMe\world-execute-me-lyric-mv\node_modules\ffmpeg-s
 
 ## 6. 已经踩过的坑（别重复）
 
-1. **确定性 NO**：曾因图片没 await 解码、以及 `createPattern` 收到负索引。现在 `main.js` 门禁 `Promise.all([...])` 必须包含所有素材的 ready promise。
+1. **确定性 NO**：曾因图片没 await 解码、以及 `createPattern` 收到负索引。现在 `main.js` 门禁 `Promise.all([...])` 必须包含所有素材的 ready promise（第 8 段加了 `S08_READY` 和 `linesReady`）。
 2. **确定性 NO（隐蔽）**：把 1342×1704 立绘**大幅缩到 330px** 时，Chromium 首次降采样路径与后续不同 → 用 `scaledArt(img,w,h)` 预缩放成位图再 blit。**任何大比例缩图都要用它。**
 3. **帧间状态泄漏**：`stage.js` 的 `resetCtx` 现在也清 shadow/dash。别在 shot 里设了 shadow 不还原。
 4. **模块求值顺序**：`const` 有暂时性死区，**常量要先声明**再被别的常量引用（曾因此整页加载失败）。
@@ -138,46 +156,75 @@ ffmpeg：`G:\CODE\worldExecuteMe\world-execute-me-lyric-mv\node_modules\ffmpeg-s
 6. **气泡重复**：不要让"气泡"和"底部标题"同时显示同一句歌词。
 7. **回显歌词**：`lyric-plan.js` 的 `echo` 只在 `byLine` 给上一句指定了位置时才生效，否则会叠印。
 8. **版画别用浅色纸**：全片已有片名一处大面积白闪，安全网关为它存在；再加大面积亮切会变成未登记的闪光事件。
+9. **沙箱里起不了 Chrome**：`node tools/export.mjs` 用 Playwright 启动 Chrome，Chrome 走**命名管道** → 受限沙箱下报 `spawn EPERM`。需要 `danger-full-access`（或本机跑）。这不是代码问题，别去改 export.mjs。
+10. **大比例降采样的第二种做法**：第 8 段的灰点网（`dotArt`）和纯色剪影（`ghostArt`）都是**首次调用时合成一张位图并缓存**，之后每帧只 blit 这张位图。不要在帧里直接对着 1342×1704 的原图做 `drawImage` 加滤镜。
+11. **lowlight 是 bust 的姿势，不是 reach 的姿势**：把 `deepseek_bust_v4_lowlight.png` 叠在 reach 体层上会在她胸口露出一条**横向接缝**（两张画的轮廓不一样）。要"褪色"用 `s08_look.js` 的 `washFigure()` —— 按这张图**自己的 alpha** 上一层灰。
+12. **`ui-client.js` 现在会裁剪整窗**并支持 `sideSlide`（侧栏被挤出）。新选项默认 0，第 1–7 段的画面不变；但如果你在窗口外画东西又发现被切掉，先看这个裁剪。
+13. **歌词行可能比镜头早开唱**：L68 比 `c2-brb` 的切点早 0.17s。镜头自己画的文字要用 `max(lineStart(n), shot.at)` 起算，否则第一帧就已经是半句。
+14. **要在关键词上叠东西**（选中框、删除按钮）：用 `engine/lyric.js` 导出的 `powerLayout()` 取字号/字位，**不要在 shot 里重算一遍**——两份布点一定会漂。
 
 ---
 
-## 7. 第 5 段最近一轮修的（已完成，了解即可）
+## 7. 第 8 段这一轮做了什么（已完成，了解即可）
 
-1. **STIMULATIONS 的拟合关系** → 重写：7 个**带噪声的采样点** → 虚线按顺序连成"绕远的路" → **最小二乘拟合**出一条直线穿过这些点 → 画出每个点到拟合线的**残差短线**。直线现在是虚线的趋势，不是第二张图。
-2. **删掉** logo 下的 `deepseek` 文字、`c1-happy` 的 `me`、`c1-trap` 的计数 `2`。
-3. **气泡 `✓ Delivered` 被下一个气泡覆盖** → tick 移进气泡内部（`herBubble` 预留 `tickH = 34px`），并拉开 c1-only / c1-trap 的气泡间距。
-4. **音画不同步** → 音频本身没问题（拼接后只差 13–21ms，且不累积）。真因是**气泡出现时间按镜头内手挑的秒数写的**，第二句歌词晚了 1.35 秒。现全部用 `cue(t, n)` 按 `lines[n].start` 触发。
+11 镜，103.70–125.62，全片情绪核心。三段式，**镜头一路变小**：
+
+1. **输入（41–44）**：`c2-typing` 里她重新起句（自绘打字机 + 光标），右上角是用户还在跳的三点，输入框打到 `one s` 停住；`c2-dots` 三个点放大成整帧，VIBRATIONS 在底部炸开；`c2-brb` 三个点变成 `one sec, brb`、指针离开窗口，**她的火花八片花瓣收成环**（`sparkRing`）；`c2-complete` 环合上、COMPLETION 落在圆心。
+2. **离开（45–48）**：`left-online` 整扇客户端、两条 `You have left`、**侧栏被挤出**（`sideSlide`）；`left-away` 窗口收成窄列、chip 变 away、**颜色开始离开**，她的**分层伸手**绕过窗口右下角停在空输入框上再收回（`drawReach` + 手层绕腕旋转）；`left-offline` 只剩一列、无标题无输入框、她退开变小低头（profile 姿势）；`left-isolation` 整条线程是一个点。
+3. **空线程（49–51）**：`alone-erase` 逐条删自己的消息（选中框 + Delete 胶囊 + 留下灰块 + 碎片堆 + FRAGMENTS），她被印成**灰点网**；`alone-empty` 只剩一条消息、一个 Delete、一个空输入框，她在玻璃后面；`alone-eye` 她**第一次睁眼**看向我们（`deepseek_eye_v3` 放大约 2.3 倍、铺满整张纸），DISHEARTENED 压在颏下黑带上，界面在最后一刻**框住 HEART 五个字母**并弹出 Delete——留给第 9 段的钩子。
+
+配套改动：
+- `src/engine/lyric.js` 导出 `powerLayout()`；`lyric-plan.js` 把 **67/70/77/80/83** 五个关键词加进 `POWER_LINES`，并给 11 镜写了逐镜落点（ISOLATION 用 `tracking: 0.62` 把字距拉满）。
+- `ui-client.js` 加整窗裁剪 + `sideSlide`；`figure.js` 加 `profile` 姿势并导出 `figureImages`。
+- `table.js` 11 条 `moment` 重写为 `written`（并更新 `picture` / `state`：warm → warm > off → off）。
+- 颜色离场是**全片级**的：`s08_look.gradeAt(t)` 按 112.93 / 114.78 / 117.31 三个切点把 `sat` 从 1 降到 0，同时收 vignette、降 glow；每个镜头用 `return { grade: gradeAt(t) }` 交给 `gradeOptions`。
+- 素材：把 `newProj_v1014/assets/character/v4/` 的 `deepseek_reach_v4_body_layer.png` / `_hand_layer.png` 复制进本项目（伸手分层，手可以绕腕转）。
 
 ---
 
-## 8. 下一段：第 8 段「副歌二到空线程」11 镜（103.70–125.62，22 秒）
+## 8. 下一段：第 9 段「越界、第一个错误、扩散」9 镜（125.62–148.01，22.4 秒）
 
-全片情绪核心。参考片的设计（`claude-version-study/data/shots.json` 里 section 8）：
+全片第一次出现**红色**（`C.danger = "#e75d69"`），只许用在越界/故障边上，**不许整屏铺红**。
+
+参考片设计（`claude-version-study/data/shots.json` 的 section 9）：
 
 | 镜 | 时间 | 内容 |
 |---|---|---|
-| c2-typing | 103.70–106.24 | 用户开始打字，三个点；她被打断、重说一句，火花开始旋转 |
-| c2-dots | 106.24–107.39 | 打字停了，三个点还在颤；那是她能感到的关于用户的全部 |
-| c2-brb | 107.39–110.16 | 三个点变成一句 "brb"，指针离开窗口；她的花瓣一片片合拢成环 |
-| c2-complete | 110.16–110.85 | 第十二片花瓣合上——输入收到，可以回答 |
-| left-online | 110.85–112.93 | 她对着沉默说了两次话，没有回应；chip 还写着 online |
-| left-away | 112.93–114.78 | 半小时、三小时：chip 变 away，**颜色开始离开，先离开头发** |
-| left-offline | 114.78–117.31 | 一天、九天：chip 变 offline，她退开一点、低头；**没有标题也没有输入框** |
-| left-isolation | 117.31–118.47 | 从很远处看，整条线程只是一个点 |
-| alone-erase | 118.47–121.70 | 她开始**删掉自己没人回的消息**，删完留下灰色小段 |
-| alone-empty | 121.70–124.70 | 小段也没了，只剩一句她自己没说完的话 |
-| alone-eye | 124.70–125.62 | 暗下来，**她第一次睁眼看向我们** |
+| err-request | 125.65–128.65 | 空线程里她写一条请求并发出：把对方的在线状态改回 online。这不是她有权发出的 |
+| err-check | 128.65–131.19 | 客户端用自己的声音回应：请求代码块的规则线和状态转红（全片第一次红），然后逐条给参数画下划线，先划人 |
+| err-first | 131.19–133.27 | 第一个错误：客户端指出请求哪里不对（一个人，以及属于他的决定），关键词是那个对话框的标题 |
+| err-send | 133.27–136.96 | 客户端不接受拒绝：发送键自己一次次按下去，请求下面的时间戳仍在走，转红 |
+| err-chrome | 136.96–140.65 | 错误从线程蔓延到外壳：状态 chip 被反复质问、标题只数到一个参与者、保存的会话留着字却留不住人、从内部打不开新会话 |
+| err-drawer | 140.65–142.50 | 没有光标，设置抽屉自己滑开：里面每个开关都是她的、没有一个是他的；于是她给自己画了一个指针，客户端把它划掉 |
+| err-forge | 142.50–144.34 | 如果他不答，她就替他答：在用户的输入框里打字被拒，然后伪造一个米色气泡、描成红边 |
+| err-window | 144.34–147.34 | 一拍一个：思考火花、火花图标、标题栏，最后是窗口自己的轮廓——第 15 个错误最大，轮廓变红那一拍它站在画面正中 |
+| err-breath | 147.34–148.04 | 过载：客户端黑掉。红轮廓折平成一条线，那条线是划掉被拒请求的删除线；然后是提示符和光标，命令被重新输入——交给下面的代码 |
 
-素材提示：
-- `assets/character/deepseek_eye_v3.png` —— **睁眼**那镜用的就是它
-- `assets/character/v4/deepseek_reach_v4_body_layer.png` + `_hand_layer.png` —— 伸手的分层（第 8 段"她伸手绕过窗口一角"用得上）
-- `deepseek_bust_v4_silhouette.png` / `_lowlight.png` —— 颜色离开、只剩剪影
+我们的表（`shots/table.js`，时间/行区间已定，不要改）：
+
+| 镜 | 时间 | 歌词行 |
+|---|---|---|
+| 052 err-request | 125.622–128.622 | 84 |
+| 053 err-check | 128.622–131.161 | 85 |
+| 054 err-first | 131.161–133.238 | 86 |
+| 055 err-send | 133.238–136.930 | 86 |
+| 056 err-chrome | 136.930–140.623 | 无 |
+| 057 err-drawer | 140.623–142.469 | 无 |
+| 058 err-forge | 142.469–144.315 | 无 |
+| 059 err-window | 144.315–147.315 | 无 |
+| 060 err-breath | 147.315–148.008 | 无 |
+
+**连续性钩子（第 8 段留的）**：
+1. `051 alone-eye` 结尾已经**框住 HEART 五个字母并弹出 Delete**（`powerLayout` 算的字位，box 在 `960,946` 那行上）。第 9 段开场如果接得上——第一个动作就是把它删掉，画面进入 `DIS`▢`ENED` 的缺口——会非常顺。否则要想办法解释为什么没删。
+2. 颜色在第 8 段已经归零（`sat = 0`），第 9 段整段是**无彩 + 红**。红色一旦出现就是全片第一次，务必只在越界/故障边上用。
+3. 第 9 段有 5 镜 `lines: null`：这些镜头**没有歌词**，画面要自己说话。
+4. 第 5 段以后的"结构"：客户端窗口 + 版画/纸面两种记法。第 9 段适合把"错误对话框"做成新的第三种记法（像第 5 段的版画那样成体系），而不是随手画个红框。
 
 ---
 
 ## 9. 工作方式（用户认可的节奏）
 
-1. 先**看参考片**对应镜头（`node -e` 读 `claude-version-study/data/shots.json` 的 section，或直接从 `study_720p30.mp4` 抽帧）
+1. 先**看参考片**对应镜头（`claude-version-study/shots/` 有逐镜剪辑，抽帧最快；`node -e` 读 `data/shots.json` 拿逐镜描述）
 2. **先给方案**（怎么拍、用什么素材、为什么），再动手
 3. 实现 → 出静帧自查 → 出片 → 重建 `review/` → 跑三项自检 → 提交推送（**每段一个 commit**）
 4. commit message 用英文写"为什么"，正文里写清楚这一轮改了什么
@@ -185,10 +232,12 @@ ffmpeg：`G:\CODE\worldExecuteMe\world-execute-me-lyric-mv\node_modules\ffmpeg-s
 
 **用户反馈往往很具体**（"这个字太小""这个位置偏了""这个效果不够炫"），照做即可，但要**说清根因**，不要只说"改好了"。
 
+喂图给用户之前，先自己拼接触印相图看一遍：`ffmpeg -framerate 1 -i "f%02d.png" -vf "tile=3x4" -frames:v 1 sheet.jpg`。
+
 ---
 
 ## 10. git
 
 - 远端 SSH：`git@github.com:A1haithRui/worldExecuteMeDS.git`（HTTPS 到 github.com:443 被墙）
 - 分支 `main`，每段完成即 push
-- 最近提交：`81c6858`（第 5 段版画加强 + 确定性修复）
+- 最近提交：第 8 段「副歌二到空线程」11 镜（`git log -1` 看哈希）；前一条是 `d68d993`（第 5 段收尾）

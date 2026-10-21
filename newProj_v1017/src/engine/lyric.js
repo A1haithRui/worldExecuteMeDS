@@ -159,6 +159,27 @@ function stamp(ctx, plan, t) {
   return w;
 }
 
+/**
+ * The layout the power treatment gives a word: its size, total width, left edge and
+ * per-glyph x positions.
+ *
+ * Exported because a shot that has to put something ON the word -- the selection
+ * box that takes DISHEARTENED apart in section 8 -- must land on the same glyphs the
+ * stage draws, and measuring them a second time in the shot is how those two drift.
+ */
+export function powerLayout(ctx, text, plan = {}) {
+  const {
+    anchor = [960, 900], align = "center", tracking = 0.1,
+    maxWidth = 1200, maxSize = 176, family = "MV Sans",
+  } = plan;
+  const size = fillSize(ctx, text, family, tracking, maxWidth, maxSize);
+  const probe = glyphPositions(ctx, text, family, size, tracking, 0);
+  const total = probe.total;
+  const x0 = anchor[0] - (align === "center" ? total / 2 : align === "right" ? total : 0);
+  const { chars, xs } = glyphPositions(ctx, text, family, size, tracking, x0);
+  return { size, total, x0, chars, xs, y: anchor[1], family, tracking };
+}
+
 // 3.5 power -- the film's keyword lines. These are the shout lines of the song
 // (PROTECTION, OBJECT CREATION, INITIALIZATION, SIMULATION), so they get the
 // full width of their area, a breathing blue glow, a blue-to-white reveal, and a
@@ -168,11 +189,9 @@ function power(ctx, plan, t) {
     line, anchor, align = "center", tracking = 0.1,
     maxWidth = 1200, maxSize = 176, family = "MV Sans",
   } = plan;
-  const size = fillSize(ctx, line.text, family, tracking, maxWidth, maxSize);
-  const probe = glyphPositions(ctx, line.text, family, size, tracking, 0);
-  const total = probe.total;
-  const x0 = anchor[0] - (align === "center" ? total / 2 : align === "right" ? total : 0);
-  const { chars, xs } = glyphPositions(ctx, line.text, family, size, tracking, x0);
+  const { size, total, x0, chars, xs } = powerLayout(ctx, line.text, {
+    anchor, align, tracking, maxWidth, maxSize, family,
+  });
 
   const env = envelope(line, t);
   const k = clamp((t - line.start) / 0.44);

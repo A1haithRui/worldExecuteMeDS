@@ -104,6 +104,8 @@ export function clientWindow(ctx, R, t, opts = {}) {
   const {
     tone = "product",
     sideW = 360,
+    // how far the sidebar has slid out of the window (section 8 pushes it off)
+    sideSlide = 0,
     threadTitle = "New chat",
     chip = { text: "harness · ready", on: true },
     presence = "silent",
@@ -125,8 +127,14 @@ export function clientWindow(ctx, R, t, opts = {}) {
   } = opts;
 
   const T = TONES[tone] ?? TONES.product;
-  const mx = R.x + sideW;
-  const mw = R.w - sideW;
+  // The sidebar can be slid out rather than only switched off. Section 8 pushes it
+  // off the edge when the second message goes unanswered -- an interface that takes
+  // a panel away by animating it out reads as alive, while the same panel switching
+  // itself off reads as a setting. `sideSlide` is how far it has travelled; the main
+  // area follows it, so the content is never left with a hole.
+  const slide = Math.max(0, sideSlide);
+  const mx = R.x + Math.max(0, sideW - slide);
+  const mw = R.w - Math.max(0, sideW - slide);
   const markX = mx + mw / 2 + markDX;
   const markY = R.y + R.h / 2 - 46 + markDY;
   const pulse = markPulse > 0 ? 1 + markPulse * 0.16 * Math.sin(t * 2.6) : 1;
@@ -142,8 +150,17 @@ export function clientWindow(ctx, R, t, opts = {}) {
     ctx.lineWidth = 1.4;
     ctx.stroke();
 
+    // Everything a window draws stays inside its own frame: without this, a panel
+    // that slides out drags its text across the conversation.
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(R.x, R.y, R.w, R.h, 22);
+    ctx.clip();
+
     // ---- sidebar
-    if (sideW > 0) {
+    if (sideW > 0 && slide < sideW) {
+      ctx.save();
+      if (slide) ctx.translate(-slide, 0);
       ctx.fillStyle = T.sidebar;
       ctx.fillRect(R.x, R.y, sideW, R.h);
       stroke(ctx, [[R.x + sideW, R.y], [R.x + sideW, R.y + R.h]], T.rule, 1.2);
@@ -173,6 +190,7 @@ export function clientWindow(ctx, R, t, opts = {}) {
       disc(ctx, R.x + sideW - 108, R.y + R.h - 34, 4.5, online ? BRAND_SOFT : T.dimmer, 1);
       if (online) halo(ctx, R.x + sideW - 108, R.y + R.h - 34, 28, 0.4, BRAND);
       type(ctx, presence, R.x + sideW - 92, R.y + R.h - 28, 14.5, online ? BRAND_SOFT : T.dimmer, "MV Mono");
+      ctx.restore(); // sidebar slide
     }
 
     // ---- main
@@ -218,6 +236,7 @@ export function clientWindow(ctx, R, t, opts = {}) {
       }
       sendButton(ctx, cb.x + cb.w - 62, cb.y + cb.h / 2, sendMode, sendK, t);
     }
+    ctx.restore(); // window clip
   });
 
   return { mx, mw, cb, markX, markY };

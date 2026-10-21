@@ -9,12 +9,20 @@ const { images, ready } = loadImages({
   lowlight: "/assets/character/v4/deepseek_bust_v4_lowlight.png",
   silhouette: "/assets/character/v4/deepseek_bust_v4_silhouette.png",
   bust: "/assets/character/deepseek_bust_v3.png",
+  // Section 8 needs the fourth pose: the one she turns away in. The bust looks at
+  // the thread; the profile is already looking down, so "head bowed towards the
+  // thread" is a pose we own rather than a rotation we fake on the bust.
+  profile: "/assets/character/deepseek_profile_v3.png",
 });
 
 /** Resolves when the bust images have decoded. The renderer must await this:
  * without it the first frame can be drawn before the art exists, which shows up
  * as a frame with no character in it and as a flaky determinism check. */
 export const figureReady = ready;
+
+/** The decoded plates, for shots that need to draw one at a placement of their
+ * own (the layered reach pose moves its hand, so it cannot go through figure()). */
+export const figureImages = images;
 
 /**
  * Draw the bust centred on (cx, cy) at the given height, with the idle bob.

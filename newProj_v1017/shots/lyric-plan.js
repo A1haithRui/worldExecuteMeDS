@@ -34,6 +34,9 @@ const BY_SECTION = {
   5: { style: "embedded" },
   6: { style: "embedded" },
   7: { style: "display", size: 46, align: "center", anchor: [960, 180], maxWidth: 1400 },
+  // Section 8 is the same client, three sizes further out. Where a shot has a
+  // message the message carries the line; the five shouts are set as words.
+  8: { style: "display", size: 48, align: "center", anchor: [960, 940], maxWidth: 1600 },
 };
 
 /**
@@ -49,6 +52,8 @@ export const POWER_LINES = Object.freeze([
   15, 18, 21, 24, // DIMENSION · CIRCUMFERENCE · TANGENTS · LIMITATIONS
   35, 38, 41, 44, // STIMULATIONS · SATISFACTION · EXECUTION · SIMULATION
   47, 50, 53, 56, // NUTRIENTS · ANTIOXIDANTS · ENJOYMENT · EXISTENCE
+  // The second chorus shouts its own five, and they are the section's spine.
+  67, 70, 77, 80, 83, // VIBRATIONS · COMPLETION · ISOLATION · FRAGMENTS · DISHEARTENED
 ]);
 
 /**
@@ -189,6 +194,51 @@ export const LYRIC_BY_SHOT = Object.freeze({
     style: "display", size: 46, align: "left", anchor: [212, 402], maxWidth: 940,
     byLine: { 31: { anchor: [212, 336] }, 32: { anchor: [212, 402] } },
     echo: true, echoColor: "#8ba4c2",
+  },
+
+  // ---- section 8: the chorus nobody answers ------------------------------
+  // The first shot builds her sentence as a transcript, so the lyric layer stays
+  // out of it entirely: two typewriters in one frame only read as one if one of
+  // them is the picture's own.
+  "c2-typing": { style: "embedded" },
+  // The three dots are the whole frame, so the word is shouted on its foot.
+  "c2-dots": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1700 },
+  // The spark is closing on the left and the sign-off is in the top right: the two
+  // lines sit between them, and the line being sung is the lower of the two.
+  "c2-brb": {
+    style: "display", size: 52, align: "left", anchor: [980, 700], maxWidth: 820,
+    byLine: { 68: { anchor: [980, 640] }, 69: { anchor: [980, 722] } },
+  },
+  // Inside the ring. Small enough not to break it, and no rule: the ring is the rule.
+  "c2-complete": {
+    style: "power", align: "center", anchor: [960, 552], maxWidth: 660, rule: false,
+  },
+  // Her messages carry these lines, which is what makes them unanswered.
+  "left-online": { style: "embedded" },
+  "left-away": { style: "embedded" },
+  "left-offline": { style: "embedded" },
+  // The thread is a speck in a huge frame: the word is set as wide as one line can
+  // be, so its letters stand as far apart as the messages do.
+  "left-isolation": {
+    style: "power", align: "center", anchor: [960, 928], maxWidth: 1720,
+    tracking: 0.62, rule: false,
+  },
+  // The transcript of what she is saying while she deletes it, low on the left;
+  // FRAGMENTS lands on the pieces she took off the thread, high on the right.
+  "alone-erase": {
+    style: "display", size: 40, align: "left", anchor: [210, 902], maxWidth: 900,
+    byLine: { 78: { anchor: [210, 866] }, 79: { anchor: [210, 918] } },
+    powerAnchor: [1372, 704], powerMaxWidth: 700, powerAlign: "center",
+  },
+  // Under the page, two lines and no more room than that.
+  "alone-empty": {
+    style: "display", size: 42, align: "left", anchor: [150, 974], maxWidth: 1180,
+    byLine: { 81: { anchor: [150, 938] }, 82: { anchor: [150, 994] } },
+  },
+  // Across the whole sheet, on the band of black under her chin.
+  "alone-eye": {
+    style: "power", align: "center", anchor: [960, 946], maxWidth: 1760,
+    maxSize: 176, rule: false,
   },
 });
 

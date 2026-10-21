@@ -21,6 +21,11 @@ import { SECTION4_RENDER } from "../shots/s04_settings.js";
 import { SECTION5_RENDER, SECTION5_READY, ART_READY as SECTION5_ART } from "../shots/s05_chorus.js";
 import { SECTION6_RENDER } from "../shots/s06_plates.js";
 import { SECTION7_RENDER } from "../shots/s07_identity.js";
+import { SECTION8_INPUT_RENDER } from "../shots/s08_input.js";
+import { SECTION8_LEFT_RENDER } from "../shots/s08_left.js";
+import { SECTION8_ALONE_RENDER } from "../shots/s08_alone.js";
+import { S08_READY } from "../shots/s08_look.js";
+import { linesReady } from "../shots/lines.js";
 
 const $ = (id) => document.getElementById(id);
 const stageCanvas = $("storyboardCanvas");
@@ -34,6 +39,7 @@ const stage = createStage(1920, 1080);
 const RENDER = {
   preroll, ...BOOT_RENDER, ...SECTION2_RENDER, ...SECTION3_RENDER,
   ...SECTION4_RENDER, ...SECTION5_RENDER, ...SECTION6_RENDER, ...SECTION7_RENDER,
+  ...SECTION8_INPUT_RENDER, ...SECTION8_LEFT_RENDER, ...SECTION8_ALONE_RENDER,
 };
 
 const BASE_GRADE = Object.freeze({
@@ -323,7 +329,14 @@ function tick() {
 
 // --- boot ------------------------------------------------------------------
 async function boot() {
-  await Promise.all([lyricsReady, featuresReady, fontReady, figureReady, SECTION5_READY, SECTION5_ART]);
+  // Every asset the shots can draw is awaited here. A shot drawn before its art has
+  // decoded still paints a frame, so the failure mode is not a crash but a frame
+  // that is missing something -- and the determinism check is the only thing that
+  // sees it.
+  await Promise.all([
+    lyricsReady, featuresReady, fontReady, figureReady,
+    SECTION5_READY, SECTION5_ART, S08_READY, linesReady,
+  ]);
   config = await configReady;
   // In render mode the picture is all that matters: ffmpeg muxes the original
   // audio afterwards. Dropping the element's source stops the page pulling a
