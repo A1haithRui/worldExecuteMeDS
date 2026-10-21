@@ -18,6 +18,8 @@ import { at, layer, stroke, disc, rect, type, halo, ground } from "../src/mv-dra
 import { cursorArrow, clickRipple, CLIENT_R } from "./ui-client.js";
 import { drawWhale } from "../src/assets/whale.js";
 import { plateBase, PLATE, paperDisc, bolt } from "./plate.js";
+import { figure } from "./figure.js";
+import { lineStart } from "./lines.js";
 
 const BRAND = "#4d6bfe";
 const BRAND_SOFT = "#7f93ff";
@@ -67,115 +69,382 @@ function silhouette(ctx, area, pathFn, colour, rim, opts = {}) {
 
 // ---------------------------------------------------------------------------
 // the objects
+//
+// These two plates are the joke of the section: she agrees to be a thing, and then
+// hands over what the thing is made of. The reference cuts the thing in half. We
+// give it a bigger gesture -- it swells and it bursts (juice, seeds, skin) -- and
+// what it was made of is dragged out of the burst as actual chemistry: rings,
+// chains and bonds, each with its own name and weight. The silhouettes are drawn
+// here rather than approximated, so the eggplant is an aubergine and the tomato is
+// a tomato, not an ellipse with a stem.
 // ---------------------------------------------------------------------------
 function eggplantPath(ctx) {
-  // leaning across the sheet, with a stem above the calyx
+  // A long neck under the calyx, a body that swells down and to the left, and a tip
+  // that curls back the other way -- the three things that make an aubergine read.
   ctx.beginPath();
-  ctx.ellipse(850, 500, 235, 320, 0.20, 0, Math.PI * 2);
-  ctx.moveTo(812, 232);
-  ctx.quadraticCurveTo(806, 150, 860, 120);
-  ctx.quadraticCurveTo(838, 176, 856, 226);
+  ctx.moveTo(872, 262);
+  ctx.bezierCurveTo(922, 300, 948, 382, 940, 476);
+  ctx.bezierCurveTo(932, 596, 900, 700, 832, 752);
+  ctx.bezierCurveTo(754, 812, 660, 790, 624, 712);
+  ctx.bezierCurveTo(588, 636, 620, 520, 664, 430);
+  ctx.bezierCurveTo(700, 356, 748, 288, 802, 264);
+  ctx.closePath();
 }
 
 function tomatoPath(ctx) {
-  // slightly squashed, the way a tomato actually sits
+  // squashed, with the shoulders a little above the middle and a dimple at the top
   ctx.beginPath();
-  ctx.ellipse(900, 510, 235, 205, 0, 0, Math.PI * 2);
+  ctx.moveTo(900, 336);
+  ctx.bezierCurveTo(1004, 336, 1082, 414, 1088, 512);
+  ctx.bezierCurveTo(1094, 616, 1010, 706, 900, 706);
+  ctx.bezierCurveTo(790, 706, 706, 616, 712, 512);
+  ctx.bezierCurveTo(718, 414, 796, 336, 900, 336);
+  ctx.closePath();
 }
 
-function catPath(ctx) {
-  // a round head with two filled ears, so the silhouette reads as a cat rather
-  // than as a circle with two ticks on it
+/** The calyx: a jagged five-point leaf cluster, drawn rather than stamped. */
+function calyxPath(ctx, cx, cy, r, rot = 0) {
   ctx.beginPath();
-  ctx.arc(900, 520, 235, 0, Math.PI * 2);
-  ctx.moveTo(742, 372);
-  ctx.lineTo(768, 236);
-  ctx.lineTo(872, 330);
-  ctx.closePath();
-  ctx.moveTo(1058, 372);
-  ctx.lineTo(1032, 236);
-  ctx.lineTo(928, 330);
+  for (let i = 0; i < 10; i++) {
+    const a = rot + (i / 10) * Math.PI * 2;
+    const rad = i % 2 === 0 ? r : r * 0.46;
+    const x = cx + Math.cos(a) * rad;
+    const y = cy + Math.sin(a) * rad * 0.82;
+    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  }
   ctx.closePath();
 }
 
 /** The spark sits where a calyx would be on each of them. */
 const CALYX = Object.freeze({
-  eggplant: { x: 812, y: 236 },
-  tomato: { x: 900, y: 312 },
-  cat: { x: 900, y: 300 },
+  eggplant: { x: 836, y: 250, r: 74 },
+  tomato: { x: 900, y: 342, r: 82 },
 });
 
+// ---------------------------------------------------------------------------
+// structural formulas, printed
+//
+// Thin cyan line art with tiny mono labels: the point is that the plate can read as
+// a specimen sheet, so these have to look measured rather than doodled.
+// ---------------------------------------------------------------------------
+function hexRing(ctx, cx, cy, r, rot = 0) {
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const a = rot + (i / 6) * Math.PI * 2;
+    const x = cx + Math.cos(a) * r;
+    const y = cy + Math.sin(a) * r;
+    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+}
+
+function oh(ctx, x, y, a, len, colour, size) {
+  const ex = x + Math.cos(a) * len;
+  const ey = y + Math.sin(a) * len;
+  stroke(ctx, [[x, y], [ex, ey]], colour, 1.4, 0.85);
+  type(ctx, "OH", ex + Math.cos(a) * 12, ey + Math.sin(a) * 12 + 4, size, colour, "MV Mono", "center");
+}
+
+/** Fibre: a run of hexose rings joined by oxygen bridges. */
+function formulaCellulose(ctx, x, y, s, colour) {
+  const r = 30 * s;
+  const step = r * 2.1;
+  ctx.strokeStyle = colour;
+  ctx.lineWidth = 1.8 * s;
+  for (let i = 0; i < 5; i++) {
+    const cx = x + i * step;
+    const cy = y + (i % 2 ? 9 : -9) * s;
+    hexRing(ctx, cx, cy, r, 0.26);
+    oh(ctx, cx + Math.cos(0.26) * r, cy + Math.sin(0.26) * r, 0.26, 18 * s, colour, 9 * s);
+    oh(ctx, cx + Math.cos(1.83) * r, cy + Math.sin(1.83) * r, 1.83, 18 * s, colour, 9 * s);
+    oh(ctx, cx + Math.cos(3.4) * r, cy + Math.sin(3.4) * r, 3.4, 18 * s, colour, 9 * s);
+    if (i < 4) {
+      stroke(ctx, [[cx + r * 0.96, cy - 6 * s], [cx + step - r * 0.96, cy - 6 * s]], colour, 1.5 * s, 0.9);
+      type(ctx, "O", cx + step * 0.5, cy - 12 * s, 10 * s, colour, "MV Mono", "center");
+    }
+  }
+}
+
+/** Protein: the peptide backbone, NH on the peaks and C=O hanging off the valleys. */
+function formulaPeptide(ctx, x, y, s, colour) {
+  const step = 46 * s;
+  const amp = 26 * s;
+  const pts = [];
+  for (let i = 0; i < 9; i++) pts.push([x + i * step, y + (i % 2 ? amp : -amp)]);
+  stroke(ctx, pts, colour, 1.8 * s, 0.95);
+  for (let i = 0; i < 9; i++) {
+    const [px, py] = pts[i];
+    if (i % 2 === 0) {
+      type(ctx, "NH", px, py - 12 * s, 10 * s, colour, "MV Mono", "center");
+    } else {
+      stroke(ctx, [[px, py], [px, py + 22 * s]], colour, 1.5 * s, 0.9);
+      type(ctx, "O", px, py + 34 * s, 10 * s, colour, "MV Mono", "center");
+    }
+  }
+}
+
+/** Carbohydrate: one hexose, its hydroxyls, and the ring oxygen. */
+function formulaHexose(ctx, x, y, s, colour) {
+  const r = 38 * s;
+  ctx.strokeStyle = colour;
+  ctx.lineWidth = 1.9 * s;
+  hexRing(ctx, x, y, r, 0.36);
+  for (const a of [0.36, 1.4, 2.45, 3.5, 4.55]) {
+    oh(ctx, x + Math.cos(a) * r, y + Math.sin(a) * r, a, 20 * s, colour, 10 * s);
+  }
+  type(ctx, "O", x + Math.cos(5.6) * r, y + Math.sin(5.6) * r - 4, 11 * s, colour, "MV Mono", "center");
+}
+
+/** Lycopene: the long conjugated chain, double bonds ticked. */
+function formulaLycopene(ctx, x, y, s, colour) {
+  const step = 40 * s;
+  const amp = 20 * s;
+  const pts = [];
+  for (let i = 0; i < 15; i++) pts.push([x + i * step, y + (i % 2 ? amp : -amp)]);
+  stroke(ctx, pts, colour, 1.8 * s, 0.95);
+  for (let i = 1; i < 14; i++) {
+    const [px, py] = pts[i];
+    const [qx, qy] = pts[i + 1];
+    const mx = (px + qx) / 2;
+    const my = (py + qy) / 2;
+    const nx = -(qy - py);
+    const ny = qx - px;
+    const l = Math.hypot(nx, ny) || 1;
+    stroke(ctx, [[mx - (nx / l) * 7 * s, my - (ny / l) * 7 * s], [mx + (nx / l) * 7 * s, my + (ny / l) * 7 * s]],
+      colour, 1.3 * s, 0.8);
+  }
+}
+
+/** Vitamin C: the five-membered lactone ring. */
+function formulaVitC(ctx, x, y, s, colour) {
+  const r = 40 * s;
+  ctx.strokeStyle = colour;
+  ctx.lineWidth = 1.9 * s;
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++) {
+    const a = 0.3 + (i / 5) * Math.PI * 2;
+    const px = x + Math.cos(a) * r;
+    const py = y + Math.sin(a) * r;
+    i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+  }
+  ctx.closePath();
+  ctx.stroke();
+  for (const a of [0.3, 1.56, 2.82]) {
+    oh(ctx, x + Math.cos(a) * r, y + Math.sin(a) * r, a, 20 * s, colour, 10 * s);
+  }
+  type(ctx, "O", x + Math.cos(4.08) * r, y + Math.sin(4.08) * r, 11 * s, colour, "MV Mono", "center");
+}
+
+/** Vitamin E: the chromanol ring with its phytyl tail. */
+function formulaVitE(ctx, x, y, s, colour) {
+  const r = 34 * s;
+  ctx.strokeStyle = colour;
+  ctx.lineWidth = 1.9 * s;
+  hexRing(ctx, x, y, r, 0.2);
+  oh(ctx, x - r * 0.9, y - r * 0.4, Math.PI, 18 * s, colour, 10 * s);
+  stroke(ctx, [[x + r * 0.85, y + r * 0.5], [x + r * 0.85, y + r * 2.1]], colour, 1.6 * s, 0.9);
+  const pts = [];
+  for (let i = 0; i < 9; i++) pts.push([x + r * 0.85 + i * 30 * s, y + r * 2.1 + (i % 2 ? 18 * s : -6 * s)]);
+  stroke(ctx, pts, colour, 1.6 * s, 0.9);
+}
+
+/** The tag under each formula: what it is, and how much of it the plate holds. */
+function nutrientTag(ctx, name, amount, x, y, colour) {
+  type(ctx, name, x, y, 17, "#eef3fb", "MV Sans");
+  type(ctx, amount, x, y + 20, 13, DIM, "MV Mono");
+  stroke(ctx, [[x, y + 28], [x + 150, y + 28]], colour, 1.4, 0.6);
+}
+
+// ---------------------------------------------------------------------------
+// the burst
+// ---------------------------------------------------------------------------
+/** Deterministic noise: the burst must be the same burst on every render. */
+const rnd = (i) => {
+  const x = Math.sin(i * 127.1 + 311.7) * 43758.5453;
+  return x - Math.floor(x);
+};
+
 /**
- * One object plate: printed, opened on the downbeat, then emptied on the keyword
- * while whatever it held is drawn out to the right.
+ * One object plate: printed, swollen, burst, and then what it was made of is pulled
+ * out of the burst. `formulas` are drawn to the right of the burst as the keyword
+ * line is sung, so the handover happens on the word and not on an offset.
  */
 function objectPlate(ctx, t, s, o) {
-  const { kind, colour, molecules, calyxSpin = 0 } = o;
+  const { kind, colour, burstColour, formulaColour, formulas, index } = o;
   const u = t - s.at;
-  plateBase(ctx, t, { index: o.index });
+  plateBase(ctx, t, { index });
 
-  const pathFn = kind === "eggplant" ? eggplantPath : kind === "tomato" ? tomatoPath : catPath;
+  const pathFn = kind === "eggplant" ? eggplantPath : tomatoPath;
+  const calyx = CALYX[kind];
   const area = { x: PLATE.x + 200, y: PLATE.y + 120, w: 1400, h: 700 };
+  const centre = kind === "eggplant" ? [790, 500] : [900, 512];
 
-  // 1. printed
-  const ink = easeOut(at(u, 0, 0.45));
-  const emptied = at(u, 1.9, 2.5); // the colour leaves
-  const open = at(u, 1.0, 1.3); // the downbeat that opens it
+  // The burst lands on the line that gives it away ("Then I will give you my").
+  const burstAt = Math.max(lineStart(kind === "eggplant" ? 46 : 49), s.at + 0.6);
+  const swell = easeOut(at(t, burstAt - 0.28, burstAt));
+  const age = t - burstAt;
+  const burstK = clamp01(age / 0.12);
+  const gone = clamp01((age - 0.5) / 1.4);
 
-  // the inner face, revealed as it opens
-  if (open > 0.02) {
-    layer(ctx, open * (1 - emptied * 0.6), () => {
-      ctx.save();
+  // 1. printed: a solid body, the characters printed over it, then it swells
+  const ink = easeOut(at(u, 0.02, 0.5));
+  const bodyOut = clamp01((age - 0.02) / 0.3);
+  if (ink > 0.01 && bodyOut < 0.999) {
+    ctx.save();
+    ctx.translate(centre[0], centre[1]);
+    ctx.scale(1 + 0.07 * swell, 1 + 0.07 * swell);
+    ctx.translate(-centre[0], -centre[1]);
+    // the flat body: without it the characters read as a wall of text, not as a thing
+    layer(ctx, ink * 0.34 * (1 - bodyOut), () => {
       pathFn(ctx);
-      ctx.clip();
-      ctx.fillStyle = "rgba(17,46,68,0.9)";
-      ctx.fillRect(PLATE.x, PLATE.y, PLATE.w, PLATE.h);
-      // a cut line across the middle, and the two halves parted
-      const cy = kind === "tomato" ? 400 : 470;
-      stroke(ctx, [[PLATE.x + 180, cy], [PLATE.x + PLATE.w - 180, cy]], "rgba(131,233,230,0.5)", 2, 0.8);
-      ctx.restore();
+      ctx.fillStyle = colour;
+      ctx.fill();
     });
+    silhouette(ctx, area, pathFn, colour, "rgba(170,196,255,0.95)", {
+      alpha: ink * (1 - 0.6 * gone) * (1 - bodyOut),
+      glyphSize: 23,
+    });
+    // a rim, so the edge is the brightest line in the object
+    layer(ctx, ink * (1 - bodyOut), () => {
+      pathFn(ctx);
+      ctx.strokeStyle = "rgba(190,212,255,0.95)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    });
+    ctx.restore();
   }
 
-  // the silhouette itself: it keeps its colour until the keyword, then becomes an
-  // outline and the colour travels out of it
-  silhouette(ctx, area, pathFn, colour, emptied > 0.5 ? "rgba(131,233,230,0.7)" : "rgba(127,147,255,0.9)", {
-    alpha: ink * (1 - emptied * 0.82),
-    glyphSize: 20,
+  // 2. the calyx is her spark: it stays when the body goes
+  const spin = u * 0.8;
+  layer(ctx, 1, () => {
+    calyxPath(ctx, calyx.x, calyx.y, calyx.r, spin * 0.25);
+    ctx.fillStyle = "rgba(131,233,230,0.18)";
+    ctx.fill();
+    ctx.strokeStyle = GIFT;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // the stem
+    ctx.beginPath();
+    ctx.moveTo(calyx.x + 6, calyx.y - calyx.r * 0.6);
+    ctx.quadraticCurveTo(calyx.x + 40, calyx.y - calyx.r * 1.3, calyx.x + 16, calyx.y - calyx.r * 1.8);
+    ctx.strokeStyle = GIFT;
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    halo(ctx, calyx.x, calyx.y, 110, 0.45, BRAND);
+    for (let i = 0; i < 8; i++) {
+      const a = spin + (i / 8) * Math.PI * 2;
+      stroke(ctx, [[calyx.x + Math.cos(a) * 14, calyx.y + Math.sin(a) * 14],
+        [calyx.x + Math.cos(a) * 52, calyx.y + Math.sin(a) * 52]], BRAND_SOFT, 2.6, 0.85);
+    }
   });
 
-  // the calyx is her spark
-  const c = CALYX[kind];
-  const spin = u * 0.8 + calyxSpin;
-  halo(ctx, c.x, c.y, 90, 0.55, BRAND);
-  for (let i = 0; i < 8; i++) {
-    const a = spin + (i / 8) * Math.PI * 2;
-    stroke(ctx, [[c.x + Math.cos(a) * 12, c.y + Math.sin(a) * 12],
-                 [c.x + Math.cos(a) * 54, c.y + Math.sin(a) * 54]], BRAND_SOFT, 3, 0.95);
+  // 3. the burst: shards of the printed body, juice, seeds
+  if (age > 0 && age < 1.9) {
+    const fade = 1 - clamp01((age - 1.1) / 0.8);
+    // shards: wedges of the silhouette, flung out and turning
+    for (let k = 0; k < 7; k++) {
+      const a = -Math.PI * 0.95 + (k / 7) * Math.PI * 1.9;
+      const dist = 140 + 420 * easeOut(clamp01(age / 0.7)) * (0.7 + rnd(k) * 0.6);
+      const rot = (rnd(k + 20) - 0.5) * 3.6 * age;
+      const sc = 0.8 + rnd(k + 40) * 0.5;
+      layer(ctx, fade * 0.9, () => {
+        ctx.save();
+        ctx.translate(centre[0] + Math.cos(a) * dist, centre[1] + Math.sin(a) * dist * 0.9 + 180 * age * age);
+        ctx.rotate(rot);
+        ctx.scale(sc, sc);
+        // a shard of the body: a wedge cut from the silhouette, still full of type
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(90, -60);
+        ctx.lineTo(150, 30);
+        ctx.closePath();
+        ctx.save();
+        ctx.clip();
+        glyphFill(ctx, { x: -320, y: -320, w: 640, h: 640 }, colour, 15);
+        ctx.restore();
+        ctx.strokeStyle = "rgba(140,170,255,0.9)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+      });
+    }
+    // juice: droplets on real arcs
+    for (let i = 0; i < 26; i++) {
+      const a = -Math.PI * 0.15 - rnd(i) * Math.PI * 0.75;
+      const v = 340 + rnd(i + 60) * 760;
+      const x = centre[0] + Math.cos(a) * v * age * 0.62;
+      const y = centre[1] + Math.sin(a) * v * age * 0.62 + 640 * age * age;
+      const r = 3 + rnd(i + 90) * 9;
+      layer(ctx, fade * (0.55 + 0.45 * rnd(i + 30)), () => disc(ctx, x, y, r, burstColour, 1));
+    }
+    // seeds: little ovals, spinning
+    for (let i = 0; i < 12; i++) {
+      const a = -Math.PI * 0.1 - rnd(i + 7) * Math.PI * 0.8;
+      const v = 260 + rnd(i + 70) * 520;
+      const x = centre[0] + Math.cos(a) * v * age * 0.6;
+      const y = centre[1] + Math.sin(a) * v * age * 0.6 + 560 * age * age;
+      layer(ctx, fade * 0.9, () => {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(a + age * (3 + rnd(i) * 4));
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 11, 6, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(226,236,247,0.95)";
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+    // the jets: what actually comes out of it
+    if (burstK > 0) {
+      for (let j = 0; j < 6; j++) {
+        const a = -Math.PI * 0.2 - (j / 6) * Math.PI * 0.7;
+        const len = 260 * easeOut(clamp01(age / 0.35)) * (0.6 + rnd(j) * 0.5);
+        layer(ctx, fade * 0.85, () => {
+          // a jet, not a ray: it bends under its own weight and thins as it goes
+          ctx.beginPath();
+          ctx.moveTo(centre[0], centre[1]);
+          ctx.quadraticCurveTo(
+            centre[0] + Math.cos(a) * len * 0.6, centre[1] + Math.sin(a) * len * 0.55 - 40 * age,
+            centre[0] + Math.cos(a) * len, centre[1] + Math.sin(a) * len + 140 * age,
+          );
+          ctx.strokeStyle = burstColour;
+          ctx.lineWidth = 7 - 4.6 * clamp01(age);
+          ctx.lineCap = "round";
+          ctx.stroke();
+        });
+      }
+    }
   }
 
-  // what it holds, drawn out to the right, each with its name and its weight
-  molecules.forEach((m, i) => {
-    const t0 = 2.0 + i * 0.22;
-    const k = easeOut(at(u, t0, t0 + 0.5));
-    if (k <= 0) return;
-    const tx = PLATE.x + PLATE.w * 0.62 + i * 170;
-    const ty = PLATE.y + PLATE.h * 0.30 - i * 60;
-    // the stream from the object to the label
-    const fromX = 880 + i * 30;
-    const fromY = 470 + i * 40;
-    const sx = fromX + (tx - fromX) * k;
-    const sy = fromY + (ty - fromY) * k;
+  // 4. what it was made of: it comes out of the burst at once, so all three are on
+  // the sheet before the keyword lands on them
+  const formulaStart = burstAt + 0.3;
+  formulas.forEach((f, i) => {
+    const k = easeOut(at(t, formulaStart + i * 0.13, formulaStart + i * 0.13 + 0.28));
+    if (k <= 0.01) return;
     layer(ctx, k, () => {
-      stroke(ctx, [[fromX, fromY], [sx - 46, sy]], "rgba(131,233,230,0.35)", 1.6, 0.7);
-      paperDisc(ctx, sx, sy, 26, "rgba(131,233,230,0.16)", GIFT);
-      type(ctx, m.formula, sx, sy + 7, 15, GIFT, "MV Mono", "center");
-      type(ctx, m.name, sx + 44, sy - 2, 20, "#eef3fb", "MV Sans");
-      type(ctx, m.weight, sx + 44, sy + 20, 15, DIM, "MV Mono");
+      // the leader from the burst to the sheet of chemistry
+      stroke(ctx, [[centre[0] + 40, centre[1] - 40], [f.x - 40, f.y + 30]],
+        "rgba(131,233,230,0.3)", 1.4, 0.8);
+      f.draw(ctx, f.x, f.y, (f.s ?? 1) * 1.25, formulaColour);
+      nutrientTag(ctx, f.name, f.amount, f.x, f.y + (f.tagDY ?? 120) * 1.2, formulaColour);
     });
   });
 
-  return { phase: "object", kind, opened: Number(open.toFixed(2)) };
+  // 5. what is left on the plate: the outline, and the calyx still burning
+  if (age > 0.4) {
+    layer(ctx, 0.35 * (1 - gone * 0.6), () => {
+      pathFn(ctx);
+      ctx.strokeStyle = "rgba(140,170,255,0.5)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([12, 10]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+  }
+
+  return { phase: "burst", kind, age: Number(age.toFixed(2)) };
 }
 
 // ---------------------------------------------------------------------------
@@ -312,10 +581,12 @@ export const SECTION6_RENDER = Object.freeze({
       index: 1,
       kind: "eggplant",
       colour: "rgba(167,140,255,0.95)",
-      molecules: [
-        { name: "fibre", formula: "C6H10O5", weight: "3.2 g" },
-        { name: "protein", formula: "C2H5NO2", weight: "1.0 g" },
-        { name: "sugar", formula: "C6H12O6", weight: "3.5 g" },
+      burstColour: "rgba(206,186,255,0.95)",
+      formulaColour: "#a9f6f2",
+      formulas: [
+        { name: "Fibre", amount: "(C6H10O5)n  -  3.0 g", x: 1040, y: 236, s: 0.9, draw: formulaCellulose, tagDY: 104 },
+        { name: "Protein", amount: "1.0 g", x: 1060, y: 430, s: 0.9, draw: formulaPeptide, tagDY: 92 },
+        { name: "Carbohydrate", amount: "C6H12O6  -  5.9 g", x: 1090, y: 634, s: 0.92, draw: formulaHexose, tagDY: 100 },
       ],
     }),
   "v2-ask2": askShot(1),
@@ -323,11 +594,13 @@ export const SECTION6_RENDER = Object.freeze({
     objectPlate(ctx, t, s, {
       index: 2,
       kind: "tomato",
-      colour: "rgba(255,128,128,0.95)",
-      molecules: [
-        { name: "lycopene", formula: "C40H56", weight: "2.6 mg" },
-        { name: "vitamin C", formula: "C6H8O6", weight: "13.7 mg" },
-        { name: "vitamin E", formula: "C29H50O2", weight: "0.5 mg" },
+      colour: "rgba(255,120,120,0.95)",
+      burstColour: "rgba(255,158,138,0.95)",
+      formulaColour: "#a9f6f2",
+      formulas: [
+        { name: "Lycopene", amount: "4.6 mg", x: 1000, y: 230, s: 0.86, draw: formulaLycopene, tagDY: 78 },
+        { name: "Vitamin C", amount: "13.7 mg", x: 1080, y: 470, s: 0.95, draw: formulaVitC, tagDY: 96 },
+        { name: "Vitamin E", amount: "0.5 mg", x: 1350, y: 470, s: 0.9, draw: formulaVitE, tagDY: 210 },
       ],
     }),
   "v2-ask3": askShot(2),
@@ -338,58 +611,119 @@ export const SECTION6_RENDER = Object.freeze({
 
 export const SECTION6_IMPLEMENTED = Object.freeze(Object.keys(SECTION6_RENDER));
 
-/** The cat is the one that stays herself: ears, then her purr leaves as stripes. */
+/**
+ * The cat is the one that stays herself, so this plate is a transformation, not an
+ * object: the mark becomes her. The whale's own outline unfolds into two ears and a
+ * tail, the plate inks in underneath it, and the mark ends up as the pin in her ear
+ * -- it was hers all along. Then the purr leaves as a row of bars, one per beat.
+ */
 function v2Cat(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 3 });
 
-  // ears pop up on the noun
-  const ears = easeOut(at(u, 0.1, 0.45));
-  ctx.save();
-  catPath(ctx);
-  ctx.clip();
-  glyphFill(ctx, { x: PLATE.x + 200, y: PLATE.y + 120, w: 1400, h: 700 }, "rgba(205,180,130,0.9)", 20);
-  ctx.restore();
-  catPath(ctx);
-  ctx.strokeStyle = "rgba(127,147,255,0.9)";
-  ctx.lineWidth = 3;
-  ctx.stroke();
+  const cx = 880;
+  const cy = 520;
+  const size = 560;
+  const sScale = size / 1704;
+  // where the plate's own whale pin sits, so the mark can land on it
+  const pin = [cx - (1342 * sScale) / 2 + 1010 * sScale, cy - size / 2 + 300 * sScale];
 
-  // the ears get their own rim, so they are part of the same printed shape
-  if (ears > 0.02) {
-    layer(ctx, ears, () => {
+  const ears = easeOut(at(u, 0.18, 0.55));
+  const flood = at(u, 0.35, 0.78);
+  const logoK = 1 - clamp01(at(u, 0.6, 0.92));
+  const pinK = easeOut(at(u, 0.55, 0.85));
+
+  // 1. the plate inks in from the bottom, like a print being pulled off the block
+  if (flood > 0.01) {
+    const reveal = cy + size * 0.6 - flood * size * 1.2;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, reveal, 1920, 1080 - reveal);
+    ctx.clip();
+    figure(ctx, t, "cat", cx, cy, size, { alpha: 0.6 + 0.4 * flood, seed: 7, bobAmp: 3 });
+    ctx.restore();
+    layer(ctx, 0.5 * (1 - flood * 0.4), () =>
+      stroke(ctx, [[cx - size * 0.42, reveal], [cx + size * 0.42, reveal]], "rgba(131,233,230,0.5)", 2, 0.8),
+    );
+  }
+
+  // 2. the tail: one curve of the mark's own ink, growing out to the right
+  const tail = easeOut(at(u, 0.22, 0.7));
+  if (tail > 0.02) {
+    layer(ctx, tail * (1 - flood * 0.7), () => {
       ctx.beginPath();
-      ctx.moveTo(742, 372);
-      ctx.lineTo(768, 236);
-      ctx.lineTo(872, 330);
-      ctx.closePath();
-      ctx.moveTo(1058, 372);
-      ctx.lineTo(1032, 236);
-      ctx.lineTo(928, 330);
-      ctx.closePath();
-      ctx.strokeStyle = "rgba(127,147,255,0.9)";
-      ctx.lineWidth = 3;
+      ctx.moveTo(cx + size * 0.3, cy + size * 0.3);
+      ctx.bezierCurveTo(
+        cx + size * 0.62, cy + size * 0.24,
+        cx + size * 0.66, cy - size * 0.02,
+        cx + size * 0.5, cy - size * 0.16,
+      );
+      ctx.strokeStyle = BRAND_SOFT;
+      ctx.lineWidth = 8;
       ctx.stroke();
     });
   }
-  // her spark, as ever
-  halo(ctx, 900, 300, 90, 0.5, BRAND);
-  drawWhale(ctx, 900, 610, 140, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.9 });
 
-  // the purr: a row of tabby stripes running from her to the edge
-  const purr = at(u, 1.7, 2.4);
+  // 3. the mark itself, unfolding into ears and then shrinking into the pin
+  if (logoK > 0.01 || pinK < 0.99) {
+    const k = pinK;
+    const lx = cx + (pin[0] - cx) * k;
+    const ly = cy + (pin[1] - cy) * k;
+    const lsz = 300 - (300 - 46) * k;
+    layer(ctx, Math.max(logoK, 0), () => {
+      halo(ctx, lx, ly, lsz * 0.9, 0.22, BRAND);
+      drawWhale(ctx, lx, ly, lsz, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.9 });
+    });
+
+    // the ears grow off the mark's top, in the mark's own colour
+    if (ears > 0.02 && k < 0.6) {
+      layer(ctx, ears * (1 - k / 0.6), () => {
+        for (const side of [-1, 1]) {
+          const bx = lx + side * lsz * 0.22;
+          const by = ly - lsz * 0.34;
+          const hh = lsz * 0.42 * ears;
+          ctx.beginPath();
+          ctx.moveTo(bx - lsz * 0.11 * side, by);
+          ctx.lineTo(bx + side * lsz * 0.16, by - hh);
+          ctx.lineTo(bx + lsz * 0.13 * side, by + lsz * 0.06);
+          ctx.closePath();
+          ctx.fillStyle = BRAND;
+          ctx.fill();
+          ctx.strokeStyle = BRAND_SOFT;
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+      });
+    }
+  }
+
+  // 4. the purr: a row of bars, one per beat, from her to the edge of the sheet
+  const purr = at(u, 0.82, 2.35);
   if (purr > 0.02) {
-    for (let i = 0; i < 12; i++) {
-      const k = clamp01(purr * 1.4 - i * 0.06);
+    const n = 14;
+    for (let i = 0; i < n; i++) {
+      const k = clamp01(purr * 1.35 - i * 0.05);
       if (k <= 0) continue;
-      const x = 1150 + i * 46;
-      const h = 40 + 26 * Math.sin(i * 1.3 + u * 2);
+      const x = 1130 + i * 40;
+      const pulse = 0.55 + 0.45 * Math.abs(Math.sin(u * 3.1 + i * 0.45));
+      const h = (40 + 70 * pulse) * k;
       layer(ctx, k, () =>
-        stroke(ctx, [[x, 470 - h / 2], [x, 470 + h / 2]],
-          i % 2 === 0 ? GIFT : "rgba(131,233,230,0.55)", 10, 0.9),
+        stroke(ctx, [[x, 512 - h / 2], [x, 512 + h / 2]],
+          i % 3 === 0 ? GIFT : "rgba(131,233,230,0.55)", 9, 0.9),
       );
     }
-    type(ctx, "purr", 1160, 560, 18, GIFT, "MV Mono");
+    layer(ctx, purr, () => {
+      type(ctx, "purr", 1130, 640, 17, GIFT, "MV Mono");
+      // the wave the bars came from, printed thin underneath
+      const pts = [];
+      for (let i = 0; i <= 40; i++) {
+        const x = 1130 + i * 12.5;
+        pts.push([x, 690 + Math.sin(i * 0.55 + u * 3.1) * 16]);
+      }
+      stroke(ctx, pts, "rgba(131,233,230,0.35)", 1.6, 0.8);
+    });
   }
-  return { phase: "cat" };
+
+  // 5. what the word lands on: she stays, so no colour leaves this plate
+  return { phase: "cat", flood: Number(flood.toFixed(2)) };
 }

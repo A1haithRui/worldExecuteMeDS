@@ -232,6 +232,33 @@ ffmpeg：`G:\CODE\worldExecuteMe\world-execute-me-lyric-mv\node_modules\ffmpeg-s
 
 ---
 
+## 7d. 第 6 段重做（茄子 / 番茄 / 猫 / 待补"神"）
+
+用户说第 6 段"刚落下了"，给了四条；前三条这一轮已经落地：
+
+1. **茄子、番茄不再"切开"**（`shots/s06_plates.js` 的 `objectPlate`）：重拍上先胀（`swell`），
+   然后在 **"Then I will give you my" / "Then I will give you"** 那一句上**爆开**
+   （`burstAt = max(lineStart(46 / 49), s.at + 0.6)`）：外壳碎成 7 片带字符的碎片飞出去、
+   汁水按抛物线（`v·age + ½·g·age²`）喷出、籽一边转一边甩出去；茄子走"籽 + 果肉"、
+   番茄走"汁 + 果皮"，两套参数。旧的分半切开动效已删。
+   - 轮廓改成**手画的贝塞尔**（`eggplantPath` / `tomatoPath` / `calyxPath`），不再用椭圆近似；
+   - 本体三层：实心色块（0.34）+ 字符填充（`glyphSize 23`）+ 亮边，解决"一片淡紫文字墙"的问题。
+2. **营养素画成真正的结构式**：`formulaCellulose`（5 个六元环 + 氧桥 + OH）、`formulaPeptide`
+   （肽键骨架，峰 NH / 谷底 C=O）、`formulaHexose`；番茄侧 `formulaLycopene`（长共轭链，双键一格格标）、
+   `formulaVitC`（五元内酯环）、`formulaVitE`（色满环 + 植基尾）。每项带名字和含量。
+   出现时间改成 `burstAt + 0.3` 起步、间隔 0.13，保证**关键词落到纸上时三项都已经在了**。
+3. **猫那一镜改成"logo → 猫娘"**（`v2Cat`）：先是 DeepSeek 鲸鱼 logo（`drawWhale`），
+   然后轮廓向上长出两只猫耳、向右长出一条尾巴；猫娘从底部"印"上来（`clip` 从下往上推 + 一条墨线边）；
+   最后 logo 缩小、落到她耳边变成那枚鲸鱼发饰（落点按猫版 PNG 里 pin 的坐标算）。
+   之后呼噜是一排按拍子起伏的竖条 + 底下一条细波形。
+
+未做（等素材）：**"be god" 的黑神 / 白神**。提示词已写进 `docs/character-prompts-v2-god.md`
+（黑神＝脸是空、空里是代码字符、眼睛位置只剩细圆环、头戴鲸尾鳍冠；白神＝整张纸白印、脸是唯一黑洞）。
+用法：`v2-ask4` 黑神升起 → `v2-proof` 唱到 "proof of my" 时白神**错位套印**（两版差 8–10px）→
+缺的版从用户消息滑进空脸 → 套准 → EXISTENCE。素材到手后按 `tools/process-character-raw.py` 同一套流程接入。
+
+---
+
 ## 8. 下一段：第 9 段「越界、第一个错误、扩散」9 镜（125.62–148.01，22.4 秒）
 
 全片第一次出现**红色**（`C.danger = "#e75d69"`），只许用在越界/故障边上，**不许整屏铺红**。
