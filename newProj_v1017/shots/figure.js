@@ -21,6 +21,8 @@ const { images, ready } = loadImages({
   // The god plate: same registration as the others, printed in paper. The shot shows
   // it dim first (the paper ink has not been laid) and then floods the white in.
   godPaper: "/assets/character/deepseek_god_paper.png",
+  // the same plate with only its white ink, so the fringe can fall in front of the eye
+  godPaperInk: "/assets/character/deepseek_god_paper_ink.png",
   // The cat ears and tail, cut out of the icon the image model returned, so the mark
   // can grow them instead of drawing triangles that only look like ears.
   earL: "/assets/character/cat-whale-icon/left_ear.png",

@@ -538,11 +538,13 @@ function v2Proof(ctx, t, s) {
   const toScreen = (px, py) => [CX + (px - 671) * sScale, CY + (py - 852) * sScale];
   // the hole in the plate (measured on the processed god plate), and the box it
   // occupies on screen at this placement
-  // measured off the rendered plate: the visible void (the hair fringe covers the
-  // left of it) is centred at (946, 462) and is about 134 x 120
-  const hole = [946, 462];
-  const HW = 56;
-  const HH = 48;
+  // The eye lives UNDER the fringe, so it sits high in the void: measured on the
+  // plate, the fringe hangs down to about y 640 there, and the void runs 378..546 on
+  // screen at this placement. The fringe is redrawn over the eye (godPaperInk), so the
+  // top of the eye is covered by hair instead of floating in the open dark.
+  const hole = [952, 439];
+  const HW = 54;
+  const HH = 46;
 
   // 1. the plate on the sheet, but the paper ink is not down yet: only a dim print
   const appear = easeOut(at(u, 0.02, 0.42));
@@ -603,7 +605,11 @@ function v2Proof(ctx, t, s) {
           `rgba(131,233,230,${0.9 * (1 - landed)})`),
       );
     }
-    eyeAt(ctx, hole[0], hole[1], HW * 0.62, HH * 0.4, 1 - landed);
+    eyeAt(ctx, hole[0], hole[1], HW * 0.62, HH * 0.42, 1 - landed);
+    // the fringe falls in front of it: the same plate, white ink only
+    if (landed > 0.05) {
+      layer(ctx, 1, () => figure(ctx, t, "godPaperInk", CX, CY, H, { seed: 9, bobAmp: 2 }));
+    }
     if (landed < 0.85) {
       layer(ctx, 1 - landed / 0.85, () =>
         type(ctx, "proof", px, py + h / 2 + 24, 13, GIFT, "MV Mono", "center"),

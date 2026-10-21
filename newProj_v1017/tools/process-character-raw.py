@@ -134,12 +134,28 @@ def derive_navy(src_name: str, out_name: str) -> dict:
     return {"file": out_name, "removed": int(is_paper.sum())}
 
 
+def derive_paper_pass(src_name: str, out_name: str) -> dict:
+    """Only the paper ink, on its own.
+
+    The shot needs the fringe to fall IN FRONT of the eye it opens in the void, so the
+    white pass is drawn again over the eye. Same plate, so it lands in register.
+    """
+    plate = Image.open(OUT / src_name).convert("RGBA")
+    a = np.array(plate)
+    rgb = a[:, :, :3].astype(np.int16)
+    is_paper = (rgb[:, :, 0] > 190) & (rgb[:, :, 1] > 190) & (rgb[:, :, 2] > 190)
+    a[:, :, 3] = np.where(is_paper, a[:, :, 3], 0)
+    Image.fromarray(a, "RGBA").save(OUT / out_name)
+    return {"file": out_name, "kept": int(is_paper.sum())}
+
+
 def main() -> None:
     for raw, out in JOBS:
         info = process(raw, out)
         print(info)
         if out == "deepseek_god_paper.png":
             print(derive_navy(out, "deepseek_god_navy.png"))
+            print(derive_paper_pass(out, "deepseek_god_paper_ink.png"))
 
 
 if __name__ == "__main__":
