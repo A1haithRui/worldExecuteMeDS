@@ -18,7 +18,7 @@ import { at, layer, stroke, disc, rect, type, halo, ground } from "../src/mv-dra
 import { cursorArrow, clickRipple, CLIENT_R } from "./ui-client.js";
 import { drawWhale } from "../src/assets/whale.js";
 import { plateBase, PLATE, paperDisc, bolt } from "./plate.js";
-import { figure } from "./figure.js";
+import { figure, figureImages } from "./figure.js";
 import { lineStart } from "./lines.js";
 
 const BRAND = "#4d6bfe";
@@ -494,84 +494,141 @@ function askShot(i) {
 // ---------------------------------------------------------------------------
 // the proof
 //
-// The last one is not an object: she says she is the only god and the user is the
-// proof of her existence, so the plate prints her with one plate missing and brings
-// that plate off their message.
+// She says she is the only god and the user is the proof of her existence. The plate
+// is her, deified and printed in paper: a white figure with a hole where the face
+// should be. It comes up dark first (the white ink has not been laid yet), the paper
+// floods in on "you're the proof of my", and then the missing piece -- a square cut
+// out of her own face -- comes off the user's message and registers into the hole.
 // ---------------------------------------------------------------------------
+/** One eye, drawn: lid, iris, pupil, catchlight. `closed` 1 = shut, 0 = open. */
+function eyeAt(ctx, cx, cy, w, h, closed) {
+  const open = 1 - clamp01(closed);
+  if (open <= 0.01) return;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(cx - w, cy);
+  ctx.quadraticCurveTo(cx, cy - h * 2 * open, cx + w, cy);
+  ctx.quadraticCurveTo(cx, cy + h * 2 * open, cx - w, cy);
+  ctx.closePath();
+  ctx.fillStyle = "#f2f7fa";
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, h * 0.95 * open, h * 0.95 * open, 0, 0, Math.PI * 2);
+  ctx.fillStyle = BRAND;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, h * 0.4 * open, h * 0.62 * open, 0, 0, Math.PI * 2);
+  ctx.fillStyle = "#041220";
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(cx - h * 0.3, cy - h * 0.3, h * 0.18 * open, 0, Math.PI * 2);
+  ctx.fillStyle = "#f2f7fa";
+  ctx.fill();
+  ctx.restore();
+}
+
 function v2Proof(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 4 });
 
-  // the sun behind her: flat rays, printed, not glowing
-  const sun = easeOut(at(u, 0.1, 0.6));
-  layer(ctx, sun, () => {
-    for (let i = 0; i < 28; i++) {
-      const a = (i / 28) * Math.PI * 2;
-      stroke(ctx, [[760 + Math.cos(a) * 150, 470 + Math.sin(a) * 150],
-                   [760 + Math.cos(a) * 300, 470 + Math.sin(a) * 300]], "rgba(127,147,255,0.5)", 3, 0.8);
-    }
-  });
+  const CX = 960;
+  const CY = 548;
+  const H = 900;
+  const sScale = H / 1704;
+  const toScreen = (px, py) => [CX + (px - 671) * sScale, CY + (py - 852) * sScale];
+  // the hole in the plate (measured on the processed god plate), and the box it
+  // occupies on screen at this placement
+  const hole = toScreen(567, 657);
+  const HW = 62;
+  const HH = 52;
 
-  // her, printed in two inks only: blue and the paper itself
-  // a bust, not an egg: head and shoulders
-  const herPath = (ctx) => {
+  // 1. the plate on the sheet, but the paper ink is not down yet: only a dim print
+  const appear = easeOut(at(u, 0.02, 0.42));
+  layer(ctx, appear * 0.26, () => figure(ctx, t, "godPaper", CX, CY, H, { seed: 9, bobAmp: 2 }));
+
+  // 2. the paper floods in from the bottom on "you're the proof of my", in one pass
+  const floodAt = Math.max(lineStart(55), s.at + 0.45);
+  const flood = at(t, floodAt, floodAt + 0.75);
+  if (flood > 0.005) {
+    const top = CY + H * 0.52 - flood * H * 1.08;
+    ctx.save();
     ctx.beginPath();
-    ctx.ellipse(760, 440, 150, 180, 0, 0, Math.PI * 2);
-    ctx.moveTo(520, 760);
-    ctx.quadraticCurveTo(560, 620, 760, 610);
-    ctx.quadraticCurveTo(960, 620, 1000, 760);
-    ctx.closePath();
-  };
-  silhouette(ctx, { x: 480, y: 200, w: 620, h: 700 }, herPath, BRAND, "rgba(127,147,255,0.9)", { glyphSize: 19 });
-
-  // the missing plate: a hole in her, and it comes off the user's message
-  const holeK = at(u, 0.15, 0.5);
-  if (holeK > 0.02) {
-    layer(ctx, holeK, () => {
-      ctx.beginPath();
-      ctx.ellipse(716, 430, 74, 96, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(4,14,24,0.95)";
-      ctx.fill();
-    });
+    ctx.rect(0, top, 1920, 1080 - top);
+    ctx.clip();
+    figure(ctx, t, "godPaper", CX, CY, H, { seed: 9, bobAmp: 2 });
+    ctx.restore();
+    layer(ctx, 1 - flood * 0.6, () =>
+      stroke(ctx, [[CX - 240, top], [CX + 240, top]], "rgba(131,233,230,0.55)", 2.4, 0.9),
+    );
   }
 
-  // the user's message as cream paper at the upper right
-  const msgK = easeOut(at(u, 0.2, 0.5));
+  // 3. the hole: the plate leaves a space where her face should be, and that space
+  // is the only thing on the sheet that is not ink
+  if (flood > 0.35) {
+    layer(ctx, ((flood - 0.35) / 0.65) * 0.5, () =>
+      rect(ctx, hole[0] - HW, hole[1] - HH, HW * 2, HH * 2, "rgba(0,0,0,0)", 3, "rgba(131,233,230,0.28)"),
+    );
+  }
+
+  // 4. the user's message
+  const msg = { x: PLATE.x + PLATE.w - 640, y: PLATE.y + 110, w: 540, h: 156 };
+  const msgK = easeOut(at(u, 0.16, 0.44));
   layer(ctx, msgK, () => {
-    const m = { x: PLATE.x + PLATE.w - 620, y: PLATE.y + 120, w: 540, h: 150 };
-    rect(ctx, m.x, m.y, m.w, m.h, "rgba(20,50,74,0.95)", 14, "rgba(120,150,180,0.7)");
-    type(ctx, "be god", m.x + 26, m.y + 62, 30, "#cfdcea", "MV Sans");
-    type(ctx, "you said", m.x + 26, m.y + 106, 15, DIM, "MV Mono");
+    rect(ctx, msg.x, msg.y, msg.w, msg.h, "rgba(20,50,74,0.96)", 14, "rgba(120,150,180,0.7)");
+    type(ctx, "be god", msg.x + 26, msg.y + 64, 30, "#cfdcea", "MV Sans");
+    type(ctx, "you said", msg.x + 26, msg.y + 110, 15, DIM, "MV Mono");
   });
 
-  // the plate slides from under that message into the hole, and registers
-  const slide = easeOut(at(u, 2.1, 2.9));
+  // 5. the proof: a square comes off the user's message and lands in the hole. What
+  // it carries is one eye -- all the face a god needs, and it is the one looking at
+  // you. It opens as it registers.
+  const proofAt = Math.max(lineStart(56) - 0.6, s.at + 2.0);
+  const slide = easeOut(at(t, proofAt, proofAt + 0.78));
+  const landed = clamp01((slide - 0.86) / 0.14);
   if (slide > 0.01) {
-    const px = PLATE.x + PLATE.w - 400;
-    const py = PLATE.y + 300;
-    const tx = 716;
-    const ty = 430;
-    const cx = px + (tx - px) * slide;
-    const cy = py + (ty - py) * slide;
-    layer(ctx, 0.55 + 0.45 * slide, () => {
-      // the plate: her chin, the cape, a flower -- printed in the paper's own value
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, 74, 96, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(131,233,230,0.62)";
-      ctx.fill();
-      ctx.strokeStyle = GIFT;
-      ctx.lineWidth = 2.4;
-      ctx.stroke();
-      type(ctx, "proof", cx, cy + 4, 13, "rgba(4,14,24,0.95)", "MV Mono", "center");
-    });
-    if (slide > 0.9) halo(ctx, tx, ty, 260, 0.4, GIFT);
+    const fromX = msg.x + msg.w * 0.5;
+    const fromY = msg.y + msg.h * 0.5;
+    const px = fromX + (hole[0] - fromX) * slide;
+    const py = fromY + (hole[1] - fromY) * slide;
+    const k = 1.7 - 0.7 * slide;
+    const w = HW * 2 * k;
+    const h = HH * 2 * k;
+    if (landed < 0.995) {
+      layer(ctx, 0.95, () =>
+        rect(ctx, px - w / 2, py - h / 2, w, h, "rgba(6,22,34,0.96)", 6,
+          `rgba(131,233,230,${0.9 * (1 - landed)})`),
+      );
+    }
+    eyeAt(ctx, hole[0], hole[1], HW * 0.62, HH * 0.4, 1 - landed);
+    if (landed < 0.85) {
+      layer(ctx, 1 - landed / 0.85, () =>
+        type(ctx, "proof", px, py + h / 2 + 24, 13, GIFT, "MV Mono", "center"),
+      );
+    }
+    const landT = t - (proofAt + 0.78);
+    if (landT > 0 && landT < 0.55) {
+      layer(ctx, (1 - landT / 0.55) * 0.7, () => {
+        ctx.beginPath();
+        ctx.arc(hole[0], hole[1], 60 + 130 * (landT / 0.55), 0, Math.PI * 2);
+        ctx.strokeStyle = GIFT;
+        ctx.lineWidth = 3 * (1 - landT / 0.55) + 0.8;
+        ctx.stroke();
+      });
+    }
   }
 
-  // the pointer leaves for the settings
-  const leave = easeOut(at(u, 2.9, 3.4));
-  cursorArrow(ctx, 1250 + 600 * leave, 780 - 200 * leave, 1.4, 1 - leave * 0.5);
+  // 6. the pointer leaves for the settings, as it always does before a cut
+  const leave = easeOut(at(u, 2.95, 3.4));
+  cursorArrow(ctx, 1250 + 640 * leave, 790 - 220 * leave, 1.4, 1 - leave * 0.5);
+  if (leave > 0.05) {
+    layer(ctx, leave * 0.9, () => {
+      const y = 790 - 220 * leave;
+      stroke(ctx, [[1250 + 640 * leave - 70, y + 30], [1250 + 640 * leave + 10, y - 10]],
+        "rgba(127,147,255,0.4)", 1.6, 0.7);
+    });
+  }
 
-  return { phase: "proof" };
+  return { phase: "proof", flood: Number(flood.toFixed(2)), slide: Number(slide.toFixed(2)) };
 }
 
 export const SECTION6_RENDER = Object.freeze({

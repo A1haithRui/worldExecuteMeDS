@@ -18,6 +18,9 @@ const { images, ready } = loadImages({
   // drawn at the same (cx, cy, height) and land on top of each other.
   man: "/assets/character/deepseek_man_bust.png",
   cat: "/assets/character/deepseek_cat_bust.png",
+  // The god plate: same registration as the others, printed in paper. The shot shows
+  // it dim first (the paper ink has not been laid) and then floods the white in.
+  godPaper: "/assets/character/deepseek_god_paper.png",
 });
 
 /** Resolves when the bust images have decoded. The renderer must await this:

@@ -33,7 +33,13 @@ CONTENT_H = FEMALE_BOX[3] - FEMALE_BOX[1]
 CONTENT_CX = (FEMALE_BOX[0] + FEMALE_BOX[2]) // 2
 CONTENT_TOP = FEMALE_BOX[1]
 
-JOBS = [("man_bust_raw.png", "deepseek_man_bust.png"), ("cat_bust_raw.png", "deepseek_cat_bust.png")]
+JOBS = [
+    ("man_bust_raw.png", "deepseek_man_bust.png"),
+    ("cat_bust_raw.png", "deepseek_cat_bust.png"),
+    # the god plate is a plate like any other: same canvas, same inks, same
+    # registration, so it can be drawn at the same (cx, cy, height) as the rest
+    ("god_paper_triangles_raw.png", "deepseek_god_paper.png"),
+]
 
 
 def key_magenta(rgb: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -111,10 +117,29 @@ def process(raw_name: str, out_name: str) -> dict:
     }
 
 
+def derive_navy(src_name: str, out_name: str) -> dict:
+    """The same plate with the white ink taken off.
+
+    The film prints in two passes, so the shot needs the plate before the paper is
+    laid down: only the navy and azure shapes are there, and the white paper floods
+    in on the beat. Deriving it from the finished plate keeps the two passes in
+    perfect register -- there is no second drawing to drift.
+    """
+    plate = Image.open(OUT / src_name).convert("RGBA")
+    a = np.array(plate)
+    rgb = a[:, :, :3].astype(np.int16)
+    is_paper = (rgb[:, :, 0] > 190) & (rgb[:, :, 1] > 190) & (rgb[:, :, 2] > 190)
+    a[:, :, 3] = np.where(is_paper, 0, a[:, :, 3])
+    Image.fromarray(a, "RGBA").save(OUT / out_name)
+    return {"file": out_name, "removed": int(is_paper.sum())}
+
+
 def main() -> None:
     for raw, out in JOBS:
         info = process(raw, out)
         print(info)
+        if out == "deepseek_god_paper.png":
+            print(derive_navy(out, "deepseek_god_navy.png"))
 
 
 if __name__ == "__main__":

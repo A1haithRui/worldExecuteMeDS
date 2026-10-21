@@ -252,10 +252,11 @@ ffmpeg：`G:\CODE\worldExecuteMe\world-execute-me-lyric-mv\node_modules\ffmpeg-s
    最后 logo 缩小、落到她耳边变成那枚鲸鱼发饰（落点按猫版 PNG 里 pin 的坐标算）。
    之后呼噜是一排按拍子起伏的竖条 + 底下一条细波形。
 
-未做（等素材）：**"be god" 的黑神 / 白神**。提示词已写进 `docs/character-prompts-v2-god.md`
+已做：**"be god" 用白神**（黑神弃用，脸里的网点糊、眼睛位置的圆环像舷窗）。提示词已写进 `docs/character-prompts-v2-god.md`
 （黑神＝脸是空、空里是代码字符、眼睛位置只剩细圆环、头戴鲸尾鳍冠；白神＝整张纸白印、脸是唯一黑洞）。
-用法：`v2-ask4` 黑神升起 → `v2-proof` 唱到 "proof of my" 时白神**错位套印**（两版差 8–10px）→
-缺的版从用户消息滑进空脸 → 套准 → EXISTENCE。素材到手后按 `tools/process-character-raw.py` 同一套流程接入。
+`v2-proof` 现在的做法：先只画**深色那一遍**（白墨未上，用同一张版的低透明度）→ 唱到 "you're the proof of my"
+白墨从下往上 clip 涮满 → 脸是一块空 → 方块从用户消息飞进洞里 → **洞里睁一只眼**（`eyeAt`）→ EXISTENCE。
+god 版已进 `figure.js`（键 `godPaper`），navy 版由 `process-character-raw.py` 派生备用。
 
 ---
 
