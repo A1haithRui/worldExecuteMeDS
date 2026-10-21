@@ -429,160 +429,185 @@ function pre2Day(ctx, t, s) {
 }
 
 // ---------------------------------------------------------------------------
-// pre2-role — S and M are type roles, not letters with an attitude.
+// pre2-role — S and M are type roles, and the plate is a press, not a shelf.
 // ---------------------------------------------------------------------------
-// The reference's Role row reads "S / M" in the drawer, which looks like something
-// else entirely; its plate tells the truth -- a heavy letter standing on a plinth
-// and a light letter on the floor. In this film the same distinction already exists
-// and is used everywhere: serif is her voice, mono is the system's. So the plate
-// prints one specimen of each, labels them, and the switch chooses which voice she
-// is set in. The light one still goes limp when it is chosen, because that is the
-// joke and it costs one function.
+// The reference settles this row with a sculpture: a heavy letter on a plinth, a
+// light letter on the floor, a vertical track between them. That reads as a ranking
+// -- one voice up, one down -- and it is somebody else's picture of the idea. This
+// film already says what the row means everywhere else: serif is her voice, mono is
+// the system's. So both sorts stand on ONE line at the SAME size (a choice, not a
+// rank), and what moves is the press above them: a portal frame, a platen that
+// travels from stop to stop, and a slug that comes down on the letter being chosen.
+// The beat is unchanged -- S on "To S", M on "to M" -- and the light one still goes
+// soft, but it now sinks into the paper it was printed on instead of lying on a
+// floor.
 function pre2Role(ctx, t, s) {
   const sCue = Math.max(lineStart(62) + 0.4, s.at + 0.45);
   const mCue = sCue + 0.8;
 
   const hit = (cue) => (t >= cue ? Math.exp(-(t - cue) * 8.5) : 0);
-  const jolt = Math.sin((t - sCue) * 30) * 9 * hit(sCue)
-    + Math.sin((t - mCue) * 30) * 7 * hit(mCue)
-    + Math.sin((t - mCue - 0.3) * 44) * 4 * hit(mCue + 0.3);
-  const lift = 1 + 0.11 * hit(sCue) - 0.05 * hit(mCue);
+  const jolt = Math.sin((t - sCue) * 30) * 10 * hit(sCue)
+    + Math.sin((t - mCue) * 30) * 9 * hit(mCue);
 
   ctx.save();
   ctx.translate(0, jolt);
   plateBase(ctx, t, { index: 3 });
 
-  // the light step when the heavy letter lands
+  const BASE = 790;
+  const SCX = 700;
+  const MCX = 1220;
+  const BEAM = { x0: 300, x1: 1620, y: 300 };
+  const LETTER = 380;
+
+  // ---- the press frame: two posts and a beam. The machine is the subject of this
+  // plate, so it is drawn at the scale of the sheet and the letters are printed by it.
   layer(ctx, 1, () => {
-    const g = ctx.createLinearGradient(0, 200, 0, 1000);
-    g.addColorStop(0, `rgba(30,86,124,${(0.06 + 0.3 * (lift - 1) * 4).toFixed(3)})`);
-    g.addColorStop(1, "rgba(3,12,20,0.42)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, 1920, 1080);
+    rect(ctx, BEAM.x0 - 46, 236, 46, 250, "rgba(10,30,44,0.92)", 4, "rgba(61,122,156,0.7)");
+    rect(ctx, BEAM.x1, 236, 46, 250, "rgba(10,30,44,0.92)", 4, "rgba(61,122,156,0.7)");
+    rect(ctx, BEAM.x0 - 52, BEAM.y - 18, BEAM.x1 - BEAM.x0 + 104, 34, "rgba(12,36,52,0.96)", 6, "rgba(131,233,230,0.6)");
+    // the beam is a rail: a lighter groove down its middle
+    stroke(ctx, [[BEAM.x0 - 40, BEAM.y + 4], [BEAM.x1 + 40, BEAM.y + 4]], "rgba(131,233,230,0.35)", 2, 0.9);
+    // the two stops, labelled with the two sorts
+    for (const [x, label, on] of [[SCX, "S", t >= sCue], [MCX, "M", t >= mCue]]) {
+      stroke(ctx, [[x, BEAM.y + 16], [x, BEAM.y + 30]], on ? GIFT : "rgba(120,146,170,0.8)", 2, 0.95);
+      type(ctx, label, x, BEAM.y - 28, 22, on ? "#eef6ff" : "rgba(159,184,210,0.75)", "MV Mono", "center");
+    }
   });
 
-  // ---- the two specimens
-  const GROUND = 800;
-  const PLINTH = { x: 300, y: 640, w: 360, h: GROUND - 640 };
-  const SCX = 480;
-  const MCX = 1040;
-
-  // the floor gives under the light letter when it lands
-  const limpK = clamp01(at(t, mCue + 0.16, mCue + 0.52));
-  const tau = t - mCue - 0.52;
-  const dip = tau > 0 ? 16 * Math.exp(-7 * tau) * Math.cos(16 * tau) : 0;
-  const groundAt = (x) => GROUND + dip * Math.exp(-(((x - MCX) / 260) ** 2));
-  const floor = [];
-  for (let x = 200; x <= 1720; x += 20) floor.push([x, groundAt(x)]);
-  stroke(ctx, floor, "rgba(131,233,230,0.55)", 2.2, 1);
-
-  // the plinth the heavy letter stands on
+  // ---- the platen: it travels between the stops (that travel is the switch) and
+  // comes down on the letter being chosen
+  const travelK = at(t, sCue + 0.24, mCue - 0.1);
+  const headX = SCX + (MCX - SCX) * travelK;
+  const punch = (cue) => {
+    const d = t - cue;
+    if (d < -0.2 || d > 0.42) return 0;
+    return d < 0 ? easeOut((d + 0.2) / 0.2) : 1 - easeOut(d / 0.42);
+  };
+  const pS = punch(sCue);
+  const pM = punch(mCue);
+  const drop = 132 * Math.max(pS, pM);
   layer(ctx, 1, () => {
-    rect(ctx, PLINTH.x, PLINTH.y, PLINTH.w, PLINTH.h, "rgba(10,32,48,0.92)", 3, "rgba(71,140,175,0.6)");
-    stroke(ctx, [[PLINTH.x, PLINTH.y], [PLINTH.x + PLINTH.w, PLINTH.y]], GIFT, 2.4, 0.9);
-    type(ctx, "serif", SCX, GROUND + 36, 18, "rgba(178,200,222,0.92)", "MV Mono", "center");
-    type(ctx, "mono", MCX, GROUND + 36, 18, "rgba(178,200,222,0.92)", "MV Mono", "center");
+    // two rods from the beam to the platen
+    // the platen hangs right under the beam at rest, so its descent is the motion
+    stroke(ctx, [[headX - 92, BEAM.y + 16], [headX - 92, BEAM.y + 20 + drop]], "rgba(131,233,230,0.55)", 5, 0.95);
+    stroke(ctx, [[headX + 92, BEAM.y + 16], [headX + 92, BEAM.y + 20 + drop]], "rgba(131,233,230,0.55)", 5, 0.95);
+    rect(ctx, headX - 176, BEAM.y + 18 + drop, 352, 44, "rgba(16,44,62,0.97)", 6, "rgba(131,233,230,0.75)");
+    rect(ctx, headX - 176, BEAM.y + 18 + drop, 352, 10, "rgba(131,233,230,0.18)", 3);
+    // the slug under it: the face that is about to be pressed
+    rect(ctx, headX - 104, BEAM.y + 62 + drop, 208, 22, "rgba(22,56,78,0.98)", 3, "rgba(131,233,230,0.85)");
+    type(ctx, travelK > 0.5 ? "M" : "S", headX, BEAM.y + 79 + drop, 15, "#f2f7fa", "MV Mono", "center");
   });
 
-  // ---- the heavy letter: printed on its syllable, with weight
-  if (t >= sCue - 0.02) {
-    const k = easeOut(at(t, sCue, sCue + 0.16));
-    const size = 300 * (1.14 - 0.14 * k);
-    layer(ctx, k, () => {
-      // the hit mark under it: a dozen short rays
-      const c = [SCX, PLINTH.y - size * 0.38];
-      for (let i = 0; i < 12; i++) {
-        const a = (i / 12) * Math.PI * 2;
-        stroke(ctx, [[c[0] + Math.cos(a) * size * 0.5, c[1] + Math.sin(a) * size * 0.5],
-          [c[0] + Math.cos(a) * size * 0.72, c[1] + Math.sin(a) * size * 0.72]], GIFT, 2, 0.55 * (1 - k) + 0.2);
-      }
-      type(ctx, "S", SCX, PLINTH.y - 8, size, "#f2f7fa", "MV Serif", "center");
-    });
-  } else {
-    // still an outline until it is sung: the same "not set yet" device as AM / PM
-    ctx.font = `600 300px "MV Serif"`;
+  // ---- the two sorts, on one line
+  const inkS = clamp01((t - sCue) / 0.1);
+  const inkM = clamp01((t - mCue) / 0.1);
+
+  stroke(ctx, [[240, BASE], [1680, BASE]], "rgba(131,233,230,0.45)", 2, 1);
+
+  if (inkS < 0.999) {
+    ctx.save();
+    ctx.globalAlpha = 1 - inkS;
+    ctx.font = `600 ${LETTER}px "MV Serif"`;
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
-    ctx.strokeStyle = "rgba(131,233,230,0.55)";
-    ctx.lineWidth = 1.8;
-    ctx.strokeText("S", SCX, PLINTH.y - 8);
+    ctx.strokeStyle = "rgba(131,233,230,0.58)";
+    ctx.lineWidth = 2;
+    ctx.strokeText("S", SCX, BASE);
+    ctx.restore();
+  }
+  if (inkS > 0.001) {
+    layer(ctx, inkS, () => {
+      // the impression comes down a touch oversized and settles onto the line
+      type(ctx, "S", SCX, BASE, LETTER * (1.05 - 0.05 * easeOut(inkS)), "#f2f7fa", "MV Serif", "center");
+    });
   }
 
-  // ---- the light letter: an outline until it is sung, then it sinks and goes soft
-  const drawM = (size, soft, colour, width) => {
-    const half = size * 0.44;
-    const top = -size * 0.78;
-    const spread = size * 0.07 * soft;
-    const sag = size * 0.16 * soft;
-    const pts = [
-      [-half - spread, 0],
-      [-half * 0.7, top + sag * 0.5],
-      [0, top * 0.55 + sag],
-      [half * 0.7, top + sag * 0.5],
-      [half + spread, 0],
-    ];
-    stroke(ctx, pts, colour, width, 1);
-  };
-  const mBase = groundAt(MCX);
-  const printed = at(t, mCue, mCue + 0.14);
-  if (printed <= 0.001) {
-    ctx.font = `400 300px "MV Mono"`;
+  // M: the mono sort. An outline until its beat; then it prints thin -- and then it
+  // sinks into the paper, which is the whole joke of setting her to M.
+  const limpK = clamp01(at(t, mCue + 0.22, mCue + 0.66));
+  const sink = 10 * limpK;
+  if (inkM < 0.999) {
+    ctx.save();
+    ctx.globalAlpha = 1 - inkM;
+    ctx.font = `400 ${LETTER}px "MV Mono"`;
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
-    ctx.strokeStyle = "rgba(131,233,230,0.5)";
-    ctx.lineWidth = 1.6;
-    ctx.strokeText("M", MCX, mBase - 8);
-  } else {
-    // the pop, then the slump: the whole letter tips and sinks instead of bending
-    // -- a bent M turns into a W, which is a different letter and a worse joke
-    const pop = 1.1 - 0.1 * easeOut(printed);
-    layer(ctx, printed, () => {
+    ctx.strokeStyle = "rgba(131,233,230,0.52)";
+    ctx.lineWidth = 1.8;
+    ctx.strokeText("M", MCX, BASE);
+    ctx.restore();
+  }
+  if (inkM > 0.001) {
+    const drawM = (size, soft, colour, width) => {
+      const half = size * 0.44;
+      const top = -size * 0.78;
+      const spread = size * 0.06 * soft;
+      const sag = size * 0.14 * soft;
+      stroke(ctx, [
+        [-half - spread, 0],
+        [-half * 0.7, top + sag * 0.5],
+        [0, top * 0.55 + sag],
+        [half * 0.7, top + sag * 0.5],
+        [half + spread, 0],
+      ], colour, width, 1);
+    };
+    layer(ctx, inkM, () => {
       ctx.save();
-      // the tip is compensated so one foot never leaves the floor: a letter that
-      // floats while it falls reads as a pasted sticker
-      const ang = -0.13 * limpK;
-      const half = 300 * pop * 0.44;
-      ctx.translate(MCX, mBase - 8 + half * Math.abs(Math.sin(ang)));
+      // the tip is compensated so one foot never leaves the paper: a letter that
+      // floats while it sinks reads as a sticker, not as ink
+      const ang = -0.1 * limpK;
+      const half = LETTER * 0.44;
+      ctx.translate(MCX, BASE - 8 + sink + half * Math.abs(Math.sin(ang)));
       ctx.rotate(ang);
-      ctx.scale(1 + 0.05 * limpK, 1 - 0.28 * limpK);
-      drawM(300 * pop, limpK, "#f2f7fa", 15 - 3 * limpK);
+      ctx.scale(1 + 0.03 * limpK, 1 - 0.14 * limpK);
+      drawM(LETTER * 0.94, limpK, "#f2f7fa", 15 - 3 * limpK);
       ctx.restore();
-      // its ink runs a little where it landed
-      if (limpK > 0.6) {
-        layer(ctx, ((limpK - 0.6) / 0.4) * 0.5, () => {
-          stroke(ctx, [[MCX - 150, mBase + 6], [MCX + 150, mBase + 6]], "rgba(131,233,230,0.6)", 2, 0.7);
+      // the paper takes the impression: a soft smear under it, not a floor dip
+      if (limpK > 0.2) {
+        layer(ctx, ((limpK - 0.2) / 0.8) * 0.4, () => {
+          ctx.beginPath();
+          ctx.ellipse(MCX, BASE + 12, 160, 13, 0, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(131,233,230,0.5)";
+          ctx.fill();
         });
       }
     });
   }
 
-  // ---- the switch: S at the top, M at the foot, and the knob travels between them
-  const TR = { x: 1584, y: 320, w: 64, h: 420 };
-  const yTop = TR.y + TR.w / 2;
-  const yBot = TR.y + TR.h - TR.w / 2;
-  const yMid = (yTop + yBot) / 2;
-  // The pointer grabs the knob half a second before the first letter, so the push
-  // has a beginning; a knob that jumps at the syllable reads as a typo, not a hand.
-  const grab = sCue - 0.76;
-  const pullK = easeOut(at(t, grab, sCue - 0.02));
-  const downK = clamp01(at(t, mCue - 0.14, mCue + 0.04));
-  const knobY = yMid + (yTop - yMid) * pullK + (yBot - yTop) * downK;
-  layer(ctx, 1, () => {
-    rect(ctx, TR.x, TR.y, TR.w, TR.h, "rgba(9,32,48,0.95)", TR.w / 2, "rgba(61,122,156,0.8)");
-    type(ctx, "S", TR.x + TR.w + 34, yTop + 22, 54, t >= sCue ? "#ffffff" : DIM, "MV Serif");
-    type(ctx, "M", TR.x + TR.w + 34, yBot + 22, 54, t >= mCue ? "#ffffff" : DIM, "MV Mono");
-    disc(ctx, TR.x + TR.w / 2, knobY, 24, t >= mCue ? "rgba(131,233,230,0.95)" : "#f2f7fa", 1);
-    if (t >= mCue) halo(ctx, TR.x + TR.w / 2, knobY, 70, 0.35, GIFT);
-  });
-  cursorArrow(ctx, TR.x + TR.w / 2 + 22, knobY + 20, 1.5, 1);
-  clickRipple(ctx, TR.x + TR.w / 2, yTop, t, sCue, GIFT);
-  clickRipple(ctx, TR.x + TR.w / 2, yBot, t, mCue, GIFT);
+  // ---- the hits: a ring of ink and four registration crosses per impression
+  const ringAt = (x, cue) => {
+    const k = clamp01((t - cue) / 0.44);
+    if (t < cue || k >= 1) return;
+    layer(ctx, (1 - k) * 0.6, () => {
+      ctx.beginPath();
+      ctx.arc(x, BASE - 160, 80 + 220 * k, 0, Math.PI * 2);
+      ctx.strokeStyle = GIFT;
+      ctx.lineWidth = 2.6 * (1 - k) + 0.6;
+      ctx.stroke();
+    });
+  };
+  ringAt(SCX, sCue);
+  ringAt(MCX, mCue);
+  const cross = (x, y, a) => {
+    if (a <= 0.01) return;
+    layer(ctx, a * 0.65, () => {
+      stroke(ctx, [[x - 11, y], [x + 11, y]], GIFT, 1.6, 0.9);
+      stroke(ctx, [[x, y - 11], [x, y + 11]], GIFT, 1.6, 0.9);
+    });
+  };
+  cross(SCX - 200, BASE - 36, inkS);
+  cross(SCX + 200, BASE - 36, inkS);
+  cross(MCX - 200, BASE - 36, inkM);
+  cross(MCX + 200, BASE - 36, inkM);
 
-  // the setting, said in the film's own margin voice
-  type(ctx, "role  /  how she is set", 210, 982, 15, "rgba(139,164,194,0.55)", "MV Mono");
+  type(ctx, "serif", SCX, BASE + 42, 18, inkS > 0.5 ? "rgba(178,200,222,0.95)" : "rgba(139,164,194,0.6)", "MV Mono", "center");
+  type(ctx, "mono", MCX, BASE + 42, 18, inkM > 0.5 ? "rgba(178,200,222,0.95)" : "rgba(139,164,194,0.6)", "MV Mono", "center");
+
+  // the setting, said plainly in the film's margin voice: this row is about voice
+  type(ctx, "role  /  her voice (serif)  ·  the system (mono)", 210, 982, 15, "rgba(139,164,194,0.55)", "MV Mono");
 
   ctx.restore();
-  return { phase: "role", limp: Number(limpK.toFixed(2)) };
+  return { phase: "role", headX: Math.round(headX), limp: Number(limpK.toFixed(2)) };
 }
 
 // ---------------------------------------------------------------------------
