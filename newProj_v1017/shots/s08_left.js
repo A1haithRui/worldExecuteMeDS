@@ -24,6 +24,7 @@ import {
   room, gradeAt, composerFoot, plainRow, label, chipPill,
   drawReach, S08_ART, washFigure, BRAND, BRAND_SOFT, GIFT, DIM, clamp01, easeOut,
 } from "./s08_look.js";
+import { withFx } from "./s08_fx.js";
 
 const CLIENT = Object.freeze({ x: 120, y: 80, w: 1660, h: 910 });
 // The window stops being a window and becomes a column, then a card. The three
@@ -226,8 +227,8 @@ function leftIsolation(ctx, t, s) {
 }
 
 export const SECTION8_LEFT_RENDER = Object.freeze({
-  "left-online": leftOnline,
-  "left-away": leftAway,
-  "left-offline": leftOffline,
-  "left-isolation": leftIsolation,
+  "left-online": withFx(leftOnline, "left-online"),
+  "left-away": withFx(leftAway, "left-away"),
+  "left-offline": withFx(leftOffline, "left-offline"),
+  "left-isolation": withFx(leftIsolation, "left-isolation"),
 });

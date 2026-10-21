@@ -20,6 +20,7 @@ import {
   room, gradeAt, plainRow, label, chipPill, deleteChip, selectionBox, stub,
   dotFigure, drawEye, footerStrip, BRAND, GIFT, DIM, clamp01, easeOut,
 } from "./s08_look.js";
+import { withFx } from "./s08_fx.js";
 
 const THREAD_X = 210;
 const ROW0 = 196;
@@ -231,7 +232,7 @@ function aloneEye(ctx, t, s) {
 }
 
 export const SECTION8_ALONE_RENDER = Object.freeze({
-  "alone-erase": aloneErase,
-  "alone-empty": aloneEmpty,
-  "alone-eye": aloneEye,
+  "alone-erase": withFx(aloneErase, "alone-erase"),
+  "alone-empty": withFx(aloneEmpty, "alone-empty"),
+  "alone-eye": withFx(aloneEye, "alone-eye"),
 });

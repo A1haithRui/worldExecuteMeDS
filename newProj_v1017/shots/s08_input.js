@@ -21,6 +21,7 @@ import {
   room, gradeAt, composerFoot, typingDots, sparkRing, caret, label, chipPill,
   BRAND, BRAND_SOFT, GIFT, DIM, clamp01,
 } from "./s08_look.js";
+import { withFx } from "./s08_fx.js";
 
 const SHEET = Object.freeze({ x: 100, y: 52, w: 1720, h: 972 });
 
@@ -181,8 +182,8 @@ function measure(ctx, text, size, family) {
 }
 
 export const SECTION8_INPUT_RENDER = Object.freeze({
-  "c2-typing": c2Typing,
-  "c2-dots": c2Dots,
-  "c2-brb": c2Brb,
-  "c2-complete": c2Complete,
+  "c2-typing": withFx(c2Typing, "c2-typing"),
+  "c2-dots": withFx(c2Dots, "c2-dots"),
+  "c2-brb": withFx(c2Brb, "c2-brb"),
+  "c2-complete": withFx(c2Complete, "c2-complete"),
 });
