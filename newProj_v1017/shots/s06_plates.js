@@ -628,10 +628,12 @@ function v2Cat(ctx, t, s) {
   // where the plate's own whale pin sits, so the mark can land on it
   const pin = [cx - (1342 * sScale) / 2 + 1010 * sScale, cy - size / 2 + 300 * sScale];
 
-  const ears = easeOut(at(u, 0.18, 0.55));
-  const flood = at(u, 0.35, 0.78);
-  const logoK = 1 - clamp01(at(u, 0.6, 0.92));
-  const pinK = easeOut(at(u, 0.55, 0.85));
+  const ears = easeOut(at(u, 0.16, 0.46));
+  // the mark dissolves into the pin BEFORE the plate has fully inked in, so the two
+  // never sit on top of each other fighting for the same space
+  const flood = at(u, 0.56, 0.95);
+  const logoK = 1 - clamp01(at(u, 0.5, 0.82));
+  const pinK = easeOut(at(u, 0.38, 0.8));
 
   // 1. the plate inks in from the bottom, like a print being pulled off the block
   if (flood > 0.01) {
@@ -647,52 +649,76 @@ function v2Cat(ctx, t, s) {
     );
   }
 
-  // 2. the tail: one curve of the mark's own ink, growing out to the right
-  const tail = easeOut(at(u, 0.22, 0.7));
+  // 2. the tail: it grows out of the whale's own rear, not out of the sheet.
+  // The mark's viewBox is 60 x 41.36, and the body's rear-bottom corner sits at
+  // about (42, 36) in those units, so the curve starts there and then leaves.
+  // the mark's placement, shared by the tail and the ears: it slides and shrinks into
+  // the pin, and the tail has to go with it or it gets left behind on the sheet
+  const k = pinK;
+  const lx = cx + (pin[0] - cx) * k;
+  const ly = cy + (pin[1] - cy) * k;
+  const lsz = 300 - (300 - 46) * k;
+  const tail = easeOut(at(u, 0.24, 0.72));
   if (tail > 0.02) {
-    layer(ctx, tail * (1 - flood * 0.7), () => {
-      ctx.beginPath();
-      ctx.moveTo(cx + size * 0.3, cy + size * 0.3);
-      ctx.bezierCurveTo(
-        cx + size * 0.62, cy + size * 0.24,
-        cx + size * 0.66, cy - size * 0.02,
-        cx + size * 0.5, cy - size * 0.16,
-      );
-      ctx.strokeStyle = BRAND_SOFT;
-      ctx.lineWidth = 8;
-      ctx.stroke();
-    });
+    const ws = lsz / 60;
+    const ty = ly - (41.36 * ws) / 2;
+    const p0 = [lx - lsz / 2 + 42 * ws, ty + 36 * ws];
+    const c1 = [lx - lsz / 2 + 51 * ws, ty + 39 * ws];
+    const c2 = [lx - lsz / 2 + 59 * ws, ty + 27 * ws];
+    const p3 = [lx - lsz / 2 + 55 * ws, ty + 10 * ws];
+    // sample the curve so it can be drawn on, not faded in
+    const pts = [];
+    for (let i = 0; i <= 24; i++) {
+      const q = i / 24;
+      const a = (1 - q) ** 3;
+      const b = 3 * (1 - q) ** 2 * q;
+      const c = 3 * (1 - q) * q * q;
+      const e = q ** 3;
+      pts.push([
+        a * p0[0] + b * c1[0] + c * c2[0] + e * p3[0],
+        a * p0[1] + b * c1[1] + c * c2[1] + e * p3[1],
+      ]);
+    }
+    const upTo = Math.max(2, Math.round(pts.length * tail));
+    layer(ctx, 1 - flood * 0.7, () =>
+      stroke(ctx, pts.slice(0, upTo), BRAND_SOFT, 9, 0.95),
+    );
   }
 
   // 3. the mark itself, unfolding into ears and then shrinking into the pin
   if (logoK > 0.01 || pinK < 0.99) {
-    const k = pinK;
-    const lx = cx + (pin[0] - cx) * k;
-    const ly = cy + (pin[1] - cy) * k;
-    const lsz = 300 - (300 - 46) * k;
     layer(ctx, Math.max(logoK, 0), () => {
       halo(ctx, lx, ly, lsz * 0.9, 0.22, BRAND);
       drawWhale(ctx, lx, ly, lsz, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.9 });
     });
 
-    // the ears grow off the mark's top, in the mark's own colour
+    // The ears have to sit on the whale's head. Measured off the mark's own path:
+    // the head is the round mass at u 4..31, so its top contour runs y 8 -> 1.6
+    // from left to right. The ears stand on that contour at u 12.5 and u 27.5.
     if (ears > 0.02 && k < 0.6) {
+      const s = lsz / 60;
+      const y0 = ly - (41.36 * s) / 2;
+      const X = (uu) => lx - lsz / 2 + uu * s;
+      const Y = (vv) => y0 + vv * s;
       layer(ctx, ears * (1 - k / 0.6), () => {
-        for (const side of [-1, 1]) {
-          const bx = lx + side * lsz * 0.22;
-          const by = ly - lsz * 0.34;
-          const hh = lsz * 0.42 * ears;
+        const ear = (uu, vv, lean) => {
+          const bx = X(uu);
+          const by = Y(vv);
+          const w = 9 * s;
+          const hh = 42 * s * ears;
           ctx.beginPath();
-          ctx.moveTo(bx - lsz * 0.11 * side, by);
-          ctx.lineTo(bx + side * lsz * 0.16, by - hh);
-          ctx.lineTo(bx + lsz * 0.13 * side, by + lsz * 0.06);
+          ctx.moveTo(bx - w, by + 5 * s);
+          ctx.quadraticCurveTo(bx - w * 0.45, by - hh * 0.5, bx + lean * s, by - hh);
+          ctx.quadraticCurveTo(bx + w * 0.5, by - hh * 0.42, bx + w, by + 5 * s);
           ctx.closePath();
           ctx.fillStyle = BRAND;
           ctx.fill();
           ctx.strokeStyle = BRAND_SOFT;
           ctx.lineWidth = 3;
           ctx.stroke();
-        }
+        };
+        ear(11.5, 4.8, -7);
+        ear(28.5, 2.0, 7);
       });
     }
   }
