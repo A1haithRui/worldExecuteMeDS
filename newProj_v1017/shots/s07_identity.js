@@ -40,7 +40,7 @@ const NAVY = "#041220";
  * stays legible in the dark room the day plate is. When `deepseek_man_bust.png`
  * exists it is a one-word change here; see docs/character-prompts-v1.md.
  */
-const M_LOOK = "lowlight";
+const M_LOOK = "man";
 
 const SHEET = Object.freeze({ x: 120, y: 80, w: 1250, h: 910 });
 const DRAWER = Object.freeze({ x: 1400, y: 110, w: 360, h: 850 });
@@ -446,8 +446,8 @@ function pre2Role(ctx, t, s) {
   const mCue = sCue + 0.8;
 
   const hit = (cue) => (t >= cue ? Math.exp(-(t - cue) * 8.5) : 0);
-  const jolt = Math.sin((t - sCue) * 30) * 10 * hit(sCue)
-    + Math.sin((t - mCue) * 30) * 9 * hit(mCue);
+  const jolt = Math.sin((t - sCue) * 30) * 14 * hit(sCue)
+    + Math.sin((t - mCue) * 30) * 12 * hit(mCue);
 
   ctx.save();
   ctx.translate(0, jolt);
@@ -485,17 +485,18 @@ function pre2Role(ctx, t, s) {
   };
   const pS = punch(sCue);
   const pM = punch(mCue);
-  const drop = 132 * Math.max(pS, pM);
+  const drop = 168 * Math.max(pS, pM);
   layer(ctx, 1, () => {
     // two rods from the beam to the platen
     // the platen hangs right under the beam at rest, so its descent is the motion
-    stroke(ctx, [[headX - 92, BEAM.y + 16], [headX - 92, BEAM.y + 20 + drop]], "rgba(131,233,230,0.55)", 5, 0.95);
-    stroke(ctx, [[headX + 92, BEAM.y + 16], [headX + 92, BEAM.y + 20 + drop]], "rgba(131,233,230,0.55)", 5, 0.95);
-    rect(ctx, headX - 176, BEAM.y + 18 + drop, 352, 44, "rgba(16,44,62,0.97)", 6, "rgba(131,233,230,0.75)");
-    rect(ctx, headX - 176, BEAM.y + 18 + drop, 352, 10, "rgba(131,233,230,0.18)", 3);
+    stroke(ctx, [[headX - 118, BEAM.y + 16], [headX - 118, BEAM.y + 20 + drop]], "rgba(131,233,230,0.55)", 6, 0.95);
+    stroke(ctx, [[headX + 118, BEAM.y + 16], [headX + 118, BEAM.y + 20 + drop]], "rgba(131,233,230,0.55)", 6, 0.95);
+    // a bigger platen: at the size of the sheet the press should feel like it has weight
+    rect(ctx, headX - 220, BEAM.y + 18 + drop, 440, 56, "rgba(16,44,62,0.97)", 7, "rgba(131,233,230,0.8)");
+    rect(ctx, headX - 220, BEAM.y + 18 + drop, 440, 12, "rgba(131,233,230,0.2)", 3);
     // the slug under it: the face that is about to be pressed
-    rect(ctx, headX - 104, BEAM.y + 62 + drop, 208, 22, "rgba(22,56,78,0.98)", 3, "rgba(131,233,230,0.85)");
-    type(ctx, travelK > 0.5 ? "M" : "S", headX, BEAM.y + 79 + drop, 15, "#f2f7fa", "MV Mono", "center");
+    rect(ctx, headX - 130, BEAM.y + 74 + drop, 260, 30, "rgba(22,56,78,0.98)", 4, "rgba(131,233,230,0.9)");
+    type(ctx, travelK > 0.5 ? "M" : "S", headX, BEAM.y + 97 + drop, 17, "#f2f7fa", "MV Mono", "center");
   });
 
   // ---- the two sorts, on one line
@@ -564,11 +565,18 @@ function pre2Role(ctx, t, s) {
       ctx.restore();
       // the paper takes the impression: a soft smear under it, not a floor dip
       if (limpK > 0.2) {
-        layer(ctx, ((limpK - 0.2) / 0.8) * 0.4, () => {
+        layer(ctx, ((limpK - 0.2) / 0.8) * 0.72, () => {
           ctx.beginPath();
-          ctx.ellipse(MCX, BASE + 12, 160, 13, 0, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(131,233,230,0.5)";
+          ctx.ellipse(MCX, BASE + 14, 190, 18, 0, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(131,233,230,0.55)";
           ctx.fill();
+          // ink that squeezed out under the sort
+          for (const [dx, dy, rr] of [[-118, 6, 5], [96, 8, 4], [-26, 12, 3]]) {
+            ctx.beginPath();
+            ctx.arc(MCX + dx, BASE + dy, rr, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(131,233,230,0.7)";
+            ctx.fill();
+          }
         });
       }
     });
@@ -578,9 +586,9 @@ function pre2Role(ctx, t, s) {
   const ringAt = (x, cue) => {
     const k = clamp01((t - cue) / 0.44);
     if (t < cue || k >= 1) return;
-    layer(ctx, (1 - k) * 0.6, () => {
+    layer(ctx, (1 - k) * 0.75, () => {
       ctx.beginPath();
-      ctx.arc(x, BASE - 160, 80 + 220 * k, 0, Math.PI * 2);
+      ctx.arc(x, BASE - 160, 100 + 300 * k, 0, Math.PI * 2);
       ctx.strokeStyle = GIFT;
       ctx.lineWidth = 2.6 * (1 - k) + 0.6;
       ctx.stroke();
@@ -588,6 +596,19 @@ function pre2Role(ctx, t, s) {
   };
   ringAt(SCX, sCue);
   ringAt(MCX, mCue);
+  // the paper takes the weight: a dark dent under the sort that fades as it springs back
+  const dentAt = (x, cue) => {
+    const k = clamp01((t - cue) / 0.5);
+    if (t < cue || k >= 1) return;
+    layer(ctx, (1 - k) * (1 - k) * 0.4, () => {
+      ctx.beginPath();
+      ctx.ellipse(x, BASE + 9, 150, 8, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(2,8,14,0.85)";
+      ctx.fill();
+    });
+  };
+  dentAt(SCX, sCue);
+  dentAt(MCX, mCue);
   const cross = (x, y, a) => {
     if (a <= 0.01) return;
     layer(ctx, a * 0.65, () => {
@@ -633,36 +654,106 @@ function loopShot(b) {
 }
 
 // ---------------------------------------------------------------------------
-// pre2-trance — the three looks drift apart and then register into one.
+// pre2-trance — three real looks now, and they turn into one.
 // ---------------------------------------------------------------------------
+// The three plates are her, him and the cat: the same face printed three ways, which
+// is what "Loop" left the settings at. They orbit, each "trance" pulls them a step
+// in, and what registers is the M plate, because that is what the drawer was left on.
+// The dial behind them spins faster as they close, so the room itself is what turns.
 function pre2Trance(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 4 });
-  const settle = easeOut(at(u, 1.5, 2.6));
-  const look = (i) => {
-    const spread = (1 - settle) * 260;
-    const a = u * 0.9 + (i / 3) * Math.PI * 2;
-    const cx = 960 + Math.cos(a) * spread * (0.6 + i * 0.2);
-    const cy = 520 + Math.sin(a) * spread * 0.5;
-    const keys = ["bust", "lowlight", "silhouette"];
-    layer(ctx, 0.4 + 0.6 * (1 - i * 0.18), () => {
-      figure(ctx, t, keys[i], cx, cy, 380 + i * 20, {
-        alpha: 0.5 + 0.4 * (1 - settle),
-        seed: 20 + i * 7,
-        bobAmp: 3,
-      });
-    });
-  };
-  look(0);
-  look(1);
-  look(2);
-  // once they register, the boy is what the settings were left at
-  if (settle > 0.6) {
-    layer(ctx, (settle - 0.6) / 0.4, () => {
-      figure(ctx, t, "silhouette", 960, 560, 460, { alpha: 0.8, seed: 3, bobAmp: 2 });
+
+  // the two "trance" words, and then the landing: all cued to the lyric, not to
+  // offsets inside the shot
+  const c1 = Math.max(lineStart(64), s.at + 0.18);
+  const c2 = c1 + 1.0;
+  const stepK = (cue) => easeOut(at(t, cue, cue + 0.14));
+  const inward = 1 - 0.28 * (stepK(c1) + stepK(c2));
+  const settleK = easeOut(at(t, c2 + 0.06, c2 + 0.44));
+  // the orbit starts from the first frame of the shot, so the three begin as a
+  // balanced triangle instead of wherever the clock happens to be
+  const spin = t * 0.85;
+  const spin0 = s.at * 0.85;
+
+  // the dial: a tick ring that locks as they come into register
+  tickRing(ctx, 960, 520, 384, 48, `rgba(131,233,230,${(0.08 + 0.34 * settleK).toFixed(3)})`, spin);
+  if (settleK > 0.2) {
+    layer(ctx, (settleK - 0.2) / 0.8 * 0.5, () => {
+      ctx.beginPath();
+      ctx.arc(960, 520, 300, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(131,233,230,0.5)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
     });
   }
-  return { phase: "trance", settle: Number(settle.toFixed(2)) };
+
+  // three looks, on a circle that keeps shrinking
+  const LOOKS = Object.freeze([
+    { key: "bust", tag: "F", ph: 0, h: 430 },
+    { key: "man", tag: "M", ph: (Math.PI * 2) / 3, h: 430 },
+    { key: "cat", tag: "cat", ph: (Math.PI * 4) / 3, h: 430 },
+  ]);
+  const r = 322 * inward * (1 - settleK) ** 0.7;
+  LOOKS.forEach((L, i) => {
+    const a = -Math.PI / 2 + L.ph + (spin - spin0);
+    const cx = 960 + Math.cos(a) * r;
+    const cy = 520 + Math.sin(a) * r * 0.5;
+    // the losers go before the pile gets muddy: a dissolve, not a stack of plates
+    const alpha = (1 - settleK) * (1 - settleK) * 0.95;
+    if (alpha <= 0.01) return;
+    // each plate leans a little as it swings, so the orbit reads as motion and not
+    // as three pictures being dragged around
+    const tilt = Math.sin(u * 1.6 + i * 2.1) * 0.07;
+    const hh = L.h * (1 + 0.02 * Math.sin(u * 2.4 + i));
+    layer(ctx, 1, () => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(tilt);
+      ctx.translate(-cx, -cy);
+      figure(ctx, t, L.key, cx, cy, hh, { alpha, seed: 20 + i * 5, bobAmp: 3 });
+      ctx.restore();
+    });
+    layer(ctx, alpha * (1 - settleK), () => {
+      // a specimen slip under each print, so "three looks" is legible at a glance
+      const tw = 34 + (L.tag.length - 1) * 11;
+      rect(ctx, cx - tw / 2, cy + L.h * 0.5, tw, 26, "rgba(6,24,36,0.9)", 4, "rgba(120,146,170,0.55)");
+      type(ctx, L.tag, cx, cy + L.h * 0.5 + 19, 15, "rgba(210,224,238,0.95)", "MV Mono", "center");
+    });
+  });
+
+  // what the drawer was left on: the M print, resolving out of the pile
+  if (settleK > 0.01) {
+    const pop = 1 + 0.05 * Math.exp(-Math.max(0, t - (c2 + 0.62)) * 6);
+    layer(ctx, settleK, () => {
+      figure(ctx, t, M_LOOK, 960, 528, 452 * pop, { alpha: 1, seed: 3, bobAmp: 2 });
+      // the landing mark: a ring that leaves the plate
+      const tau = t - (c2 + 0.62);
+      if (tau > 0 && tau < 0.5) {
+        const k = tau / 0.5;
+        layer(ctx, (1 - k) * 0.55, () => {
+          ctx.beginPath();
+          ctx.arc(960, 520, 220 + 260 * k, 0, Math.PI * 2);
+          ctx.strokeStyle = GIFT;
+          ctx.lineWidth = 3 * (1 - k) + 0.8;
+          ctx.stroke();
+        });
+      }
+    });
+  }
+
+  // four registration crosses settle into the corners as the plate locks
+  if (settleK > 0.3) {
+    const a = (settleK - 0.3) / 0.7;
+    layer(ctx, a * 0.6, () => {
+      for (const [x, y] of [[300, 300], [1620, 300], [300, 900], [1620, 900]]) {
+        stroke(ctx, [[x - 14, y], [x + 14, y]], GIFT, 1.6, 0.9);
+        stroke(ctx, [[x, y - 14], [x, y + 14]], GIFT, 1.6, 0.9);
+      }
+    });
+  }
+
+  return { phase: "trance", settle: Number(settleK.toFixed(2)), inward: Number(inward.toFixed(2)) };
 }
 
 export const SECTION7_RENDER = Object.freeze({

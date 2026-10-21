@@ -13,6 +13,11 @@ const { images, ready } = loadImages({
   // the thread; the profile is already looking down, so "head bowed towards the
   // thread" is a pose we own rather than a rotation we fake on the bust.
   profile: "/assets/character/deepseek_profile_v3.png",
+  // The two plates generated from docs/character-prompts-v1.md and processed by
+  // tools/process-character-raw.py: same framing, same inks, so all of them can be
+  // drawn at the same (cx, cy, height) and land on top of each other.
+  man: "/assets/character/deepseek_man_bust.png",
+  cat: "/assets/character/deepseek_cat_bust.png",
 });
 
 /** Resolves when the bust images have decoded. The renderer must await this:

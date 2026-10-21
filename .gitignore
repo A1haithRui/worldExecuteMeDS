@@ -50,3 +50,6 @@ Thumbs.db
 
 # Local agent settings
 **/.claude/settings.local.json
+
+# Raw image-model output and candidate sheets: working data, not film assets.
+/newProj_v1017/assets/character/raw/

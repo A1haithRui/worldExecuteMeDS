@@ -103,12 +103,15 @@ newProj_v1017/
     build-storyboard.mjs  生成 STORYBOARD.md + data/shots.js|json
     check-engine.mjs  引擎纯函数 48 项回归（不碰浏览器）
     check-time-windows.mjs  静态扫 at(t,a,b) 反窗口
+    process-character-raw.py  ★原始出图 → 抠底 / 三色量化 / 按女版配准
   review/
     index.html        ★人类审查入口，双击打开
     NN-name-{AB,ours,reference}.mp4 / poster-*.jpg / stills-*.jpg
     check-review.mjs 审查页自检
   compareResult/     两片同时间轴对比页 + check-compare.mjs（11 项）
   assets/character/  官方鲸鱼 + 角色四姿势（bust/eye/profile/reach）+ v4：
+                     ★deepseek_man_bust.png / deepseek_cat_bust.png（三色 + 配准的生产版，
+                     由 tools/process-character-raw.py 从 raw/ 生成）
                      bust_v4_lowlight / bust_v4_silhouette / palm 掌心特写 /
                      ★reach_v4_body_layer + reach_v4_hand_layer（伸手分层）
   data/lyrics.json   129 行歌词时间（数据源）
@@ -200,15 +203,32 @@ ffmpeg：`G:\CODE\worldExecuteMe\world-execute-me-lyric-mv\node_modules\ffmpeg-s
    M 印上后**陷进纸里、软下去**（纸面留一道墨渍），S 始终立着。两次落版各有一次震纸 + 墨圈 + 四角套准十字。
    与参考片不同的三条硬边界：**没有台座**、**没有高低差**、**没有竖向开关**。
 
-还没做的两条（都要等新素材）：
-- **男版 / 猫娘版形象**：提示词已写到 `docs/character-prompts-v1.md`。出图后：
-  量化到三色 `#041220 / #00B4E6 / #F2F7FA` → 按女性版内容框 `128..1214 × 128..1566` 配准 →
-  生成 lowlight / silhouette 衍生版 → 放进 `assets/character/` →
-  把 `s07_identity.js` 里的 **`M_LOOK`** 从 `"lowlight"` 改成 `"male"`（一行），
-  Gender / On call / Trance 三镜就同时换上新版。
-- **trance 重做**：现在三种样子是 bust / lowlight / silhouette（同一张脸的三个印法）；
-  有了男版和猫娘版之后改成 **F / M / 猫** 三种真样子，绕彼此转、每唱一次"trance"就近一步，
-  最后对齐成 `M_LOOK`（设定停在 M，所以落点必须是男版）。
+3. **pre2-gender / pre2-day**：`M_LOOK` 现在是 `"man"`，所以 Gender 切到 M 时站进格子的是**真男版**，
+   On call 的太阳底下站着的也是男版（设定在那之前已经切到 M 了）。
+4. **pre2-trance 重做**：三种样子现在是 **F / 男版 / 猫娘** 三张真版，绕着中心转、每唱一次 "trance"
+   就往里近一步，最后对齐成 **男版**（因为设定停在 M）。每张版下面有一张 `F` / `M` / `cat` 的小标签，
+   转的时候能分清谁是谁；落点有墨圈 + 四角套准十字 + 旋转刻度盘。
+5. **男版 / 猫娘版已经接入**。codex 按 `docs/character-prompts-v1.md` 生成（洋红底），
+   我用 `tools/process-character-raw.py` 做了三步：**抠洋红底（含去边）→ 压回三色
+   `#041220 / #00B4E6 / #F2F7FA` → 按女版内容框配准**（同画布 1342×1704、内容顶 128、底 1566）。
+   产出 `assets/character/deepseek_man_bust.png` / `deepseek_cat_bust.png`，
+   已加进 `figure.js` 的 `loadImages`（键名 `man` / `cat`）。原始图和候选留在
+   `assets/character/raw/`（**已加进 .gitignore，不入库**）。
+
+还能继续的：
+- 猫娘目前只在 trance 出现（歌曲的 Gender 只唱 F→M，所以 Gender 那格没放猫）。
+  以后哪一段想让猫娘上场，直接 `figure(ctx, t, "cat", …)` 即可。
+- 如果后面要给男版/猫娘做 `lowlight` / `silhouette` 衍生版（第 9 段"低亮角色"可能会用到），
+  用同一套流程在 Python 里压暗/取形就行，不要改原图。
+
+## 7c. 这一轮 Role 压印机的细节加强
+
+用户认可版式之后要的三件事，都落在 `pre2Role` 里：
+
+1. **压印头更大**：盘面 352×46 → 440×56，字模 208×22 → 260×30，下落行程 132 → 168。
+2. **落版更重**：震纸幅度 10/9 → 14/12，墨圈半径 80+220k → 100+300k 且更亮，
+   纸上多一道"压痕"（落版瞬间的暗影，1/4 秒内收回）。
+3. **墨渍更明显**：M 印上后纸面那道墨渍 160×13/0.4 → 190×18/0.72，并加三滴挤出来的墨点。
 
 ---
 
