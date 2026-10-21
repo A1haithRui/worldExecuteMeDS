@@ -119,13 +119,25 @@ function display(ctx, plan, t) {
   ctx.globalAlpha *= env;
   ctx.textBaseline = "alphabetic";
   ctx.fillStyle = plan.color ?? IN.white;
-  // reveal left to right: each glyph appears once the wipe has passed it
+  // reveal left to right: each glyph appears once the wipe has passed it. With
+  // `pop` set, each glyph also rises into place on its own beat instead of sliding
+  // in with the wipe -- same words, more movement, and the shot opts in.
+  const pop = plan.pop ?? 0;
   let acc = 0;
   chars.forEach((c, i) => {
-    const gk = clamp((e * total - acc) / Math.max(1, widths[i]));
-    if (gk > 0) {
-      ctx.globalAlpha = env * gk;
-      ctx.fillText(c, x + (1 - gk) * 10, anchor[1]);
+    if (pop > 0) {
+      const gk = clamp((t - line.start - i * pop) / 0.26);
+      if (gk > 0) {
+        const gp = 1 - (1 - gk) ** 3;
+        ctx.globalAlpha = env * gp;
+        ctx.fillText(c, x, anchor[1] + (1 - gp) * 26);
+      }
+    } else {
+      const gk = clamp((e * total - acc) / Math.max(1, widths[i]));
+      if (gk > 0) {
+        ctx.globalAlpha = env * gk;
+        ctx.fillText(c, x + (1 - gk) * 10, anchor[1]);
+      }
     }
     acc += widths[i];
     x += widths[i];

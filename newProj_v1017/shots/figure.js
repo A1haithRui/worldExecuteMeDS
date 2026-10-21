@@ -21,6 +21,11 @@ const { images, ready } = loadImages({
   // The god plate: same registration as the others, printed in paper. The shot shows
   // it dim first (the paper ink has not been laid) and then floods the white in.
   godPaper: "/assets/character/deepseek_god_paper.png",
+  // The cat ears and tail, cut out of the icon the image model returned, so the mark
+  // can grow them instead of drawing triangles that only look like ears.
+  earL: "/assets/character/cat-whale-icon/left_ear.png",
+  earR: "/assets/character/cat-whale-icon/right_ear.png",
+  tail: "/assets/character/cat-whale-icon/cat_tail.png",
 });
 
 /** Resolves when the bust images have decoded. The renderer must await this:

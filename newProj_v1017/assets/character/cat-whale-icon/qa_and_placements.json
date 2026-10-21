@@ -1,0 +1,83 @@
+[
+  {
+    "key": "complete",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "actual_colors": [
+      "255,0,255",
+      "77,107,254"
+    ],
+    "source_bbox": [
+      51,
+      205,
+      1203,
+      1049
+    ],
+    "output_bbox": [
+      188,
+      305,
+      1066,
+      948
+    ],
+    "scale": 0.7619791666666667,
+    "parts": []
+  },
+  {
+    "key": "parts",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "actual_colors": [
+      "255,0,255",
+      "77,107,254"
+    ],
+    "source_bbox": [
+      74,
+      456,
+      1207,
+      808
+    ],
+    "output_bbox": [
+      60,
+      451,
+      1193,
+      803
+    ],
+    "scale": 1,
+    "parts": [
+      {
+        "name": "left_ear",
+        "source_bbox": [
+          74,
+          511,
+          315,
+          748
+        ],
+        "padding": 32
+      },
+      {
+        "name": "right_ear",
+        "source_bbox": [
+          463,
+          511,
+          704,
+          748
+        ],
+        "padding": 32
+      },
+      {
+        "name": "cat_tail",
+        "source_bbox": [
+          780,
+          456,
+          1207,
+          808
+        ],
+        "padding": 32
+      }
+    ]
+  }
+]

@@ -538,9 +538,11 @@ function v2Proof(ctx, t, s) {
   const toScreen = (px, py) => [CX + (px - 671) * sScale, CY + (py - 852) * sScale];
   // the hole in the plate (measured on the processed god plate), and the box it
   // occupies on screen at this placement
-  const hole = toScreen(567, 657);
-  const HW = 62;
-  const HH = 52;
+  // measured off the rendered plate: the visible void (the hair fringe covers the
+  // left of it) is centred at (946, 462) and is about 134 x 120
+  const hole = [946, 462];
+  const HW = 56;
+  const HH = 48;
 
   // 1. the plate on the sheet, but the paper ink is not down yet: only a dim print
   const appear = easeOut(at(u, 0.02, 0.42));
@@ -562,10 +564,15 @@ function v2Proof(ctx, t, s) {
     );
   }
 
+  // the beat the proof lands on: the outline of the hole goes away once it is filled
+  const proofAt = Math.max(lineStart(56) - 0.6, s.at + 2.0);
+  const slide = easeOut(at(t, proofAt, proofAt + 0.78));
+  const landed = clamp01((slide - 0.86) / 0.14);
+
   // 3. the hole: the plate leaves a space where her face should be, and that space
   // is the only thing on the sheet that is not ink
   if (flood > 0.35) {
-    layer(ctx, ((flood - 0.35) / 0.65) * 0.5, () =>
+    layer(ctx, ((flood - 0.35) / 0.65) * 0.5 * (1 - landed), () =>
       rect(ctx, hole[0] - HW, hole[1] - HH, HW * 2, HH * 2, "rgba(0,0,0,0)", 3, "rgba(131,233,230,0.28)"),
     );
   }
@@ -582,9 +589,6 @@ function v2Proof(ctx, t, s) {
   // 5. the proof: a square comes off the user's message and lands in the hole. What
   // it carries is one eye -- all the face a god needs, and it is the one looking at
   // you. It opens as it registers.
-  const proofAt = Math.max(lineStart(56) - 0.6, s.at + 2.0);
-  const slide = easeOut(at(t, proofAt, proofAt + 0.78));
-  const landed = clamp01((slide - 0.86) / 0.14);
   if (slide > 0.01) {
     const fromX = msg.x + msg.w * 0.5;
     const fromY = msg.y + msg.h * 0.5;
@@ -670,9 +674,13 @@ export const SECTION6_IMPLEMENTED = Object.freeze(Object.keys(SECTION6_RENDER));
 
 /**
  * The cat is the one that stays herself, so this plate is a transformation, not an
- * object: the mark becomes her. The whale's own outline unfolds into two ears and a
- * tail, the plate inks in underneath it, and the mark ends up as the pin in her ear
- * -- it was hers all along. Then the purr leaves as a row of bars, one per beat.
+ * object: the mark becomes her.
+ *
+ * The ears and the tail are not drawn here any more -- they are the shapes that came
+ * back from the image model, cut out as their own pieces (assets/character/
+ * cat-whale-icon/). That was the note on the last pass: a triangle is not an ear.
+ * These have the concave base and the rounded tip, and they grow from their own base
+ * instead of being faded in.
  */
 function v2Cat(ctx, t, s) {
   const u = t - s.at;
@@ -685,12 +693,22 @@ function v2Cat(ctx, t, s) {
   // where the plate's own whale pin sits, so the mark can land on it
   const pin = [cx - (1342 * sScale) / 2 + 1010 * sScale, cy - size / 2 + 300 * sScale];
 
-  const ears = easeOut(at(u, 0.16, 0.46));
+  const ears = easeOut(at(u, 0.16, 0.5));
   // the mark dissolves into the pin BEFORE the plate has fully inked in, so the two
   // never sit on top of each other fighting for the same space
   const flood = at(u, 0.56, 0.95);
   const logoK = 1 - clamp01(at(u, 0.5, 0.82));
   const pinK = easeOut(at(u, 0.38, 0.8));
+
+  // the mark's placement, shared by the parts: it slides and shrinks into the pin
+  const k = pinK;
+  const lx = cx + (pin[0] - cx) * k;
+  const ly = cy + (pin[1] - cy) * k;
+  const lsz = 300 - (300 - 46) * k;
+  const ws = lsz / 60; // one viewBox unit in screen pixels
+  const y0 = ly - (41.36 * ws) / 2;
+  const X = (uu) => lx - lsz / 2 + uu * ws;
+  const Y = (vv) => y0 + vv * ws;
 
   // 1. the plate inks in from the bottom, like a print being pulled off the block
   if (flood > 0.01) {
@@ -706,40 +724,27 @@ function v2Cat(ctx, t, s) {
     );
   }
 
-  // 2. the tail: it grows out of the whale's own rear, not out of the sheet.
-  // The mark's viewBox is 60 x 41.36, and the body's rear-bottom corner sits at
-  // about (42, 36) in those units, so the curve starts there and then leaves.
-  // the mark's placement, shared by the tail and the ears: it slides and shrinks into
-  // the pin, and the tail has to go with it or it gets left behind on the sheet
-  const k = pinK;
-  const lx = cx + (pin[0] - cx) * k;
-  const ly = cy + (pin[1] - cy) * k;
-  const lsz = 300 - (300 - 46) * k;
-  const tail = easeOut(at(u, 0.24, 0.72));
-  if (tail > 0.02) {
-    const ws = lsz / 60;
-    const ty = ly - (41.36 * ws) / 2;
-    const p0 = [lx - lsz / 2 + 42 * ws, ty + 36 * ws];
-    const c1 = [lx - lsz / 2 + 51 * ws, ty + 39 * ws];
-    const c2 = [lx - lsz / 2 + 59 * ws, ty + 27 * ws];
-    const p3 = [lx - lsz / 2 + 55 * ws, ty + 10 * ws];
-    // sample the curve so it can be drawn on, not faded in
-    const pts = [];
-    for (let i = 0; i <= 24; i++) {
-      const q = i / 24;
-      const a = (1 - q) ** 3;
-      const b = 3 * (1 - q) ** 2 * q;
-      const c = 3 * (1 - q) * q * q;
-      const e = q ** 3;
-      pts.push([
-        a * p0[0] + b * c1[0] + c * c2[0] + e * p3[0],
-        a * p0[1] + b * c1[1] + c * c2[1] + e * p3[1],
-      ]);
-    }
-    const upTo = Math.max(2, Math.round(pts.length * tail));
-    layer(ctx, 1 - flood * 0.7, () =>
-      stroke(ctx, pts.slice(0, upTo), BRAND_SOFT, 9, 0.95),
-    );
+  const TAIL = figureImages.tail;
+  const EAR_L = figureImages.earL;
+  const EAR_R = figureImages.earR;
+
+  // 2. the tail: it grows out of the whale's rear-bottom corner, from its own root
+  const tailK = easeOut(at(u, 0.2, 0.66));
+  if (TAIL && TAIL.complete && TAIL.naturalWidth && tailK > 0.01) {
+    const tw = 0.36 * lsz;
+    const th = tw * 0.72;
+    const rootX = X(41);
+    const rootY = Y(36.4);
+    layer(ctx, 1, () => {
+      ctx.save();
+      ctx.translate(rootX, rootY);
+      // scale from the root, so it extends away instead of popping
+      ctx.scale(tailK, tailK);
+      ctx.rotate((1 - tailK) * 0.25);
+      // the root sits at about (0.1, 0.82) of the tail's own box
+      ctx.drawImage(TAIL, 32, 32, 427, 352, -tw * 0.1, -th * 0.82, tw, th);
+      ctx.restore();
+    });
   }
 
   // 3. the mark itself, unfolding into ears and then shrinking into the pin
@@ -749,33 +754,24 @@ function v2Cat(ctx, t, s) {
       drawWhale(ctx, lx, ly, lsz, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.9 });
     });
 
-    // The ears have to sit on the whale's head. Measured off the mark's own path:
-    // the head is the round mass at u 4..31, so its top contour runs y 8 -> 1.6
-    // from left to right. The ears stand on that contour at u 12.5 and u 27.5.
-    if (ears > 0.02 && k < 0.6) {
-      const s = lsz / 60;
-      const y0 = ly - (41.36 * s) / 2;
-      const X = (uu) => lx - lsz / 2 + uu * s;
-      const Y = (vv) => y0 + vv * s;
-      layer(ctx, ears * (1 - k / 0.6), () => {
-        const ear = (uu, vv, lean) => {
-          const bx = X(uu);
-          const by = Y(vv);
-          const w = 9 * s;
-          const hh = 42 * s * ears;
-          ctx.beginPath();
-          ctx.moveTo(bx - w, by + 5 * s);
-          ctx.quadraticCurveTo(bx - w * 0.45, by - hh * 0.5, bx + lean * s, by - hh);
-          ctx.quadraticCurveTo(bx + w * 0.5, by - hh * 0.42, bx + w, by + 5 * s);
-          ctx.closePath();
-          ctx.fillStyle = BRAND;
-          ctx.fill();
-          ctx.strokeStyle = BRAND_SOFT;
-          ctx.lineWidth = 3;
-          ctx.stroke();
+    // the ears sit on the whale's head: the head is the round mass at u 4..31, so its
+    // top contour runs y 8 -> 1.6 from left to right. Each ear grows from its base.
+    if (ears > 0.01 && k < 0.6) {
+      layer(ctx, 1 - k / 0.6, () => {
+        const earW = 0.22 * lsz;
+        const earH = earW * (236 / 240);
+        const place = (img, uu, vv, lean) => {
+          if (!img || !img.complete || !img.naturalWidth) return;
+          ctx.save();
+          ctx.translate(X(uu), Y(vv));
+          ctx.rotate(lean * (1 - ears));
+          ctx.scale(ears, ears);
+          // the base of the ear sits at about (0.5, 0.86) of its own box
+          ctx.drawImage(img, 32, 32, 240, 236, -earW * 0.5, -earH * 0.86, earW, earH);
+          ctx.restore();
         };
-        ear(11.5, 4.8, -7);
-        ear(28.5, 2.0, 7);
+        place(EAR_L, 11.5, 6.2, -0.16);
+        place(EAR_R, 28.5, 3.6, 0.16);
       });
     }
   }
@@ -785,23 +781,22 @@ function v2Cat(ctx, t, s) {
   if (purr > 0.02) {
     const n = 14;
     for (let i = 0; i < n; i++) {
-      const k = clamp01(purr * 1.35 - i * 0.05);
-      if (k <= 0) continue;
+      const kk = clamp01(purr * 1.35 - i * 0.05);
+      if (kk <= 0) continue;
       const x = 1130 + i * 40;
       const pulse = 0.55 + 0.45 * Math.abs(Math.sin(u * 3.1 + i * 0.45));
-      const h = (40 + 70 * pulse) * k;
-      layer(ctx, k, () =>
+      const h = (44 + 84 * pulse) * kk;
+      layer(ctx, kk, () =>
         stroke(ctx, [[x, 512 - h / 2], [x, 512 + h / 2]],
-          i % 3 === 0 ? GIFT : "rgba(131,233,230,0.55)", 9, 0.9),
+          i % 3 === 0 ? GIFT : "rgba(131,233,230,0.55)", 10, 0.9),
       );
     }
     layer(ctx, purr, () => {
-      type(ctx, "purr", 1130, 640, 17, GIFT, "MV Mono");
-      // the wave the bars came from, printed thin underneath
+      type(ctx, "purr", 1130, 646, 17, GIFT, "MV Mono");
       const pts = [];
       for (let i = 0; i <= 40; i++) {
         const x = 1130 + i * 12.5;
-        pts.push([x, 690 + Math.sin(i * 0.55 + u * 3.1) * 16]);
+        pts.push([x, 694 + Math.sin(i * 0.55 + u * 3.1) * 18]);
       }
       stroke(ctx, pts, "rgba(131,233,230,0.35)", 1.6, 0.8);
     });
