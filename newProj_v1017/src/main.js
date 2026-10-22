@@ -25,6 +25,7 @@ import { SECTION8_INPUT_RENDER } from "../shots/s08_input.js";
 import { SECTION8_LEFT_RENDER } from "../shots/s08_left.js";
 import { SECTION8_ALONE_RENDER } from "../shots/s08_alone.js";
 import { S08_READY } from "../shots/s08_look.js";
+import { SECTION9_RENDER, SECTION9_IMPLEMENTED } from "../shots/s09_err.js";
 import { linesReady } from "../shots/lines.js";
 
 const $ = (id) => document.getElementById(id);
@@ -40,6 +41,7 @@ const RENDER = {
   preroll, ...BOOT_RENDER, ...SECTION2_RENDER, ...SECTION3_RENDER,
   ...SECTION4_RENDER, ...SECTION5_RENDER, ...SECTION6_RENDER, ...SECTION7_RENDER,
   ...SECTION8_INPUT_RENDER, ...SECTION8_LEFT_RENDER, ...SECTION8_ALONE_RENDER,
+  ...SECTION9_RENDER,
 };
 
 const BASE_GRADE = Object.freeze({
