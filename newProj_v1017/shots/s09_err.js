@@ -67,6 +67,7 @@ function threadSheet(ctx, t, R, o = {}) {
     sendK = 0,
     sideSlide = 0,
     composer = true,
+    suppressPlaceholder = false,
     ink = 1,
     sendColour = BRAND_SOFT,
   } = o;
@@ -125,7 +126,7 @@ function threadSheet(ctx, t, R, o = {}) {
       cb = { x: mx + 50, y: R.y + R.h - 176, w: mw - 100, h: 136 };
       rect(ctx, cb.x, cb.y, cb.w, cb.h, "rgba(10,26,40,0.95)", 14, "rgba(61,122,156,0.65)");
       const baseY = cb.y + cb.h / 2 + 7;
-      if (!composerText) {
+      if (!composerText && !suppressPlaceholder) {
         type(ctx, placeholder, cb.x + 38, baseY, 26, "rgba(120,146,170,0.7)", "MV Sans");
       } else {
         type(ctx, composerText, cb.x + 38, baseY, 26, "#cfdcea", "MV Mono");
@@ -364,26 +365,43 @@ function errCheck(ctx, t, s) {
 function errFirst(ctx, t, s) {
   const u = t - s.at;
   room(ctx, t, { focus: [960, 520], lift: 0.2 });
-  threadSheet(ctx, t, SHEET, { composer: false, ink: 0.12, rows: [INHERITED_ROWS[0]] });
+  threadSheet(ctx, t, SHEET, { composer: false, ink: 0.06, rows: [INHERITED_ROWS[0]] });
 
-  const G = { x: 300, y: 246, w: 1320, h: 470 };
+  // A ledger band across the sheet: the router is a diagram, so it gets a rule and a
+  // title the way a plate would, not a caption floating in the dark.
+  const G = { x: 230, y: 400, w: 1460, h: 380 };
+  layer(ctx, 0.9, () => {
+    ctx.strokeStyle = "rgba(120,150,180,0.35)";
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(G.x, G.y - 40);
+    ctx.lineTo(G.x + G.w, G.y - 40);
+    ctx.stroke();
+  });
+  mono(ctx, "INTERNAL ROUTER", G.x, G.y - 58, 22, "rgba(190,208,224,0.9)");
+  mono(ctx, "6 nodes · 8 edges · one port", G.x + 420, G.y - 58, 16, "rgba(120,146,170,0.8)");
+
   const N = [
-    [0.04, 0.52], [0.26, 0.24], [0.26, 0.8], [0.5, 0.52], [0.74, 0.3], [0.74, 0.74], [0.96, 0.52],
+    [0.02, 0.52], [0.26, 0.22], [0.26, 0.82], [0.5, 0.52], [0.76, 0.26], [0.76, 0.78], [0.98, 0.52],
   ].map(([a, b]) => [G.x + a * G.w, G.y + b * G.h]);
   const E = [[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [3, 5], [4, 6], [5, 6]];
 
   const draw = easeOut(at(u, 0.02, 0.3));
-  layer(ctx, draw * 0.55, () => {
-    E.forEach(([a, b]) => stroke(ctx, [N[a], N[b]], "rgba(120,150,180,0.6)", 1.6, 0.9));
+  layer(ctx, draw * 0.6, () => {
+    E.forEach(([a, b]) => stroke(ctx, [N[a], N[b]], "rgba(120,150,180,0.7)", 2.4, 0.9));
   });
   N.forEach(([x, y], i) => {
     const k = easeOut(at(u, 0.05 + i * 0.03, 0.3 + i * 0.03));
     layer(ctx, k, () => {
-      rect(ctx, x - 9, y - 9, 18, 18, "rgba(9,26,38,0.98)", 4, "rgba(131,233,230,0.7)");
-      if (i === 3) port(ctx, x, y, 16, k, RED);
+      rect(ctx, x - 13, y - 13, 26, 26, "rgba(9,26,38,0.98)", 4, "rgba(131,233,230,0.85)");
+      mono(ctx, `r${i}`, x, y + 42, 16, "rgba(150,176,201,0.85)", "center");
+      if (i === 3) port(ctx, x, y, 30, k, RED), mono(ctx, `r${i}`, x, y + 62, 16, "rgba(150,176,201,0.85)", "center");
     });
   });
-  mono(ctx, "internal router · 6 nodes", G.x, G.y - 18, 15, "rgba(120,146,170,0.75)");
+  // the port gets its name in the same size as the nodes
+  layer(ctx, easeOut(at(u, 0.5, 0.7)), () =>
+    mono(ctx, "PORT 3", N[3][0] + 44, N[3][1] - 26, 18, "rgba(231,93,105,0.95)"),
+  );
 
   const path = [
     { from: 0, to: 1, t0: 0.05, t1: 0.32 },
@@ -399,7 +417,7 @@ function errFirst(ctx, t, s) {
     const from = N[seg.from];
     const to = N[seg.to];
     layer(ctx, 1, () => {
-      stroke(ctx, [from, [mix(from[0], to[0], k), mix(from[1], to[1], k)]], "rgba(131,233,230,0.9)", 3, 1);
+      stroke(ctx, [from, [mix(from[0], to[0], k), mix(from[1], to[1], k)]], "rgba(131,233,230,0.95)", 4.5, 1);
     });
     if (k >= 1) {
       px = to[0];
@@ -412,33 +430,34 @@ function errFirst(ctx, t, s) {
     if (k <= 0) return;
     layer(ctx, k, () => {
       ctx.strokeStyle = RED;
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 5;
       ctx.beginPath();
-      ctx.moveTo(N[3][0] - 22, N[3][1] - 22);
-      ctx.lineTo(N[3][0] + 22, N[3][1] + 22);
-      ctx.moveTo(N[3][0] + 22, N[3][1] - 22);
-      ctx.lineTo(N[3][0] - 22, N[3][1] + 22);
+      ctx.moveTo(N[3][0] - 34, N[3][1] - 34);
+      ctx.lineTo(N[3][0] + 34, N[3][1] + 34);
+      ctx.moveTo(N[3][0] + 34, N[3][1] - 34);
+      ctx.lineTo(N[3][0] - 34, N[3][1] + 34);
       ctx.stroke();
-      mono(ctx, `E_ARG_${i + 1}`, N[3][0] + 34, N[3][1] - 30 + i * 18, 12, "rgba(231,93,105,0.85)");
+      mono(ctx, `E_ARG_${i + 1}`, N[3][0] + 58, N[3][1] + 58 + i * 28, 18, "rgba(231,93,105,0.95)");
     });
   });
 
   const pk = easeOut(at(u, 0.02, 0.2));
   if (pk > 0.01) {
     layer(ctx, 1, () => {
-      disc(ctx, px, py, 7, "#eef6ff", 0.95);
-      halo(ctx, px, py, 46, 0.4, GIFT);
+      disc(ctx, px, py, 11, "#eef6ff", 0.98);
+      halo(ctx, px, py, 80, 0.45, GIFT);
     });
   }
 
-  const stamp = easeOut(at(u, 1.15, 1.45));
+  // the trace stamp: the frame's biggest piece of type in this shot
+  const stamp = easeOut(at(u, 1.05, 1.4));
   if (stamp > 0.01) {
     layer(ctx, stamp, () => {
-      const x = N[3][0] + 60;
-      const y = N[3][1] + 70;
-      mono(ctx, "first fault · traced", x, y, 16, "rgba(231,93,105,0.95)");
-      mono(ctx, "t+00:01.42 · port 3", x, y + 24, 14, "rgba(150,176,201,0.85)");
-      redEdge(ctx, x, y + 30, x + 190, y + 30, stamp, 1.5);
+      const x = G.x;
+      const y = G.y + G.h + 78;
+      mono(ctx, "FIRST FAULT · TRACED", x, y, 30, "rgba(231,93,105,0.95)");
+      mono(ctx, "t+00:01.42 · PORT 3 · E_ARG 1/2/3", x, y + 34, 18, "rgba(190,208,224,0.85)");
+      redEdge(ctx, x, y + 48, x + 620, y + 48, stamp, 2.5);
     });
   }
 
@@ -447,126 +466,143 @@ function errFirst(ctx, t, s) {
 }
 
 // ---------------------------------------------------------------------------
-// 4. err-send -- pressing send three times, and the key forgetting what it was
+// 4. err-send -- the key is pressed three times, and each refusal is a stamp
+//
+// The refusals are the subject of this shot, so they are not rowdy little tags: they
+// are three large stamps dropped one under the other in the empty thread, and the
+// count is a numeral you cannot miss.
 // ---------------------------------------------------------------------------
 function errSend(ctx, t, s) {
   const u = t - s.at;
-  const R = CLIENT_R;
   room(ctx, t, { focus: [1180, 520], lift: 0.3 });
-  backFigure(ctx, t, 1500, 470, 360, 0.26);
+  backFigure(ctx, t, 1560, 470, 360, 0.24);
 
-  const win = threadSheet(ctx, t, SHEET, { rows: INHERITED_ROWS, sendMode: "hollow" });
-  const bx = win.cb.x + win.cb.w - 62;
+  const win = threadSheet(ctx, t, SHEET, { rows: [], sendMode: "hollow", ink: 0.9 });
+  const bx = win.cb.x + win.cb.w - 72;
   const by = win.cb.y + win.cb.h / 2;
 
-  const presses = [0.35, 0.95, 1.55];
+  const presses = [0.3, 0.85, 1.4];
+  const stampX = SHEET.x + 60;
   presses.forEach((p, i) => {
-    const k = at(u, p, p + 0.06);
+    const k = clamp01((u - p) / 0.2);
     if (k <= 0) return;
-    clickRipple(ctx, bx, by, t, s.at + p, RED);
+    const pop = 1.06 - 0.06 * easeOut(k);
+    const y = SHEET.y + 150 + i * 128;
+    layer(ctx, k, () => {
+      ctx.save();
+      ctx.translate(stampX + 260, y + 50);
+      ctx.scale(pop, pop);
+      ctx.translate(-(stampX + 260), -(y + 50));
+      // the stamp is a slab with a red rule, so it reads as a document, not a tooltip
+      rect(ctx, stampX, y, 520, 100, "rgba(10,20,30,0.92)", 4, "rgba(231,93,105,0.55)");
+      ctx.fillStyle = "rgba(231,93,105,0.85)";
+      ctx.fillRect(stampX, y, 3, 100);
+      type(ctx, "REFUSED", stampX + 30, y + 58, 46, RED, "MV Sans");
+      mono(ctx, `№ ${i + 1}`, stampX + 286, y + 42, 20, "rgba(190,208,224,0.9)");
+      mono(ctx, `t+${(p).toFixed(2)}s  ·  SEND`, stampX + 286, y + 72, 15, "rgba(150,176,201,0.8)");
+      ctx.restore();
+    });
+    // the ring the press throws off
     const ring = clamp01((u - p) / 0.5);
     if (ring > 0 && ring < 1) {
-      layer(ctx, (1 - ring) * 0.8, () => {
+      layer(ctx, (1 - ring) * 0.85, () => {
         ctx.beginPath();
-        ctx.arc(bx, by, 22 + 90 * ring, 0, Math.PI * 2);
+        ctx.arc(bx, by, 36 + 150 * ring, 0, Math.PI * 2);
         ctx.strokeStyle = RED;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.stroke();
       });
     }
-    refusedTag(ctx, bx - 120 - i * 8, by - 54 - i * 34, k, "refused");
+    clickRipple(ctx, bx, by, t, s.at + p, RED);
   });
 
-  const degr = easeOut(at(u, 0.5, 1.9));
-  layer(ctx, 1, () => {
-    disc(ctx, bx, by, 21, "rgba(8,20,31,0.9)", 0.9);
-    port(ctx, bx, by, 17, clamp01((degr - 0.3) / 0.5), RED);
-  });
-
+  // the count: one very large numeral, because that is the point of the shot
   const n = presses.filter((p) => u > p).length;
   if (n > 0) {
     layer(ctx, 1, () => {
-      type(ctx, `refused ×${n}`, SHEET.x + 90, win.cb.y - 54, 46, RED, "MV Sans");
-      mono(ctx, "the key no longer sends · it only refuses", SHEET.x + 90, win.cb.y - 20, 15, "rgba(150,176,201,0.85)");
+      const x = stampX + 600;
+      const y = SHEET.y + 200;
+      type(ctx, `×${n}`, x, y + 92, 140, RED, "MV Sans");
+      mono(ctx, "times the key refused", x, y + 140, 20, "rgba(190,208,224,0.95)");
+      mono(ctx, "the key no longer sends · it only refuses", x, y + 172, 16, "rgba(150,176,201,0.85)");
     });
   }
+
+  // the key itself: a port, with the three rings it has already thrown
+  const degr = easeOut(at(u, 0.4, 1.7));
+  layer(ctx, 1, () => {
+    disc(ctx, bx, by, 30, "rgba(8,20,31,0.92)", 0.95);
+    port(ctx, bx, by, 26, clamp01((degr - 0.2) / 0.6), RED);
+    mono(ctx, "SEND → PORT", bx - 96, by + 58, 16, "rgba(231,93,105,0.9)");
+  });
 
   footerStrip(ctx, t, { alpha: 0.6 });
   return { phase: "send", n };
 }
 
 // ---------------------------------------------------------------------------
-// 5. err-chrome -- three failure queues squeeze the window from outside
+// 5. err-chrome -- the failure queues push in, on a strict grid
+//
+// Last pass these were cards of three different sizes with text falling out of them.
+// They are now one card size on a 3x3 grid, and the squeeze is the grid losing its
+// gaps, which is what a queue closing in actually looks like.
 // ---------------------------------------------------------------------------
 function errChrome(ctx, t, s) {
   const u = t - s.at;
   room(ctx, t, { focus: [960, 520], lift: 0.18 });
-  backFigure(ctx, t, 960, 560, 454, 0.22);
+  backFigure(ctx, t, 960, 560, 454, 0.2);
 
   const squeeze = easeOut(at(u, 0.05, 2.6));
-  const inset = 26 * squeeze;
-  const R = { x: CLIENT_R.x + inset, y: CLIENT_R.y + inset, w: CLIENT_R.w - inset * 2, h: CLIENT_R.h - inset * 2 };
-  threadSheet(ctx, t, SHEET, { composer: false, sideSlide: 120 * squeeze, rows: [INHERITED_ROWS[0]] });
+  const inset = 20 * squeeze;
+  const R = { x: SHEET.x + inset, y: SHEET.y + inset, w: SHEET.w - inset * 2, h: SHEET.h - inset * 2 };
+  threadSheet(ctx, t, R, { composer: false, sideSlide: 120 * squeeze, ink: 0.4, rows: [INHERITED_ROWS[0]] });
 
+  const CARD = { w: 380, h: 104 };
+  const GAP = 24 - 12 * squeeze;
+  const COLS = 3;
+  const gridW = COLS * CARD.w + (COLS - 1) * GAP;
+  const x0 = 960 - gridW / 2;
+  const y0 = SHEET.y + 150;
   const cards = [
-    ["cannot write their reply", "one author"],
-    ["not yours to set", "passed a person"],
-    ["they are still gone", ""],
-    ["reply is overdue", "00:00:12"],
-    ["nothing left to answer", ""],
-    ["no switches for them", ""],
-    ["search returned nobody", ""],
-    ["one participant remaining", ""],
+    "cannot write their reply",
+    "not yours to set",
+    "they are still gone",
+    "reply is overdue",
+    "nothing left to answer",
+    "no switches for them",
+    "search returned nobody",
+    "one participant remaining",
+    "the answer has not changed",
   ];
-  const pos = [
-    [SHEET.x - 80, 250], [SHEET.x - 80, 390], [SHEET.x - 80, 530],
-    [SHEET.x + SHEET.w - 240, 250], [SHEET.x + SHEET.w - 240, 400], [SHEET.x + SHEET.w - 240, 550],
-    [SHEET.x + 120, 136], [SHEET.x + 540, 116],
-  ];
-  const pile = easeOut(at(u, 0.4, 2.2));
-  cards.forEach((c, i) => {
-    const delay = 0.06 * i;
-    const k = easeOut(at(u, 0.4 + delay, 1.0 + delay));
+  const codes = ["4d2c", "8f2c", "1a09", "00:00:12", "", "—", "0 results", "1 / 2", "unchanged"];
+
+  cards.forEach((text, i) => {
+    const col = i % COLS;
+    const row = Math.floor(i / COLS);
+    const k = easeOut(at(u, 0.35 + i * 0.06, 0.85 + i * 0.06));
     if (k <= 0.01) return;
-    const [tx, ty] = pos[i];
-    const inward = (i < 3 ? 1 : i < 6 ? -1 : 0) * (20 + 26 * squeeze);
-    const x = tx + inward;
-    const y = ty + 40;
-    errCard(ctx, x, y, 300, 74, {
-      lines: c.slice(0, 1),
-      code: c[1] ?? "",
-      red: 0.5 + 0.5 * pile,
+    const x = x0 + col * (CARD.w + GAP);
+    const y = y0 + row * (CARD.h + GAP);
+    errCard(ctx, x, y, CARD.w, CARD.h, {
+      lines: [text],
+      code: codes[i] ? `E_${codes[i]}` : "",
+      red: 0.45 + 0.55 * squeeze,
       alpha: k,
     });
   });
 
-  const steps = Math.round(squeeze * 6);
-  layer(ctx, 0.9, () => {
-    ctx.strokeStyle = "rgba(231,93,105,0.5)";
-    ctx.lineWidth = 2;
+  // the chrome, four rules inset by the squeeze: the window is being pressed in
+  layer(ctx, 0.6, () => {
+    ctx.strokeStyle = "rgba(231,93,105,0.35)";
+    ctx.lineWidth = 1.6;
+    const s = 8 + squeeze * 26;
     ctx.beginPath();
-    const sInset = 8 + steps * 9;
-    const x0 = CLIENT_R.x + sInset;
-    const x1 = CLIENT_R.x + CLIENT_R.w - sInset;
-    const y0 = CLIENT_R.y + sInset;
-    const y1 = CLIENT_R.y + CLIENT_R.h - sInset;
-    const step = 34;
-    ctx.moveTo(x0 + step, y0);
-    ctx.lineTo(x1 - step, y0);
-    ctx.lineTo(x1 - step, y0 + step * 0.4);
-    ctx.lineTo(x1, y0 + step * 0.4);
-    ctx.lineTo(x1, y1 - step);
-    ctx.lineTo(x1 - step * 0.4, y1 - step);
-    ctx.lineTo(x1 - step * 0.4, y1);
-    ctx.lineTo(x0 + step, y1);
-    ctx.lineTo(x0 + step, y1 - step * 0.4);
-    ctx.lineTo(x0, y1 - step * 0.4);
-    ctx.lineTo(x0, y0 + step);
-    ctx.lineTo(x0 + step * 0.5, y0 + step);
+    ctx.rect(SHEET.x + s, SHEET.y + s, SHEET.w - s * 2, SHEET.h - s * 2);
     ctx.stroke();
   });
 
-  mono(ctx, `queues · ${Math.min(8, Math.round(8 * Math.min(1, pile * 1.4)))} pending`, CLIENT_R.x, CLIENT_R.y - 22, 13, "rgba(231,93,105,0.8)");
+  mono(ctx, `QUEUES · ${Math.min(9, Math.round(9 * Math.min(1, squeeze * 1.5)))} PENDING`, SHEET.x, SHEET.y - 26, 20, "rgba(231,93,105,0.9)");
+  mono(ctx, "the failure queues close in from outside", SHEET.x + 360, SHEET.y - 26, 15, "rgba(150,176,201,0.8)");
   footerStrip(ctx, t, { alpha: 0.5 });
   return { phase: "chrome", squeeze: Number(squeeze.toFixed(2)) };
 }
@@ -627,10 +663,10 @@ function errDrawer(ctx, t, s) {
 // ---------------------------------------------------------------------------
 function errForge(ctx, t, s) {
   const u = t - s.at;
-  const R = CLIENT_R;
   room(ctx, t, { focus: [1180, 520], lift: 0.32 });
-  backFigure(ctx, t, 1500, 470, 380, 0.3);
-  const win = threadSheet(ctx, t, SHEET, { rows: INHERITED_ROWS });
+  backFigure(ctx, t, 1540, 470, 380, 0.26);
+  // no placeholder: this composer holds her forged line, drawn below by hand
+  const win = threadSheet(ctx, t, SHEET, { rows: INHERITED_ROWS, suppressPlaceholder: true, ink: 0.85 });
 
   const target = "you have made some illegal arguments";
   const n = Math.ceil(target.length * easeOut(at(u, 0.1, 1.2)));
@@ -644,29 +680,29 @@ function errForge(ctx, t, s) {
     })
     .join("");
 
-  const tx = win.cb.x + 34;
-  const ty = win.cb.y + win.cb.h / 2 + 8;
+  const tx = win.cb.x + 38;
+  const ty = win.cb.y + win.cb.h / 2 + 9;
   layer(ctx, 1, () => {
     ctx.save();
-    ctx.globalAlpha *= 0.5;
-    type(ctx, shown, tx + 3, ty + 2, 21, "rgba(231,93,105,0.7)", "MV Mono");
+    ctx.globalAlpha *= 0.55;
+    type(ctx, shown, tx + 4, ty + 3, 26, "rgba(231,93,105,0.75)", "MV Mono");
     ctx.restore();
-    type(ctx, shown, tx, ty, 21, "#cfdcea", "MV Mono");
+    type(ctx, shown, tx, ty, 26, "#cfdcea", "MV Mono");
     if (Math.sin(t * 6) > -0.2) {
       ctx.fillStyle = RED;
-      ctx.fillRect(tx + 6 + shown.length * 12.6, ty - 16, 2.4, 20);
+      ctx.fillRect(tx + 8 + shown.length * 15.6, ty - 22, 3, 28);
     }
   });
 
-  const cardK = easeOut(at(u, 0.5, 0.9));
-  errCard(ctx, R.x + R.w - 420, R.y + 150, 380, 96, {
+  const cardK = easeOut(at(u, 0.45, 0.85));
+  errCard(ctx, SHEET.x + SHEET.w - 520, SHEET.y + 250, 470, 116, {
     lines: ["cannot write their reply"],
     code: "one author · not you",
     tag: "refused",
     alpha: cardK * 0.98,
-    red: 0.8,
+    red: 0.85,
   });
-  mono(ctx, "writing for someone else is not a permission", R.x + 300, R.y + 300, 13, "rgba(231,93,105,0.7)");
+  mono(ctx, "writing for someone else is not a permission", SHEET.x + 60, SHEET.y + 388, 16, "rgba(231,93,105,0.8)");
 
   footerStrip(ctx, t, { alpha: 0.55 });
   return { phase: "forge", typed: n };
@@ -674,42 +710,50 @@ function errForge(ctx, t, s) {
 
 // ---------------------------------------------------------------------------
 // 8. err-window -- back to the empty thread, and only this side is retrying
+//
+// The queue is the plot here: it has to be the largest thing on the sheet after the
+// window title, so it is a panel with 40px numerals, not three small pills.
 // ---------------------------------------------------------------------------
 function errWindow(ctx, t, s) {
   const u = t - s.at;
   const R = CLIENT_R;
   room(ctx, t, { focus: [1180, 520], lift: 0.4 });
-  backFigure(ctx, t, 1520, 470, 324, 0.28);
-  const win = threadSheet(ctx, t, SHEET, { rows: INHERITED_ROWS });
+  backFigure(ctx, t, 1560, 470, 324, 0.26);
+  const win = threadSheet(ctx, t, SHEET, { rows: INHERITED_ROWS, ink: 0.85 });
 
-  const qx = SHEET.x + SHEET.w - 470;
-  const qy = SHEET.y + 300;
-  mono(ctx, "retry queue · local only", qx, qy - 20, 13, "rgba(150,176,201,0.85)");
+  const P = { x: SHEET.x + SHEET.w - 620, y: SHEET.y + 210, w: 560, h: 300 };
+  mono(ctx, "RETRY QUEUE · LOCAL ONLY", P.x, P.y - 22, 22, "rgba(231,93,105,0.9)");
+  mono(ctx, "nothing leaves this side of the thread", P.x, P.y + 2, 15, "rgba(150,176,201,0.8)");
   for (let i = 0; i < 3; i++) {
     const k = easeOut(at(u, 0.1 + i * 0.12, 0.4 + i * 0.12));
     if (k <= 0.01) continue;
     const secs = Math.max(0, Math.round(12 - ((u * 2.2 + i * 1.6) % 14)));
+    const ry = P.y + 34 + i * 74;
     layer(ctx, k, () => {
-      rect(ctx, qx, qy + i * 46, 330, 34, "rgba(8,20,31,0.9)", 8, "rgba(120,150,180,0.5)");
-      mono(ctx, `retry in ${String(secs).padStart(2, "0")}`, qx + 16, qy + i * 46 + 22, 14, "rgba(190,208,224,0.95)");
-      const w = 330 * ((12 - secs) / 12);
-      ctx.fillStyle = RED_GHOST;
-      ctx.fillRect(qx + 1, qy + i * 46 + 31, Math.max(0, w - 2), 2);
+      rect(ctx, P.x, ry, P.w, 62, "rgba(8,20,31,0.92)", 8, "rgba(120,150,180,0.6)");
+      mono(ctx, "retry in", P.x + 22, ry + 40, 17, "rgba(150,176,201,0.85)");
+      type(ctx, String(secs).padStart(2, "0"), P.x + P.w - 130, ry + 50, 40, "#dfe9f4", "MV Mono");
+      mono(ctx, "s", P.x + P.w - 96, ry + 40, 18, "rgba(190,208,224,0.9)");
+      const w = (P.w - 24) * ((12 - secs) / 12);
+      ctx.fillStyle = "rgba(231,93,105,0.35)";
+      ctx.fillRect(P.x + 12, ry + 54, Math.max(0, w), 3);
     });
   }
 
-  pendingDots(ctx, R.x + 380, R.y + 420, t, 1);
+  pendingDots(ctx, SHEET.x + 380, SHEET.y + 470, t, 1);
 
-  const bx = win.cb.x + win.cb.w - 62;
+  const bx = win.cb.x + win.cb.w - 72;
   const by = win.cb.y + win.cb.h / 2;
-  port(ctx, bx, by, 17, easeOut(at(u, 0.2, 1.4)), RED);
-  mono(ctx, "SEND → PORT", bx - 150, by + 4, 12, "rgba(231,93,105,0.85)");
-  mono(ctx, "无伪造用户输入 · 仅本端排队", R.x + 300, R.y + R.h - 40, 12, "rgba(150,176,201,0.7)");
+  layer(ctx, 1, () => {
+    disc(ctx, bx, by, 30, "rgba(8,20,31,0.9)", 0.9);
+    port(ctx, bx, by, 26, easeOut(at(u, 0.2, 1.4)), RED);
+    mono(ctx, "SEND → PORT", bx - 110, by + 58, 17, "rgba(231,93,105,0.9)");
+  });
+  mono(ctx, "无伪造用户输入 · 仅本端排队", SHEET.x + 380, SHEET.y + SHEET.h + 26, 15, "rgba(150,176,201,0.75)");
 
   footerStrip(ctx, t, { alpha: 0.6 });
   return { phase: "window" };
 }
-
 // ---------------------------------------------------------------------------
 // 9. err-breath -- one red pip, one breath, then EXECUTION
 // ---------------------------------------------------------------------------
