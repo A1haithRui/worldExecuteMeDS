@@ -37,7 +37,7 @@ import { lineStart } from "./lines.js";
 const RED = "#e75d69";
 // The thread sits a little lower than section 8 left it, so the lyric caption has a
 // band of its own above the window instead of sitting on its title.
-const SHEET = Object.freeze({ x: 120, y: 150, w: 1660, h: 826 });
+const SHEET = Object.freeze({ x: 250, y: 176, w: 1300, h: 800 });
 const RED_TAG = "rgba(231,93,105,0.12)";
 const RED_GHOST = "rgba(231,93,105,0.22)";
 
@@ -70,7 +70,7 @@ function threadSheet(ctx, t, R, o = {}) {
     ink = 1,
     sendColour = BRAND_SOFT,
   } = o;
-  const sideW = 330;
+  const sideW = 0;
   const slide = Math.max(0, sideSlide);
   const mx = R.x + Math.max(0, sideW - slide);
   const mw = R.w - Math.max(0, sideW - slide);
@@ -105,49 +105,49 @@ function threadSheet(ctx, t, R, o = {}) {
     }
 
     // header
-    type(ctx, title, mx + 44, R.y + 64, 25, "#dfe9f4", "MV Sans");
-    const cw = 16 + chipText.length * 9 + 36;
+    type(ctx, title, mx + 52, R.y + 74, 32, "#dfe9f4", "MV Sans");
+    const cw = 20 + chipText.length * 11 + 40;
     rect(ctx, R.x + R.w - cw - 36, R.y + 28, cw, 38, "rgba(16,40,56,0.95)", 19, "rgba(120,150,180,0.6)");
     disc(ctx, R.x + R.w - cw - 16, R.y + 47, 5, "rgba(160,186,210,0.7)", 1);
-    mono(ctx, chipText, R.x + R.w - cw - 2, R.y + 54, 13, "rgba(160,186,210,0.9)");
+    mono(ctx, chipText, R.x + R.w - cw - 4, R.y + 60, 15, "rgba(160,186,210,0.9)");
     stroke(ctx, [[mx, R.y + 92], [R.x + R.w, R.y + 92]], "rgba(61,122,156,0.5)", 1.2);
 
     // rows
     rows.forEach((r, i) => {
-      const y = R.y + 160 + i * 84;
-      mono(ctx, r.who ?? "me", mx + 44, y - 18, 11, "rgba(120,146,170,0.65)");
-      type(ctx, r.text, mx + 44, y + 12, 24, `rgba(206,220,234,${r.alpha ?? 0.9})`, "MV Sans");
-      if (r.time) mono(ctx, r.time, mx + 44, y + 38, 11, "rgba(120,146,170,0.55)");
+      const y = R.y + 186 + i * 104;
+      mono(ctx, r.who ?? "me", mx + 52, y - 22, 13, "rgba(120,146,170,0.65)");
+      type(ctx, r.text, mx + 52, y + 16, 32, `rgba(206,220,234,${r.alpha ?? 0.9})`, "MV Sans");
+      if (r.time) mono(ctx, r.time, mx + 52, y + 48, 13, "rgba(120,146,170,0.55)");
     });
 
     // composer
     if (composer) {
-      cb = { x: mx + 42, y: R.y + R.h - 158, w: mw - 84, h: 118 };
+      cb = { x: mx + 50, y: R.y + R.h - 176, w: mw - 100, h: 136 };
       rect(ctx, cb.x, cb.y, cb.w, cb.h, "rgba(10,26,40,0.95)", 14, "rgba(61,122,156,0.65)");
       const baseY = cb.y + cb.h / 2 + 7;
       if (!composerText) {
-        type(ctx, placeholder, cb.x + 34, baseY, 21, "rgba(120,146,170,0.7)", "MV Sans");
+        type(ctx, placeholder, cb.x + 38, baseY, 26, "rgba(120,146,170,0.7)", "MV Sans");
       } else {
-        type(ctx, composerText, cb.x + 34, baseY, 21, "#cfdcea", "MV Mono");
+        type(ctx, composerText, cb.x + 38, baseY, 26, "#cfdcea", "MV Mono");
         if (caret) {
-          ctx.font = '400 21px "MV Mono"';
+          ctx.font = '400 26px "MV Mono"';
           if (Math.sin(t * 6.2) > -0.4) {
             ctx.fillStyle = sendColour;
-            ctx.fillRect(cb.x + 36 + ctx.measureText(composerText).width, baseY - 16, 2.2, 20);
+            ctx.fillRect(cb.x + 40 + ctx.measureText(composerText).width, baseY - 20, 2.6, 24);
           }
         }
       }
-      const bx = cb.x + cb.w - 62;
+      const bx = cb.x + cb.w - 72;
       const by = cb.y + cb.h / 2;
-      disc(ctx, bx, by, 21, sendColour, 0.42 + 0.3 * sendK, false, 1.8);
+      disc(ctx, bx, by, 26, sendColour, 0.42 + 0.3 * sendK, false, 2.1);
       if (sendMode === "armed" || sendK > 0.02) {
         ctx.save();
         ctx.globalAlpha *= sendMode === "armed" ? 1 : sendK;
         ctx.fillStyle = sendColour;
         ctx.beginPath();
-        ctx.moveTo(bx, by - 9);
-        ctx.lineTo(bx + 7.5, by + 3.5);
-        ctx.lineTo(bx - 7.5, by + 3.5);
+        ctx.moveTo(bx, by - 11);
+        ctx.lineTo(bx + 9, by + 4.5);
+        ctx.lineTo(bx - 9, by + 4.5);
         ctx.closePath();
         ctx.fill();
         ctx.restore();
@@ -183,15 +183,15 @@ function errCard(ctx, x, y, w, h, o = {}) {
       ctx.lineTo(x + w - 10, y + 20);
       ctx.stroke();
     }
-    if (head) type(ctx, head, x + 20, y + 30, 13, "rgba(150,176,201,0.92)", "MV Mono");
+    if (head) type(ctx, head, x + 24, y + 34, 16, "rgba(150,176,201,0.92)", "MV Mono");
     lines.forEach((ln, i) => {
-      type(ctx, ln, x + 20, y + 58 + i * 26, 17, "#cfdcea", "MV Mono");
+      type(ctx, ln, x + 24, y + 66 + i * 32, 22, "#cfdcea", "MV Mono");
     });
-    if (code) type(ctx, code, x + 20, y + h - 12, 11, "rgba(120,146,170,0.8)", "MV Mono");
+    if (code) type(ctx, code, x + 24, y + h - 14, 13, "rgba(120,146,170,0.8)", "MV Mono");
     if (tag) {
-      const tw = 16 + tag.length * 9;
-      rect(ctx, x + w - tw - 14, y + 14, tw, 24, RED_TAG, 12, "rgba(231,93,105,0.65)");
-      type(ctx, tag, x + w - tw / 2 - 14, y + 31, 12, RED, "MV Mono", "center");
+      const tw = 20 + tag.length * 11;
+      rect(ctx, x + w - tw - 16, y + 16, tw, 28, RED_TAG, 14, "rgba(231,93,105,0.65)");
+      type(ctx, tag, x + w - tw / 2 - 16, y + 36, 14, RED, "MV Mono", "center");
     }
   });
 }
@@ -200,9 +200,9 @@ function errCard(ctx, x, y, w, h, o = {}) {
 function refusedTag(ctx, x, y, k, text = "refused", alpha = 1) {
   if (k <= 0.01) return;
   layer(ctx, Math.min(1, k) * alpha, () => {
-    const w = 22 + text.length * 8.5;
-    rect(ctx, x - w / 2, y - 13, w, 26, "rgba(6,16,26,0.95)", 13, "rgba(231,93,105,0.7)");
-    type(ctx, text, x, y + 5, 13, RED, "MV Mono", "center");
+    const w = 26 + text.length * 10;
+    rect(ctx, x - w / 2, y - 15, w, 30, "rgba(6,16,26,0.95)", 15, "rgba(231,93,105,0.7)");
+    type(ctx, text, x, y + 6, 15, RED, "MV Mono", "center");
   });
 }
 
@@ -263,8 +263,8 @@ function errRequest(ctx, t, s) {
   // the request leaves the composer as a card and hits the window's edge
   const cue = Math.max(lineStart(83), s.at + 0.95);
   const fly = easeOut(at(t, cue, cue + 0.5));
-  const cardW = 520;
-  const cardH = 84;
+  const cardW = 620;
+  const cardH = 108;
   if (fly > 0.01) {
     const fromX = win.cb.x + win.cb.w * 0.5 - cardW / 2;
     const fromY = win.cb.y - cardH - 40;
@@ -302,9 +302,9 @@ function errCheck(ctx, t, s) {
   const R = CLIENT_R;
   room(ctx, t, { focus: [1180, 520], lift: 0.35 });
   backFigure(ctx, t, 1520, 470, 324, 0.3);
-  threadSheet(ctx, t, SHEET, { composer: false, rows: INHERITED_ROWS });
+  threadSheet(ctx, t, SHEET, { composer: false, ink: 0.45, rows: INHERITED_ROWS });
 
-  const card = { x: SHEET.x + 300, y: SHEET.y + 90, w: 900, h: 420 };
+  const card = { x: SHEET.x + 110, y: SHEET.y + 130, w: 1060, h: 420 };
   const appear = easeOut(at(u, 0.02, 0.26));
   errCard(ctx, card.x, card.y, card.w, card.h, {
     head: "request · validating",
@@ -364,7 +364,7 @@ function errCheck(ctx, t, s) {
 function errFirst(ctx, t, s) {
   const u = t - s.at;
   room(ctx, t, { focus: [960, 520], lift: 0.2 });
-  threadSheet(ctx, t, SHEET, { composer: false, ink: 0.22, rows: [INHERITED_ROWS[0]] });
+  threadSheet(ctx, t, SHEET, { composer: false, ink: 0.12, rows: [INHERITED_ROWS[0]] });
 
   const G = { x: 300, y: 246, w: 1320, h: 470 };
   const N = [
@@ -383,7 +383,7 @@ function errFirst(ctx, t, s) {
       if (i === 3) port(ctx, x, y, 16, k, RED);
     });
   });
-  mono(ctx, "internal router · 6 nodes", G.x, G.y - 16, 13, "rgba(120,146,170,0.7)");
+  mono(ctx, "internal router · 6 nodes", G.x, G.y - 18, 15, "rgba(120,146,170,0.75)");
 
   const path = [
     { from: 0, to: 1, t0: 0.05, t1: 0.32 },
@@ -436,8 +436,8 @@ function errFirst(ctx, t, s) {
     layer(ctx, stamp, () => {
       const x = N[3][0] + 60;
       const y = N[3][1] + 70;
-      mono(ctx, "first fault · traced", x, y, 13, "rgba(231,93,105,0.9)");
-      mono(ctx, "t+00:01.42 · port 3", x, y + 20, 12, "rgba(150,176,201,0.8)");
+      mono(ctx, "first fault · traced", x, y, 16, "rgba(231,93,105,0.95)");
+      mono(ctx, "t+00:01.42 · port 3", x, y + 24, 14, "rgba(150,176,201,0.85)");
       redEdge(ctx, x, y + 30, x + 190, y + 30, stamp, 1.5);
     });
   }
@@ -486,8 +486,8 @@ function errSend(ctx, t, s) {
   const n = presses.filter((p) => u > p).length;
   if (n > 0) {
     layer(ctx, 1, () => {
-      type(ctx, `refused ×${n}`, R.x + 300, win.cb.y - 40, 34, RED, "MV Sans");
-      mono(ctx, "the key no longer sends · it only refuses", R.x + 300, win.cb.y - 12, 13, "rgba(150,176,201,0.85)");
+      type(ctx, `refused ×${n}`, SHEET.x + 90, win.cb.y - 54, 46, RED, "MV Sans");
+      mono(ctx, "the key no longer sends · it only refuses", SHEET.x + 90, win.cb.y - 20, 15, "rgba(150,176,201,0.85)");
     });
   }
 
@@ -519,7 +519,9 @@ function errChrome(ctx, t, s) {
     ["one participant remaining", ""],
   ];
   const pos = [
-    [26, 180], [26, 320], [26, 460], [1580, 180], [1580, 330], [1580, 480], [700, 30], [1060, 12],
+    [SHEET.x - 80, 250], [SHEET.x - 80, 390], [SHEET.x - 80, 530],
+    [SHEET.x + SHEET.w - 240, 250], [SHEET.x + SHEET.w - 240, 400], [SHEET.x + SHEET.w - 240, 550],
+    [SHEET.x + 120, 136], [SHEET.x + 540, 116],
   ];
   const pile = easeOut(at(u, 0.4, 2.2));
   cards.forEach((c, i) => {
@@ -579,7 +581,7 @@ function errDrawer(ctx, t, s) {
   threadSheet(ctx, t, SHEET, { composer: false, rows: [INHERITED_ROWS[0]] });
 
   const open = easeOut(at(u, 0.05, 0.42));
-  const W = 560;
+  const W = 620;
   const x = R.x + R.w - W * open;
   const y = R.y + 90;
   layer(ctx, 0.98, () => rect(ctx, x, y, W, 620, "rgba(7,19,29,0.98)", 16, "rgba(120,150,180,0.6)"));
@@ -598,8 +600,8 @@ function errDrawer(ctx, t, s) {
     const k = easeOut(at(u, 0.22 + i * 0.05, 0.5 + i * 0.05));
     if (k <= 0.01) return;
     layer(ctx, k, () => {
-      mono(ctx, r.name, x + 34, ry, 15, "rgba(190,208,224,0.95)");
-      mono(ctx, r.value, x + 34, ry + 24, 12, "rgba(120,146,170,0.85)");
+      mono(ctx, r.name, x + 38, ry, 18, "rgba(190,208,224,0.95)");
+      mono(ctx, r.value, x + 38, ry + 30, 14, "rgba(120,146,170,0.85)");
       const tryK = i === 0 || i === 2 ? at(t, cue + i * 0.22, cue + i * 0.22 + 0.16) : 0;
       const flip = Math.sin(tryK * Math.PI) * 0.8;
       const sx = x + W - 120;

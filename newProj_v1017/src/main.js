@@ -233,7 +233,16 @@ function lyricFor(t, shot, plan) {
   if (plan.embeddedLines && plan.embeddedLines.includes(idx)) return null;
   const start = Math.max(raw.start, shot.at);
   const end = Math.min(raw.end ?? raw.start + 3, shot.until);
-  return end > start ? { ...raw, start, end } : null;
+  if (!(end > start)) return null;
+  // A line that began before this shot keeps its ORIGINAL clock. Clamping it to the
+  // cut (which is what this used to do) restarts the entrance animation at every shot
+  // boundary that falls inside a line, and a line like "So we can enter" spans two
+  // shots, so the caption types itself out twice across the cut -- which reads as the
+  // singer repeating the phrase. The start is still clamped for VISIBILITY (the shot
+  // may not show the line before it owns it), but the animation phase runs on the true
+  // start, so a carried line is simply already there.
+  void start;
+  return { ...raw, start: raw.start, end, carried: raw.start < shot.at - 1e-6 };
 }
 
 function renderFrame(t) {
