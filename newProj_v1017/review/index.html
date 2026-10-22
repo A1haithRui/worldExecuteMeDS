@@ -35,8 +35,8 @@
 </head>
 <body>
 <main>
-  <h1>审查入口 <span>·</span> 第 9 段 故障（歌曲 125.62 – 148.01 秒）</h1>
-  <div class="sub">newProj_v1017 · 87 镜中已实现 60 镜（第 0–9 段） · 本轮新增：<a href="#s09">第 9 段 故障</a>（第 ⑥ 节） · 需要你判断的是"第一次出现的红色，力度够不够"</div>
+  <h1>审查入口 <span>·</span> 第 10 段 EXECUTION（歌曲 148.01 – 159.08 秒）</h1>
+  <div class="sub">newProj_v1017 · 87 镜中已实现 64 镜（第 0–10 段） · 本轮新增：<a href="#s10">第 10 段 EXECUTION</a>（第 ⑥ 节） · 需要你判断的是"整屏红有没有到、眼图出不出来"</div>
 
   <h2>① 第 0 段：片头闪光警告页（新增，5 秒）</h2>
   <video controls preload="metadata" src="00-preroll-AB.mp4" poster="poster-preroll.jpg"></video>
@@ -124,7 +124,33 @@
   <div class="ask" style="border-left-color:#7f93ff">
     <b>顺手做的两件工程事。</b>一是把客户端窗口和人物抽成共享模块（<code>ui-client.js</code> / <code>figure.js</code>）——这一段的四镜全都在第 1 段那张窗口里，两份拷贝必然漂移。二是修了歌词归属规则：<code>lines</code> 为空的镜头不再继承上一镜的歌词（L12 从 16.0 持续到 20.0，跨过了 16.93 的切点，旧规则会让下一镜用错位置再画一次）。
   </div>
-  <h2 id="s09">⑥ 第 9 段：故障（新增，22.4 秒，52→60 镜）</h2>
+  <h2 id="s10">⑥ 第 10 段：EXECUTION（新增，11.1 秒，60→64 镜）</h2>
+  <video controls preload="metadata" src="10-execution-AB.mp4" poster="poster-execution-ab.jpg"></video>
+  <div class="sub">左＝参考片（一段代码在循环、同一句 EXECUTION 一层层叠高，第 12 轮撕开）　右＝我们（同一台机器在打十二通重连电话：环、格子、端口、眼）</div>
+  <div class="row" style="margin-top:14px">
+    <div class="box"><h3>我们这一整段</h3><video controls preload="metadata" src="10-execution-ours.mp4" poster="poster-execution-ab.jpg"></video></div>
+    <div class="box"><h3>参考片同区间</h3><video controls preload="metadata" src="10-execution-reference.mp4"></video></div>
+  </div>
+  <img src="stills-10-execution.jpg" alt="第 10 段十二个时间点">
+  <div class="sub">148.15 红点变成第一格 · 149.05 第二次呼叫 · 150.99 第四次 · 151.97 第五次起失败格上第二圈 · 152.73 / 153.61 / 154.43 继续堆 · 155.65 第九次：轨道收、眼从中心孔里出现 · 156.53 / 157.49 第十、十一次 · 158.45 第十二次：红从端口边缘铺开 · 158.98 整屏红</div>
+
+  <div class="ask" style="border-left-color:#e75d69">
+    <b>这一段为什么可以整屏红。</b>因为这是全片第一次"机器真的开始执行"——前面所有的拒绝、报错、重连失败，到这里变成一台机器自己不停按同一个呼叫键。红色在前一段代表"系统不肯做的事"，只画在边界上；这一段它变成了<b>机器本身过载发的光</b>，所以允许铺满。
+    <br>但它不是"突然换一支片子"。第一帧仍然是边界红：上一段结尾那个在黑暗里呼吸的红点，就是这一段的第一格刻度。然后红用四个镜头慢慢长大：
+    <br>① <b>前四次（061）</b>：每次呼叫沿环前进一格，格子亮、返回路径是空的；红只有格子外侧一条 2px 的短边。
+    <br>② <b>第五到八次（062）</b>：失败开始堆到第二圈，青色路径越铺越长，红仍然只是每格一条短边。
+    <br>③ <b>第九到十一次（063）</b>：整圈轨道向内收，中心端口打开，眼只从圆孔里出现；红只加在圆孔边缘。
+    <br>④ <b>第十二次（064）</b>：端口关到底，红从端口边缘向外铺满整屏。它推进的是<b>红的面积</b>，不是红的亮度，所以不会闪；眼睛一直完整，只是被红盖住，没有撕裂、没有眨眼。
+    <br><span class="sub">另外，歌词这十二声都印在画面底部，并且一声比一声大（84 → 96 → 108 → 124px）。它也是"力度递增"的一部分，不是字幕。</span>
+  </div>
+
+  <div class="ask" style="border-left-color:#83e9e6">
+    <b>和参考片哪里不一样。</b>参考片这一段是"代码在循环"：同一段程序、同一句 EXECUTION 越叠越高，第 9 轮台阶冲出画框、开始每轮撕一次，第 12 轮那个词大到装不下、当场撕成两半、轮次计数溢出。它靠的是<b>字的体积和撕裂</b>。
+    <br>我们不能照抄：那套暖光摄影、纸张和墨水的质感我们接不住，而且分镜表已经把这一段定成"十二格声呐重连轨道 + 眼"。所以我们只学它"一轮比一轮加力"的结构——每唱一次多亮一格、第 9 次开始收轨、第 12 次封口——画面语言换成我们自己的：格子、端口、刻度、印刷页。参考片的撕裂我们一次都没用，眼睛也没有被撕或眨。
+    <br><span class="sub">还需要你判断两件事：① 最后这一下"整屏红"够不够狠、够不够"机器过载"；② 眼睛从第 9 次开始露出来，位置和大小对不对。</span>
+  </div>
+
+  <h2 id="s09">⑦ 第 9 段：故障（新增，22.4 秒，52→60 镜）</h2>
   <video controls preload="metadata" src="09-fault-AB.mp4" poster="poster-fault-ab.jpg"></video>
   <div class="sub">左＝参考片（品红错误卡、堆成墙）　右＝我们（同一条空线程 + 红色只出现在边界上）</div>
   <div class="row" style="margin-top:14px">
@@ -160,7 +186,7 @@
     <br>另外这一段<b>和前一段的出口是接上的</b>：空线程、两条旧消息、离线的 chip、底部的输入框，都还是第 8 段留下的那一个，没有换场景。
   </div>
 
-  <h2 id="s08">⑦ 第 8 段：副歌二到空线程（新增，22 秒，40→51 镜）</h2>
+  <h2 id="s08">⑧ 第 8 段：副歌二到空线程（新增，22 秒，40→51 镜）</h2>
   <video controls preload="metadata" src="08-alone-AB.mp4" poster="poster-alone-ab.jpg"></video>
   <div class="sub">左＝参考片（暖橙、米白）　右＝我们（蓝一路褪到钢灰——这一段就是颜色离开的一段）</div>
   <div class="row" style="margin-top:14px">
@@ -196,7 +222,7 @@
     <br>③ 参考片的"颜色先离开头发"我们改成了<b>整体褪色 + 她本人被一层灰色按自己的形状洗过</b>：逐帧只褪头发需要一张头发遮罩，我们没有；宁可整体干净，也不要一条横在她胸口的接缝。
   </div>
 
-  <h2>⑧ 第 7 段：设定改的是她本人（新增，14.8 秒）</h2>
+  <h2>⑨ 第 7 段：设定改的是她本人（新增，14.8 秒）</h2>
   <video controls preload="metadata" src="07-identity-AB.mp4" poster="poster-identity-ab.jpg"></video>
   <div class="sub">左＝参考片　右＝我们</div>
   <div class="row" style="margin-top:14px">
@@ -217,7 +243,7 @@
   <div class="ask" style="border-left-color:#e0a06a">
     <b>新素材已经接进来了。</b>男版和猫娘版是按 <code>docs/character-prompts-v1.md</code> 生成的（提示词里要的是<b>洋红底</b>，不是红底——因为我们的三色里没有洋红，切图最干净，也不会吃掉她的白衣服）。我这边做了三步：<b>抠底</b>（含去洋红边）→ <b>压回我们的三色</b>（#041220 / #00B4E6 / #F2F7FA）→ <b>按女版的内容框配准</b>（同画布 1342×1704、头顶 128、下巴线 1566），所以三张版可以原位叠加。处理脚本在 <code>tools/process-character-raw.py</code>，原始图和候选都在 <code>assets/character/raw/</code>（没入库）。
   </div>
-  <h2>⑨ 第 6 段：三个名词三张版画，一张校样（新增，14.8 秒）</h2>
+  <h2>⑩ 第 6 段：三个名词三张版画，一张校样（新增，14.8 秒）</h2>
   <video controls preload="metadata" src="06-plates-AB.mp4" poster="poster-plates-ab.jpg"></video>
   <div class="sub">左＝参考片　右＝我们</div>
   <div class="row" style="margin-top:14px">
@@ -248,7 +274,7 @@
     （原先想在脸的洞里睁一只眼，但那只眼在刘海下怎么摆都别扭，按你的意见改成了这个落点。）
     <br>素材处理：`tools/process-character-raw.py` 里新增了 god 一档，顺手导出一张"去掉白墨"的版本（`deepseek_god_navy.png`），两版天然严丝合缝。
   </div>
-  <h2>⑩ 第 5 段：对话与四张版画（新增，14.8 秒）</h2>
+  <h2>⑪ 第 5 段：对话与四张版画（新增，14.8 秒）</h2>
   <video controls preload="metadata" src="05-chorus1-AB.mp4" poster="poster-chorus1-ab.jpg"></video>
   <div class="sub">左＝参考片（橙 + 米白）　右＝我们（蓝 + 青）</div>
   <div class="row" style="margin-top:14px">
@@ -272,7 +298,7 @@
     <br><b>四张版画</b>：① 电弧从她的火花横穿纸面打到你的点；② 回答下面那个按钮放大到占满画面，按下、环跑满、计数变 1；③ 一段七行的程序——因为你在，循环体从未进入，指针直接跳到倒数第二行；④ 这扇窗口本身被做成一个盒子，第二个重拍拉开，它是满墙相同窗口中的一个。
     <br><span class="sub">版画用深色纸而不是浅色纸：全片已经在片名处有一次大面积白闪，安全网关是为那一次存在的，15 秒里再塞四次满幅亮切会变成第二个未登记的闪光事件。区分它们靠的是"版画的语域"——平纸、套色边框、纯色剪影，没有窗口装饰。</span>
   </div>
-  <h2>⑪ 第 4 段：设定被切换（新增，14.8 秒）</h2>
+  <h2>⑫ 第 4 段：设定被切换（新增，14.8 秒）</h2>
   <video controls preload="metadata" src="04-settings-AB.mp4" poster="poster-settings-ab.jpg"></video>
   <div class="sub">左＝参考片（设置抽屉，暖橙）　右＝我们（同一个抽屉，蓝 + 青）</div>
   <div class="row" style="margin-top:14px">
@@ -314,7 +340,7 @@
   <div class="ask" style="border-left-color:#e0a06a">
     <b>参考片的哪几件事我照搬了。</b>设置抽屉的形式、当前值的双态开关、拖动日期穿越历史、以及"关掉视觉＝画面碎块、只有字清晰"这三件，是它这一段最好的设计，我按我们的两色系统重做了一遍。字号、间距、开关样式都按我们的客户端重建，不是贴图。
   </div>
-  <h2>⑫ 第 3 段：用数学回答（新增，15.2 秒）</h2>
+  <h2>⑬ 第 3 段：用数学回答（新增，15.2 秒）</h2>
   <video controls preload="metadata" src="03-geometry-AB.mp4" poster="poster-geometry-ab.jpg"></video>
   <div class="sub">左＝参考片（暖橙 + 米白，答案画在聊天窗里）　右＝我们（蓝 + 青，同一套做法）</div>
   <div class="row" style="margin-top:14px">
@@ -361,7 +387,7 @@
   <div class="ask" style="border-left-color:#7f93ff">
     <b>两处衔接。</b>一是这一段承接第 2 段末尾"坠入标志"——第一镜的相机从标志里<b>拉回来</b>（3.6→1.0），所以那个切点是连续的运镜，不是重新开始。二是会话标题从 <code>New chat</code> 变成 <code>me, as geometry</code>——她给自己的答案起了个名字。
   </div>
-  <h2>⑬ 这一版按你的意见改了什么</h2>
+  <h2>⑭ 这一版按你的意见改了什么</h2>
 
   <div class="ask">
     <b>1. 术语：<code>world model</code> → <code>harness</code>。</b>启动页、标题栏、人格卡三处统一成 <code>deepseek / harness</code>。<br>
@@ -388,7 +414,7 @@
     <span class="sub">人物不透明度 <b>48%</b>、高度 1180px，填满画面右侧并出血；另外输入框会把这一句歌词<b>逐字打出来</b>（22 字/秒，正好在该句唱完时打完），空会话的提示语随输入淡出，发送按钮随之亮起。</span>
   </div>
 
-  <h2>⑭ 还想请你确认三件小事</h2>
+  <h2>⑮ 还想请你确认三件小事</h2>
 
   <div class="ask">
     <b>A. 终端行的文案。</b>现在是 <code>❯ dsh --boot</code> + <code>terminal ready</code>。<br>
@@ -404,7 +430,7 @@
     <b>C. 最后一镜的人物。</b>现在 24%。<br>
     <span class="sub">够不够"存在感"？再亮一点会更明显，但也会削弱"没点亮"的感觉。</span>
   </div>
-  <h2>⑮ 逐镜剪辑（想单独看某一镜时用）</h2>
+  <h2>⑯ 逐镜剪辑（想单独看某一镜时用）</h2>
   <table>
     <tr><th>镜头</th><th>歌曲时间</th><th>这一镜在讲什么</th><th>剪辑</th></tr>
     <tr><td><code>boot-power</code></td><td>0.00–4.00</td><td>电源接通，鲸鱼标志亮起，防护层扫过</td><td><a href="../shots/002_boot-power.mp4">002_boot-power.mp4</a></td></tr>
@@ -421,14 +447,14 @@
     <tr><td><code>v1-limit</code></td><td>40.70–44.62</td><td>曲线趋近无穷，按下停止处就是极限</td><td><a href="../shots/013_v1-limit.mp4">013_v1-limit.mp4</a></td></tr>
   </table>
 
-  <h2>⑯ 想自己翻着看</h2>
+  <h2>⑰ 想自己翻着看</h2>
   <ul>
     <li><a href="../compareResult/index.html">对比页</a>：87 个镜头槽，左右同轴播放，逐镜对比，可搜可筛。（双击打开，不需要开服务）</li>
     <li><a href="../index.html">预览页</a>：全片时间轴，目前只有这一节能播，其余镜显示 "NOT RENDERED YET"。（需要先 <code>node server.mjs</code>）</li>
     <li><a href="../STORYBOARD.md">分镜表</a>：87 镜的时间、歌词行、叙事时刻、转场。</li>
   </ul>
 
-  <h2>⑰ 这一节的状态</h2>
+  <h2>⑱ 这一节的状态</h2>
   <table>
     <tr><th>项目</th><th>状态</th></tr>
     <tr><td>四镜画面</td><td class="ok">已实现并导出（720p30，带声音）</td></tr>
@@ -444,7 +470,7 @@
     <code>review/</code> 下的文件随每次出片更新。
   </p>
 </main>
-  <h2>⑱ 色彩状态：颜色是"世界开始运行"那一刻才出现的</h2>
+  <h2>⑲ 色彩状态：颜色是"世界开始运行"那一刻才出现的</h2>
   <img src="stills-colour-state.jpg" alt="色彩状态对照：无彩 → 点火 → 全彩">
   <div class="sub">t=3.5 / 10.6 / 14.9 无彩　·　t=15.6 点火中　·　t=16.5 点火完成　·　t=19.2 聊天世界全彩</div>
 
@@ -468,7 +494,7 @@
   <div class="ask" style="border-left-color:#7f93ff">
     <b>一处我们和参考片有意不同。</b>参考片在点火之后<b>又退回了接近中性</b>（10.8 → 4.0 → 1.9），也就是说它全片其实是"大面积灰 + 一处暖色峰值"。我们是<b>颜色来了就留下</b>（13.6 → 19），因为品牌蓝是这个片子的身份。两种读法都成立："闪一下又收回去"更像一次事件，"亮起来就一直是亮的"更像一个世界被打开。如果你想要前者，把第 2 段之后的 sat 压到 0.4 左右即可。
   </div>
-  <h2>⑱ 跨段检查：第 0–2 段放在一起</h2>
+  <h2>⑳ 跨段检查：第 0–2 段放在一起</h2>
   <img src="stills-00-02-cross.jpg" alt="第 0 至 2 段横切：12 个时间点">
   <div class="sub">第一行 t=−3.0（警告页）/ 1.2（启动）/ 3.5（PROTECTION）/ 5.6（装配）　第二行 t=8.6 / 10.6（人格卡）/ 12.4 / 14.9（空会话）　第三行 t=15.3 / 16.6（片名）/ 19.2（会话打开）/ 25.9（提问）</div>
 

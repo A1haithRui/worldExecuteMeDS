@@ -193,6 +193,16 @@ export const LYRIC_BY_SHOT = Object.freeze({
   "err-window": { style: "embedded" },
   "err-breath": { style: "embedded" },
 
+  // ---- section 10: the machine shouts the same word twelve times -----------
+  // The word is the machine's output, so it is printed under the loop like the
+  // last line of a log, and it grows a size per shot as the call count rises.
+  // It is deliberately NOT a power line: power adds the blue glow of a keyword,
+  // and this section's energy is mechanical, not luminous.
+  "exec-01": { style: "display", size: 84, tracking: 0.14, align: "center", anchor: [960, 1006], maxWidth: 1500 },
+  "exec-05": { style: "display", size: 96, tracking: 0.14, align: "center", anchor: [960, 1006], maxWidth: 1500 },
+  "exec-09": { style: "display", size: 108, tracking: 0.14, align: "center", anchor: [960, 1006], maxWidth: 1500 },
+  "exec-12": { style: "display", size: 124, tracking: 0.14, align: "center", anchor: [960, 1006], maxWidth: 1500 },
+
 "c1-give": { style: "embedded" },
   "c1-kw1": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1500 },
   "c1-only": { style: "embedded" },
