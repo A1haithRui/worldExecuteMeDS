@@ -21,9 +21,18 @@ const INK = "#2b4a6b";
 
 export const PLATE = Object.freeze({ x: 96, y: 72, w: 1728, h: 936 });
 
-/** The sheet every plate is printed on, plus the ruled edge that frames it. */
+/**
+ * The sheet every plate is printed on, plus the ruled edge that frames it.
+ *
+ * `left` / `right` replace the two corner lines without moving anything: section 12
+ * reprints these sheets with a plate name of its own, and the plate has to stay the
+ * same plate, so the furniture prints in the same two places rather than being
+ * redrawn next to it.
+ */
 export function plateBase(ctx, t, opts = {}) {
-  const { alpha = 1 } = opts;
+  const { alpha = 1, left = null, right = null } = opts;
+  const leftLabel = left ?? "plate " + (opts.index ?? 1) + " / 4";
+  const rightLabel = right ?? "me, as geometry";
   layer(ctx, alpha, () => {
     ctx.fillStyle = SHEET;
     ctx.fillRect(0, 0, 1920, 1080);
@@ -50,8 +59,8 @@ export function plateBase(ctx, t, opts = {}) {
       INK, 1, 0.5,
     );
     // the sheet's own label, in the corner like a print number
-    type(ctx, "plate " + (opts.index ?? 1) + " / 4", PLATE.x + 30, PLATE.y + 44, 15, "rgba(139,164,194,0.75)", "MV Mono");
-    type(ctx, "me, as geometry", PLATE.x + PLATE.w - 30, PLATE.y + 44, 15, "rgba(139,164,194,0.75)", "MV Mono", "right");
+    type(ctx, leftLabel, PLATE.x + 30, PLATE.y + 44, 15, "rgba(139,164,194,0.75)", "MV Mono");
+    type(ctx, rightLabel, PLATE.x + PLATE.w - 30, PLATE.y + 44, 15, "rgba(139,164,194,0.75)", "MV Mono", "right");
   });
 }
 

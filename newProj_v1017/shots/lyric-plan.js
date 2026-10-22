@@ -219,7 +219,38 @@ export const LYRIC_BY_SHOT = Object.freeze({
   // whale is printed through), so the engine must not draw a second copy.
   "last-shout": { style: "embedded" },
 
-"c1-give": { style: "embedded" },
+  // ---- section 12: the last chorus, the four plates reprinted in place ------
+  // The verse is set in the plate's top-left margin -- the same place the reference
+  // puts its section 12 lines -- and never over a plate's subject: the channel, her
+  // face, the palm and the trapped figure all own the middle of the sheet.
+  "cx-eye": {
+    style: "display", size: 52, align: "left", anchor: [150, 200], maxWidth: 900,
+    byLine: { 106: { anchor: [150, 200] }, 107: { anchor: [150, 268] } },
+  },
+  // The three EXECUTIONs are the plate's title, not a shout, so they are not power
+  // lines: the plates already print that word four times, and a power treatment
+  // would make it glow like a new keyword instead of a reprint. The shot prints the
+  // title itself into its title bar (`embedded`) because the engine's stamp is
+  // clipped to the lyric's own window: it would lift off the bar the moment the
+  // syllable ends, and a printed title has to stay on the paper until the cut.
+  "cx-kw1": { style: "embedded" },
+  "cx-bust": {
+    style: "display", size: 46, align: "left", anchor: [150, 200], maxWidth: 640,
+    byLine: { 109: { anchor: [150, 200] }, 110: { anchor: [150, 268] } },
+  },
+  "cx-kw2": { style: "embedded" },
+  // The caption band the moment asks for (S18's, y 100-240) with the palm clear.
+  "cx-hand": {
+    style: "display", size: 46, align: "left", anchor: [150, 172], maxWidth: 620,
+    byLine: { 112: { anchor: [150, 180] }, 113: { anchor: [150, 248] } },
+  },
+  "cx-kw3": { style: "embedded" },
+  "cx-fall": {
+    style: "display", size: 46, align: "left", anchor: [150, 200], maxWidth: 560,
+    byLine: { 115: { anchor: [150, 200] }, 116: { anchor: [150, 268] } },
+  },
+
+  "c1-give": { style: "embedded" },
   "c1-kw1": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1500 },
   "c1-only": { style: "embedded" },
   "c1-kw2": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1500 },
