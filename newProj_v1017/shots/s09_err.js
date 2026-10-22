@@ -264,19 +264,19 @@ function errRequest(ctx, t, s) {
   // the request leaves the composer as a card and hits the window's edge
   const cue = Math.max(lineStart(83), s.at + 0.95);
   const fly = easeOut(at(t, cue, cue + 0.5));
-  const cardW = 620;
-  const cardH = 108;
+  const cardW = 700;
+  const cardH = 132;
   if (fly > 0.01) {
     const fromX = win.cb.x + win.cb.w * 0.5 - cardW / 2;
     const fromY = win.cb.y - cardH - 40;
-    const toX = SHEET.x + SHEET.w - cardW - 24;
-    const toY = SHEET.y + 150;
+    const toX = SHEET.x + SHEET.w - cardW - 28;
+    const toY = SHEET.y + 470;
     const cx = fromX + (toX - fromX) * fly;
     const cy = fromY + (toY - fromY) * fly;
     const blocked = clamp01((t - cue - 0.5) / 0.16);
     errCard(ctx, cx, cy, cardW, cardH, {
       head: "request",
-      lines: ["setPresence(you, ", '  "online" );'],
+      lines: ["setPresence( you,", '  "online" );'],
       tag: blocked > 0.5 ? "refused" : "",
       red: 0.4 + 0.6 * blocked,
     });
@@ -639,15 +639,15 @@ function errDrawer(ctx, t, s) {
     const k = easeOut(at(u, 0.22 + i * 0.05, 0.5 + i * 0.05));
     if (k <= 0.01) return;
     layer(ctx, k, () => {
-      mono(ctx, r.name, x + 38, ry, 18, "rgba(190,208,224,0.95)");
-      mono(ctx, r.value, x + 38, ry + 30, 14, "rgba(120,146,170,0.85)");
+      mono(ctx, r.name, x + 38, ry + 4, 22, "rgba(190,208,224,0.95)");
+      mono(ctx, r.value, x + 38, ry + 38, 16, "rgba(120,146,170,0.85)");
       const tryK = i === 0 || i === 2 ? at(t, cue + i * 0.22, cue + i * 0.22 + 0.16) : 0;
       const flip = Math.sin(tryK * Math.PI) * 0.8;
       const sx = x + W - 120;
       const sy = ry - 8;
-      rect(ctx, sx, sy, 62, 28, "rgba(14,38,54,1)", 14, "rgba(120,150,180,0.6)");
-      disc(ctx, sx + 14 + flip * 34, sy + 14, 10, "rgba(160,186,210,0.9)", 1);
-      if (tryK > 0.55) refusedTag(ctx, sx - 8, sy - 4, clamp01((tryK - 0.55) / 0.3), "not yours");
+      rect(ctx, sx, sy - 5, 78, 36, "rgba(14,38,54,1)", 18, "rgba(120,150,180,0.6)");
+      disc(ctx, sx + 18 + flip * 42, sy + 13, 13, "rgba(160,186,210,0.95)", 1);
+      if (tryK > 0.55) refusedTag(ctx, sx - 86, sy + 13, clamp01((tryK - 0.55) / 0.3), "not yours");
     });
   });
 
