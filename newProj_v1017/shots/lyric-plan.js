@@ -203,6 +203,19 @@ export const LYRIC_BY_SHOT = Object.freeze({
   "exec-09": { style: "display", size: 108, tracking: 0.14, align: "center", anchor: [960, 1006], maxWidth: 1500 },
   "exec-12": { style: "display", size: 124, tracking: 0.14, align: "center", anchor: [960, 1006], maxWidth: 1500 },
 
+  // ---- section 11: six counts and the last shout ---------------------------
+  // The six counts are printed on the probe panel as channel labels, not as
+  // captions. The shot owns them: at 0.46 s a stamp/power entrance would spend
+  // the whole beat arriving, and the moment explicitly rules out six full-screen
+  // language cards. The last shout IS the one big word, so it takes display.
+  "count-1-de": { style: "embedded" },
+  "count-2-es": { style: "embedded" },
+  "count-3-fr": { style: "embedded" },
+  "count-4-ko": { style: "embedded" },
+  "count-5-sv": { style: "embedded" },
+  "count-6-zh": { style: "embedded" },
+  "last-shout": { style: "display", size: 92, tracking: 0.16, align: "center", anchor: [960, 1024], maxWidth: 1700 },
+
 "c1-give": { style: "embedded" },
   "c1-kw1": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1500 },
   "c1-only": { style: "embedded" },
