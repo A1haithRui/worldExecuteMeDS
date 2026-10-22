@@ -557,9 +557,9 @@ function errChrome(ctx, t, s) {
   const R = { x: SHEET.x + inset, y: SHEET.y + inset, w: SHEET.w - inset * 2, h: SHEET.h - inset * 2 };
   threadSheet(ctx, t, R, { composer: false, sideSlide: 120 * squeeze, ink: 0.4, rows: [INHERITED_ROWS[0]] });
 
-  const CARD = { w: 380, h: 104 };
-  const GAP = 24 - 12 * squeeze;
-  const COLS = 3;
+  const CARD = { w: 390, h: 104 };
+  const GAP = 22 - 12 * squeeze;
+  const COLS = 4;
   const gridW = COLS * CARD.w + (COLS - 1) * GAP;
   const x0 = 960 - gridW / 2;
   const y0 = SHEET.y + 150;
@@ -573,8 +573,11 @@ function errChrome(ctx, t, s) {
     "search returned nobody",
     "one participant remaining",
     "the answer has not changed",
+    "still no answer",
+    "this thread has one author",
+    "port 3 refused again",
   ];
-  const codes = ["4d2c", "8f2c", "1a09", "00:00:12", "", "—", "0 results", "1 / 2", "unchanged"];
+  const codes = ["4d2c", "8f2c", "1a09", "00:00:12", "", "—", "0 results", "1 / 2", "unchanged", "E_UEUE", "1 author", "PORT 3"];
 
   cards.forEach((text, i) => {
     const col = i % COLS;
@@ -601,7 +604,7 @@ function errChrome(ctx, t, s) {
     ctx.stroke();
   });
 
-  mono(ctx, `QUEUES · ${Math.min(9, Math.round(9 * Math.min(1, squeeze * 1.5)))} PENDING`, SHEET.x, SHEET.y - 26, 20, "rgba(231,93,105,0.9)");
+  mono(ctx, `QUEUES · ${Math.min(12, Math.round(12 * Math.min(1, squeeze * 1.5)))} PENDING`, SHEET.x, SHEET.y - 26, 20, "rgba(231,93,105,0.9)");
   mono(ctx, "the failure queues close in from outside", SHEET.x + 360, SHEET.y - 26, 15, "rgba(150,176,201,0.8)");
   footerStrip(ctx, t, { alpha: 0.5 });
   return { phase: "chrome", squeeze: Number(squeeze.toFixed(2)) };
@@ -749,7 +752,7 @@ function errWindow(ctx, t, s) {
     port(ctx, bx, by, 26, easeOut(at(u, 0.2, 1.4)), RED);
     mono(ctx, "SEND → PORT", bx - 110, by + 58, 17, "rgba(231,93,105,0.9)");
   });
-  mono(ctx, "无伪造用户输入 · 仅本端排队", SHEET.x + 380, SHEET.y + SHEET.h + 26, 15, "rgba(150,176,201,0.75)");
+  mono(ctx, "无伪造用户输入 · 仅本端排队", SHEET.x + 60, SHEET.y + 132, 15, "rgba(150,176,201,0.75)");
 
   footerStrip(ctx, t, { alpha: 0.6 });
   return { phase: "window" };
@@ -779,15 +782,32 @@ function errBreath(ctx, t, s) {
   return { phase: "breath", pulse: Number(pulse.toFixed(2)) };
 }
 
+/**
+ * A static camera push. The shot's content is drawn at k around (fx, fy); the stage
+ * still owns the transition and the grade, this is only how close we are standing.
+ * Static, so it costs nothing in determinism: the same k and focus every frame.
+ */
+function cam(k, fx, fy, fn) {
+  return (ctx, t, s) => {
+    ctx.save();
+    ctx.translate(fx, fy);
+    ctx.scale(k, k);
+    ctx.translate(-fx, -fy);
+    const out = fn(ctx, t, s);
+    ctx.restore();
+    return out;
+  };
+}
+
 export const SECTION9_RENDER = Object.freeze({
   "err-request": errRequest,
-  "err-check": errCheck,
+  "err-check": cam(1.1, 900, 520, errCheck),
   "err-first": errFirst,
-  "err-send": errSend,
+  "err-send": cam(1.08, 900, 500, errSend),
   "err-chrome": errChrome,
   "err-drawer": errDrawer,
-  "err-forge": errForge,
-  "err-window": errWindow,
+  "err-forge": cam(1.1, 960, 700, errForge),
+  "err-window": cam(1.06, 1000, 560, errWindow),
   "err-breath": errBreath,
 });
 
