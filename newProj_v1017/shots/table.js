@@ -1337,7 +1337,7 @@ export const SHOTS = [
       99
     ],
     "picture": "portrait",
-    "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+    "moment": "右半边她的立绘每一拍从下往上印出 1/6，第六拍才完整；左边只留当前语言的大字、尝试计数和六个语言刻度；六次呼叫仍都落到同一个空端口，红色只做边界。",
     "momentState": "written",
     "inherits": "S42",
     "inheritCoverage": 0.94,
@@ -1357,7 +1357,7 @@ export const SHOTS = [
       100
     ],
     "picture": "portrait",
-    "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+    "moment": "右半边她的立绘每一拍从下往上印出 1/6，第六拍才完整；左边只留当前语言的大字、尝试计数和六个语言刻度；六次呼叫仍都落到同一个空端口，红色只做边界。",
     "momentState": "written",
     "inherits": "S42",
     "inheritCoverage": 1,
@@ -1377,7 +1377,7 @@ export const SHOTS = [
       101
     ],
     "picture": "portrait",
-    "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+    "moment": "右半边她的立绘每一拍从下往上印出 1/6，第六拍才完整；左边只留当前语言的大字、尝试计数和六个语言刻度；六次呼叫仍都落到同一个空端口，红色只做边界。",
     "momentState": "written",
     "inherits": "S42",
     "inheritCoverage": 1,
@@ -1397,7 +1397,7 @@ export const SHOTS = [
       102
     ],
     "picture": "portrait",
-    "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+    "moment": "右半边她的立绘每一拍从下往上印出 1/6，第六拍才完整；左边只留当前语言的大字、尝试计数和六个语言刻度；六次呼叫仍都落到同一个空端口，红色只做边界。",
     "momentState": "written",
     "inherits": "S42",
     "inheritCoverage": 1,
@@ -1417,7 +1417,7 @@ export const SHOTS = [
       103
     ],
     "picture": "portrait",
-    "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+    "moment": "右半边她的立绘每一拍从下往上印出 1/6，第六拍才完整；左边只留当前语言的大字、尝试计数和六个语言刻度；六次呼叫仍都落到同一个空端口，红色只做边界。",
     "momentState": "written",
     "inherits": "S42",
     "inheritCoverage": 1,
@@ -1437,7 +1437,7 @@ export const SHOTS = [
       104
     ],
     "picture": "portrait",
-    "moment": "同一个探针面板依次激活六条不同编码的通道，均落到同一空端点；小数字1–6表示尝试次序，不做六张全屏语言卡。",
+    "moment": "右半边她的立绘每一拍从下往上印出 1/6，第六拍才完整；左边只留当前语言的大字、尝试计数和六个语言刻度；六次呼叫仍都落到同一个空端口，红色只做边界。",
     "momentState": "written",
     "inherits": "S42",
     "inheritCoverage": 1,
@@ -1457,7 +1457,7 @@ export const SHOTS = [
       105
     ],
     "picture": "plate",
-    "moment": "路径在眼前形成一道竖直水光；眼部内容宽1050px，占画高约80%，倒映的是那一个未返回的点。角色保持完整脸部，无字母镂空。",
+    "moment": "不放角色：整屏两行 EXECUTION，DeepSeek 鲸鱼 logo 与字做交集（只在笔画里隐隐出现），结尾用印刷套印错位代替撕纸。",
     "momentState": "written",
     "inherits": "S43",
     "inheritCoverage": 0.97,
