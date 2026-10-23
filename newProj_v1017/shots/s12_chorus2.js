@@ -25,7 +25,7 @@
 import { layer, stroke, disc, rect, type, clamp } from "../src/mv-draw.js";
 import { lineStart, lineText } from "./lines.js";
 import { figureImages } from "./figure.js";
-import { ART, PALM_BOX, PALM_ANCHOR, scaledArt } from "./s05_layout.js";
+import { ART, PALM_BOX, PALM_ANCHOR, REACH_BOX, REACH_PALM, scaledArt } from "./s05_layout.js";
 import { S08_ART } from "./s08_look.js";
 import { plateBase, tickRing, PLATE } from "./plate.js";
 import { shotById } from "./index.js";
@@ -504,26 +504,59 @@ function bodyEye(ctx, t, C) {
   disc(ctx, EYE.cx + 40, EYE.cy - 10, 40, C.accent, 0.5, false, 2);
 }
 
-/** The lyric gets a paper card laid over her hair: ink on paper, readable. */
-function lyricCard(ctx, k) {
-  if (k <= 0.01) return;
+/** The lyric gets a paper card laid over her hair: bold serif, ink on paper. */
+const CARD_LINES = Object.freeze([
+  { line: 106, y: 216, size: 58 },
+  { line: 107, y: 282, size: 58 },
+]);
+
+function lyricCard(ctx, t) {
   const { x, y, w, h } = LYRIC_CARD;
-  layer(ctx, k, () => {
+  const open = easeOut((t - (shotById("cx-eye")?.at ?? 162.7774)) / 0.4);
+  if (open <= 0.01) return;
+  layer(ctx, open, () => {
     ctx.fillStyle = PAPER;
     ctx.fillRect(x, y, w, h);
     ctx.strokeStyle = INK;
     ctx.lineWidth = 3;
     ctx.strokeRect(x, y, w, h);
     ctx.fillStyle = INK;
-    ctx.fillRect(x, y + h - 6, w, 6);
+    ctx.fillRect(x, y + h - 7, w, 7);
     for (const cx of [x + 22, x + w - 22]) {
       ctx.fillRect(cx - 1, y + 14, 2, 10);
       ctx.fillRect(cx - 5, y + 18, 10, 2);
     }
+    type(ctx, "LYRIC 02  /  printed on paper", x + 20, y + 28, 12, "rgba(4,18,32,0.5)", "MV Mono");
+    type(ctx, "bold serif  ·  58 / 62", x + w - 20, y + 28, 12, "rgba(4,18,32,0.5)", "MV Mono", "right");
   });
-  layer(ctx, k, () => {
-    type(ctx, "LYRIC 02 / printed on paper", x + 18, y + 26, 12, "rgba(4,18,32,0.55)", "MV Mono");
-    type(ctx, `overprint ${pad2(Math.round(12 + 6 * k))}px`, x + w - 18, y + 26, 12, "rgba(4,18,32,0.55)", "MV Mono", "right");
+
+  // each line types on at its own beat, and the one before it steps back
+  for (let i = 0; i < CARD_LINES.length; i++) {
+    const { line, y: ly, size } = CARD_LINES[i];
+    const text = lineText(line);
+    const start = lineStart(line);
+    const next = CARD_LINES[i + 1];
+    const nextStart = next ? lineStart(next.line) : Infinity;
+    const reveal = clamp01((t - start) / 0.3);
+    const fadeOut = next ? clamp01(1 - (t - nextStart) / 0.18) : 1;
+    const alpha = (i === 0 ? 1 : reveal) * fadeOut * (i === 0 && t < start ? 0 : 1);
+    if (alpha <= 0.01) continue;
+    const shown = i === 0 ? text.length : Math.round(text.length * easeOut(reveal));
+    const cut = text.slice(0, Math.max(0, shown));
+    if (!cut) continue;
+    // the print: a cyan copy two pixels out of register, then the ink on top
+    layer(ctx, open * alpha * 0.45, () =>
+      type(ctx, cut, x + 56 + 2, ly + 1, size, BLUE, "MV Serif"),
+    );
+    layer(ctx, open * alpha, () => type(ctx, cut, x + 56, ly, size, INK, "MV Serif"));
+  }
+
+  // a rule under the words, and the beat they belong to
+  layer(ctx, open, () => {
+    const under = CARD_LINES[1].y + 26;
+    ctx.fillStyle = "rgba(0,180,230,0.85)";
+    ctx.fillRect(x + 54, under, 92, 3);
+    type(ctx, "beat 02", x + w - 20, y + h - 20, 12, "rgba(4,18,32,0.55)", "MV Mono", "right");
   });
 }
 
@@ -702,6 +735,7 @@ function bodyForms(ctx, t, C) {
     if (age < 0) continue;
     const a = STACK[at.from];
     const b = STACK[at.to];
+    // the attack: sharp paper chips flying from one form to the next
     for (let j = 0; j < 10; j++) {
       const q = (age * 1.6 + j * 0.1) % 1;
       const px = Math.round(a.x + (b.x - a.x) * q + Math.sin(q * 9 + j) * 22);
@@ -709,15 +743,49 @@ function bodyForms(ctx, t, C) {
       const sz = 8 + ((j * 3) % 8);
       ctx.fillStyle = j % 3 === 0 ? C.line : C.accent;
       ctx.fillRect(px, py, sz, sz);
+      if (j % 3 === 0) {
+        ctx.fillStyle = INK;
+        ctx.fillRect(px + sz, py, 2, sz);
+      }
     }
-    if (age > 0.18) {
-      const dk = clamp01((age - 0.18) / 0.5);
-      for (let r = 0; r < 5; r++) {
-        for (let c = 0; c < 5; c++) {
-          if ((r * 7 + c * 3 + Math.floor(age * 8)) % 3 === 0) continue;
-          ctx.fillStyle = "rgba(4,18,32," + (0.55 * dk).toFixed(3) + ")";
-          ctx.fillRect(b.x - 70 + c * 26, b.y - 90 + r * 26, 24, 24);
+    // the hit: cracks, not a mosaic blur -- a broken plate, not a censored one
+    if (age > 0.16) {
+      const ck = clamp01((age - 0.16) / 0.45);
+      const hx = b.x + ((at.from * 37) % 40) - 20;
+      const hy = b.y - 40 + ((at.to * 53) % 60);
+      for (let c = 0; c < 4; c++) {
+        const ang = -1.9 + c * 0.85 + ((at.from + at.to) % 3) * 0.12;
+        const len = (60 + c * 34) * ck;
+        const pts = [[hx, hy]];
+        for (let s = 1; s <= 4; s++) {
+          const r = (len * s) / 4;
+          const off = ((s % 2 ? 1 : -1) * 9 * s) / 4;
+          pts.push([
+            Math.round(hx + Math.cos(ang) * r - Math.sin(ang) * off),
+            Math.round(hy + Math.sin(ang) * r + Math.cos(ang) * off),
+          ]);
         }
+        stroke(ctx, pts, C.line, 2, 0.95);
+        stroke(ctx, pts.map(([px, py]) => [px + 2, py + 2]), INK, 1.2, 0.7);
+        // a chip breaking off the end of the crack
+        if (ck > 0.55) {
+          const [ex, ey] = pts[pts.length - 1];
+          const drift = Math.round((age - 0.16) * 90);
+          ctx.fillStyle = C.line;
+          ctx.beginPath();
+          ctx.moveTo(ex, ey);
+          ctx.lineTo(ex + 14, ey + 4);
+          ctx.lineTo(ex + 5, ey + 16);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = INK;
+          ctx.fillRect(ex + 2 + drift, ey + 6 + drift * 0.6, 5, 5);
+        }
+      }
+      // the hit itself: a short burst of paper rays, not a white blob
+      if (ck < 0.6) {
+        rays(ctx, hx, hy, 12, Math.round(30 + 90 * ck), 20, C.line, 0.7 * (1 - ck / 0.6), ck * 2, 2);
+        landBurst(ctx, hx, hy, age - 0.16, C.line, 0.5, 0.45);
       }
     }
   }
@@ -781,35 +849,58 @@ function handHole(ctx, k) {
 function bodyPalm(ctx, t, C) {
   handHole(ctx, easeOut((t - (HAND_AT + 0.5)) / 1.1));
 
-  const bust = figureImages.bust;
+  // 1. the figure with the palm out -- the same body the close-up is a detail of.
+  //    It is the whole figure that breaks up; the palm is the part that survives.
+  const reach = ART.images.reach;
   const breakK = easeOut((t - (HAND_AT + 0.15)) / 1.7);
-  if (bust && bust.complete && breakK < 0.99) {
-    const s = GHOST.h / 1438;
-    const w = Math.round(1342 * s);
-    const h = Math.round(1704 * s);
-    const gx = Math.round(GHOST.x - w / 2);
-    const gy = Math.round(GHOST.y - h / 2);
-    const art = scaledArt(bust, w, h);
-    if (art) layer(ctx, 0.55 * (1 - breakK), () => ctx.drawImage(art, gx, gy));
-    const mos = mosaicOf(bust, w, h, 22);
-    if (mos) {
-      blockMask(ctx, mos, gx, gy, Math.round(h * (1 - breakK)));
-      blockFall(ctx, mos, gx, gy, breakK, null, 0.8, 80);
-      blockFall(ctx, mos, gx, gy, breakK * 0.7, BLUE, 0.25, 20);
+  if (reach && reach.complete) {
+    const s = 0.60;
+    const w = Math.round(reach.width * s);
+    const h = Math.round(reach.height * s);
+    const ox = Math.round(PALM.x - (REACH_BOX.x + REACH_PALM.x) * s);
+    const oy = Math.round(PALM.y - (REACH_BOX.y + REACH_PALM.y) * s);
+    const art = scaledArt(reach, w, h);
+    if (art) layer(ctx, 0.92 * (1 - breakK), () => ctx.drawImage(art, ox, oy));
+    const mos = mosaicOf(reach, w, h, 22);
+    if (mos && breakK > 0.02) {
+      const R = Math.round(140 + 80 * (1 - breakK));
+      // everything outside the palm goes to blocks; the palm's island shrinks
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, 1920, 1080);
+      ctx.arc(PALM.x, PALM.y, R, 0, Math.PI * 2, true);
+      ctx.clip("evenodd");
+      layer(ctx, clamp01(breakK * 1.8) * (1 - breakK), () => ctx.drawImage(mos.canvas, ox, oy));
+      blockFall(ctx, mos, ox, oy, breakK, null, 0.95 * (1 - breakK), 90);
+      blockFall(ctx, mos, ox, oy, breakK * 0.7, BLUE, 0.25 * (1 - breakK * 0.85), 22);
+      ctx.restore();
+      // the palm's rim, so the island reads as a cut-out rather than a hole
+      ctx.save();
+      ctx.setLineDash([6, 7]);
+      ctx.beginPath();
+      ctx.arc(PALM.x, PALM.y, R, 0, Math.PI * 2);
+      ctx.strokeStyle = C.accent;
+      ctx.lineWidth = 2;
+      ctx.globalAlpha = 0.6 * breakK;
+      ctx.stroke();
+      ctx.restore();
     }
-    codeFall(ctx, GHOST.x - 300, GHOST.y - 320, Math.max(0, t - (HAND_AT + 0.3)), C.line, 0.55);
-    type(ctx, breakK < 0.5 ? "the figure is a print" : "the print is a figure", GHOST.x, GHOST.y + 330, 13, C.mid, "MV Mono", "center");
+    codeFall(ctx, PALM.x - 420, PALM.y - 500, Math.max(0, t - (HAND_AT + 0.3)), C.line, 0.55);
+    type(ctx, breakK < 0.5 ? "the figure is a print" : "the print is a figure", PALM.x - 380, PALM.y + 400, 13, C.mid, "MV Mono", "center");
   }
 
+  // 2. the palm that is left: the close-up grows in and takes the frame over
   const palm = ART.images.palm;
-  if (palm && palm.complete) {
-    const s = PALM.w / PALM_BOX.w;
+  const palmIn = clamp01((breakK - 0.42) / 0.58);
+  if (palm && palm.complete && palmIn > 0.01) {
+    const size = Math.round(PALM.w * (0.62 + 0.38 * palmIn));
+    const s = size / PALM_BOX.w;
     const w = Math.round(palm.width * s);
     const h = Math.round(palm.height * s);
     const ox = Math.round(PALM.x - (PALM_BOX.x + PALM_ANCHOR.x) * s);
     const oy = Math.round(PALM.y - (PALM_BOX.y + PALM_ANCHOR.y) * s);
     const art = scaledArt(palm, w, h);
-    if (art) layer(ctx, 1, () => ctx.drawImage(art, ox, oy));
+    if (art) layer(ctx, palmIn, () => ctx.drawImage(art, ox, oy));
   }
 
   const snapAt = lineStart(113);
@@ -1142,7 +1233,7 @@ export const SECTION12_RENDER = Object.freeze({
         { x: 40, y: 40, w: 1520, h: 1000, alpha: 0.10 },
         { x: 900, y: 480, w: 900, h: 120, alpha: 0.06 },
       ],
-      after: (c, tt) => lyricCard(c, easeOut((tt - s.at) / 0.4)),
+      after: (c, tt) => lyricCard(c, tt),
     });
     return { ...out(ctx, t, s), grade: sectionGrade(0.5) };
   },

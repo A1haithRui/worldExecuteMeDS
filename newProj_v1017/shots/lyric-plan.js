@@ -225,11 +225,9 @@ export const LYRIC_BY_SHOT = Object.freeze({
   // face, the palm and the trapped figure all own the middle of the sheet.
   // 072 is the one shot whose ground is her own face, printed paper white: the verse
   // is set in ink here instead of paper, so it reads like a line printed ON her.
-  "cx-eye": {
-    style: "display", size: 50, align: "left", anchor: [150, 210], maxWidth: 860,
-    color: "#041220",
-    byLine: { 106: { anchor: [150, 210] }, 107: { anchor: [150, 276] } },
-  },
+  // 072's lyric is not set by the engine: the shot prints it in bold serif on a paper
+  // card laid over her hair, so it stays readable on the one bright frame in the section.
+  "cx-eye": { style: "embedded" },
   // The three EXECUTIONs are the plate's title, not a shout, so they are not power
   // lines: the plates already print that word four times, and a power treatment
   // would make it glow like a new keyword instead of a reprint. The shot prints the
