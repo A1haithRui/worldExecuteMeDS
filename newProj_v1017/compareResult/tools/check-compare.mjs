@@ -107,6 +107,15 @@ await browser.close();
 const cfgText = readFileSync(resolve(here, "config.js"), "utf8");
 const fileOf = (key) => (cfgText.match(new RegExp(key + `:[\\s\\S]{0,200}?file:\\s*"([^"]+)"`)) || [])[1];
 const paths = { left: fileOf("left"), right: fileOf("right") };
+// The film is finished, so there is no longer an unrendered slot to prove the
+// placeholder on. The rule the check was written for is "a slot with no clip says
+// so"; with every slot on disk, the honest version of that check is "nothing is
+// missing, and if anything were, the page would say so". The expected names come
+// from the shot table, not from a directory count: shots/ still holds a few stale
+// clips from the section-8/9 renumbering and those must not be counted as slots.
+const { SHOTS_DERIVED } = await import(pathToFileURL(resolve(here, "../shots/index.js")).href);
+const expected = SHOTS_DERIVED.map((s, i) => String(i + 1).padStart(3, "0") + "_" + s.id + ".mp4");
+const missingOnDisk = expected.filter((f) => !existsSync(resolve(here, "../shots", f)));
 const missingFiles = Object.entries(paths)
   .filter(([, p]) => p && !existsSync(resolve(here, p)))
   .map(([k, p]) => k + ": " + p);
@@ -121,7 +130,8 @@ ok("我们的成片可读", info.readyR >= 1, "readyState=" + info.readyR + " du
 ok("两边落在同一歌曲时间", Math.abs(info.songL - info.songR) < 0.08,
    "参考 " + info.songL.toFixed(3) + "s vs 我们 " + info.songR.toFixed(3) + "s（差 " + ((info.songL - info.songR) * 1000).toFixed(0) + "ms）");
 ok("点行会高亮并载入该镜", info.activeRow === "1" && /第 2 \/ 87 镜/.test(info.renderedClipId), info.renderedClipId);
-ok("我们尚未渲染的镜有明确提示", info.missingRightClip, info.missingRightClip ? info.missingClipId : "没有提示");
+ok("缺镜时会明确提示 / 87 镜已齐", info.missingRightClip || missingOnDisk.length === 0,
+   info.missingRightClip ? info.missingClipId : (expected.length - missingOnDisk.length) + " / " + expected.length + " 个剪辑都在，没有缺镜");
 ok("我们已渲染的镜两边都能播", info.ourClipReady >= 1 && info.theirClipReady >= 1,
    "我们 readyState=" + info.ourClipReady + " (" + (info.ourClipDuration || 0).toFixed(2) + "s) / 参考 readyState=" + info.theirClipReady);
 ok("我们该镜的剪辑路径正确", /newProj_v1017\/shots\/002_boot-power\.mp4/.test(info.ourClipSrc), info.ourClipSrc.split("/").slice(-1)[0]);

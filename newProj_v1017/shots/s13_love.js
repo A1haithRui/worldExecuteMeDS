@@ -141,6 +141,30 @@ function tick(ctx, x, y, size, k, colour = PAPER) {
 const label = (ctx, text, x, y, size = 13, colour = PAPER_DIM, align = "left") =>
   type(ctx, text, x, y, size, colour, "MV Mono", align);
 
+/** Blocks coming off a patch of paper: what loses the argument breaks into pixels. */
+const BLOCK_SEEDS = Array.from({ length: 64 }, (_, i) => ({
+  u: ((i * 37) % 100) / 100,
+  v: ((i * 53) % 100) / 100,
+  d: 30 + ((i * 29) % 170),
+  s: 6 + ((i * 13) % 10),
+  sway: (i % 7) - 3,
+}));
+
+function blocks(ctx, x, y, w, h, k, colour = BLUE, alpha = 0.8, count = 40) {
+  if (k <= 0.01) return;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.fillStyle = colour;
+  for (let i = 0; i < count; i++) {
+    const s = BLOCK_SEEDS[i % BLOCK_SEEDS.length];
+    const px = Math.round(x + s.u * w + s.sway * 8 * k);
+    const py = Math.round(y + s.v * h + s.d * 1.6 * k + 40 * k * k);
+    ctx.globalAlpha = alpha * (1 - k * 0.75);
+    ctx.fillRect(px, py, s.s, s.s);
+  }
+  ctx.restore();
+}
+
 // ---------------------------------------------------------------------------
 // the loud things
 //
@@ -156,9 +180,9 @@ function sunburst(ctx, cx, cy, r0, r1, n, colour, alpha = 1, phase = 0) {
     const a = phase + (i / n) * Math.PI * 2;
     const w = (Math.PI / n) * 0.5;
     ctx.beginPath();
-    ctx.moveTo(cx + Math.cos(a - w) * r0, cy + Math.sin(a - w) * r0);
-    ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
-    ctx.lineTo(cx + Math.cos(a + w) * r0, cy + Math.sin(a + w) * r0);
+    ctx.moveTo(Math.round(cx + Math.cos(a - w) * r0), Math.round(cy + Math.sin(a - w) * r0));
+    ctx.lineTo(Math.round(cx + Math.cos(a) * r1), Math.round(cy + Math.sin(a) * r1));
+    ctx.lineTo(Math.round(cx + Math.cos(a + w) * r0), Math.round(cy + Math.sin(a + w) * r0));
     ctx.closePath();
     ctx.fill();
   }
@@ -376,6 +400,9 @@ function outLesson(ctx, t, s) {
     const k = clamp01((t - sel) / 0.26);
     sunburst(ctx, CELLS[2].x + CELLS[2].w / 2, CELLS[2].y + CELLS[2].h / 2, 260, 700, 36, BLUE, 0.14 * k, 0.12);
     rays(ctx, CELLS[2].x + CELLS[2].w / 2, CELLS[2].y + CELLS[2].h / 2, 320, 760, 40, PAPER, 0.10 * k, 0.05, 1.5);
+    const kb = clamp01((t - sel) / 0.9);
+    blocks(ctx, CELLS[0].x, CELLS[0].y, CELLS[0].w, CELLS[0].h, kb, BLUE, 0.5, 18);
+    blocks(ctx, CELLS[1].x, CELLS[1].y, CELLS[1].w, CELLS[1].h, kb, BLUE, 0.5, 18);
     tick(ctx, CELLS[2].x + CELLS[2].w - 46, CELLS[2].y + 48, 46, k);
     label(ctx, "SELECTED", CELLS[2].x + CELLS[2].w - 84, CELLS[2].y + 46, 13, PAPER, "right");
     layer(ctx, k, () =>
@@ -489,6 +516,7 @@ function outTest(ctx, t, s) {
       label(ctx, "one answer", SAME_POINT.x, SAME_POINT.y - 96, 13, PAPER_MID, "center");
     });
     burst(ctx, SAME_POINT.x, SAME_POINT.y, t - lineStart(122) - 0.08, BLUE, 0.9);
+    blocks(ctx, TEST_R.x + TEST_R.w - 140, TEST_R.y + 70, 140, TEST_R.h - 150, k, PAPER, 0.55, 22);
   }
 
   return { phase: "test", recalled };
@@ -728,6 +756,7 @@ function outProof(ctx, t, s) {
         const gy = Math.round(529 - h / 2);
         layer(ctx, arrive * 0.42, () => ctx.drawImage(art, gx + 7, gy - 5));
         layer(ctx, arrive, () => ctx.drawImage(art, gx, gy));
+        blocks(ctx, 900, 60, 780, 960, arrive, BLUE, 0.45, 44);
         sunburst(ctx, 1263, 470, 300, 760, 36, BLUE, 0.16 * arrive, 0.05);
         rays(ctx, 1263, 470, 360, 900, 48, PAPER, 0.10 * arrive, 0.02, 1.5);
         label(ctx, "printed on her, not by her", 1263, 990, 13, PAPER_MID, "center");
@@ -820,3 +849,8 @@ export const SECTION13_RENDER = Object.freeze({
 });
 
 export const SECTION13_IMPLEMENTED = Object.freeze(Object.keys(SECTION13_RENDER));
+
+// Section 14 opens on this exact sheet: its first shot is the same page, with the
+// channels taken out. Exporting the furniture (rather than copying it) is what makes
+// that cut continuous -- a second copy would drift the moment either one is edited.
+export { pageBase };

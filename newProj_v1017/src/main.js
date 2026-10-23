@@ -30,6 +30,7 @@ import { SECTION10_RENDER } from "../shots/s10_exec.js";
 import { SECTION11_RENDER } from "../shots/s11_count.js";
 import { SECTION12_RENDER } from "../shots/s12_chorus2.js";
 import { SECTION13_RENDER } from "../shots/s13_love.js";
+import { SECTION14_RENDER } from "../shots/s14_end.js";
 import { linesReady } from "../shots/lines.js";
 
 const $ = (id) => document.getElementById(id);
@@ -46,7 +47,7 @@ const RENDER = {
   ...SECTION4_RENDER, ...SECTION5_RENDER, ...SECTION6_RENDER, ...SECTION7_RENDER,
   ...SECTION8_INPUT_RENDER, ...SECTION8_LEFT_RENDER, ...SECTION8_ALONE_RENDER,
   ...SECTION9_RENDER, ...SECTION10_RENDER, ...SECTION11_RENDER,
-  ...SECTION12_RENDER, ...SECTION13_RENDER,
+  ...SECTION12_RENDER, ...SECTION13_RENDER, ...SECTION14_RENDER,
 };
 
 const BASE_GRADE = Object.freeze({
@@ -237,8 +238,19 @@ function lyricFor(t, shot, plan) {
   if (idx < shot.lines[0] || idx > shot.lines[1]) return null;
   if (plan.embeddedLines && plan.embeddedLines.includes(idx)) return null;
   const start = Math.max(raw.start, shot.at);
-  const end = Math.min(raw.end ?? raw.start + 3, shot.until);
-  if (!(end > start)) return null;
+  // The END is only clamped when this shot is the last one that will show the line.
+  // It used to always be clamped, and that made the outgoing shot fade the word out
+  // over its last 0.14 s; when the next shot picks the same word up (a carried line)
+  // a hard cut then put it back at full strength on that shot's first frame -- the
+  // singer appearing to say it twice, which is the complaint this function already
+  // fixed on the entrance side. A line that runs into the next shot now simply keeps
+  // running. A line that dies on the cut still fades on its own end time.
+  const end = raw.end ?? raw.start + 3;
+  const at = SHOTS_DERIVED.findIndex((s) => s.id === shot.id);
+  const next = at >= 0 ? SHOTS_DERIVED[at + 1] : null;
+  const carriedOn = next?.lines && idx >= next.lines[0] && idx <= next.lines[1];
+  const lineEnd = carriedOn ? end : Math.min(end, shot.until);
+  if (!(lineEnd > start)) return null;
   // A line that began before this shot keeps its ORIGINAL clock. Clamping it to the
   // cut (which is what this used to do) restarts the entrance animation at every shot
   // boundary that falls inside a line, and a line like "So we can enter" spans two
@@ -247,7 +259,7 @@ function lyricFor(t, shot, plan) {
   // may not show the line before it owns it), but the animation phase runs on the true
   // start, so a carried line is simply already there.
   void start;
-  return { ...raw, start: raw.start, end, carried: raw.start < shot.at - 1e-6 };
+  return { ...raw, start: raw.start, end: lineEnd, carried: raw.start < shot.at - 1e-6 };
 }
 
 function renderFrame(t) {

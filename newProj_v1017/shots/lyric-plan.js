@@ -297,6 +297,21 @@ export const LYRIC_BY_SHOT = Object.freeze({
     },
   },
 
+  // ---- section 14: the ending ----------------------------------------------
+  // L128 "LO-O-OVE" is carried straight in from out-proof, so this entry copies that
+  // shot's placement letter for letter: if it moved at the cut, the word would jump
+  // and the held frame would no longer be a held frame. Nothing else here speaks.
+  "down-message": {
+    style: "display", size: 42, align: "left", anchor: [330, 200], maxWidth: 620,
+    byLine: {
+      128: { size: 96, align: "left", anchor: [330, 1000], maxWidth: 1200 },
+    },
+  },
+  // The four syllables of EXECUTION are printed into the launch bar's cells by the
+  // shot itself, one cell per sung syllable, so the lyric layer stays out: a second
+  // copy of the word on the same frame would print it twice.
+  "down-last": { style: "embedded" },
+
   "c1-give": { style: "embedded" },
   "c1-kw1": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1500 },
   "c1-only": { style: "embedded" },
