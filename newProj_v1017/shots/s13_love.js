@@ -43,6 +43,7 @@ import { lineStart } from "./lines.js";
 import { pointCloud } from "./geometry.js";
 import { ART, REACH_BOX, REACH_PALM, scaledArt } from "./s05_layout.js";
 import { clientWindow } from "./ui-client.js";
+import { figureImages } from "./figure.js";
 
 const INK = "#041220";
 const SHEET = "#071a2b";
@@ -139,6 +140,61 @@ function tick(ctx, x, y, size, k, colour = PAPER) {
 /** A small mono caption, used for every label on the sheet. */
 const label = (ctx, text, x, y, size = 13, colour = PAPER_DIM, align = "left") =>
   type(ctx, text, x, y, size, colour, "MV Mono", align);
+
+// ---------------------------------------------------------------------------
+// the loud things
+//
+// The exam paper is quiet by design, so the four moments that carry the story get
+// one loud mark each: a flat wedge burst (light in this film is paper, not glow),
+// speed rays, and a burst that rings out from a point.
+// ---------------------------------------------------------------------------
+function sunburst(ctx, cx, cy, r0, r1, n, colour, alpha = 1, phase = 0) {
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.fillStyle = colour;
+  for (let i = 0; i < n; i += 2) {
+    const a = phase + (i / n) * Math.PI * 2;
+    const w = (Math.PI / n) * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(a - w) * r0, cy + Math.sin(a - w) * r0);
+    ctx.lineTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
+    ctx.lineTo(cx + Math.cos(a + w) * r0, cy + Math.sin(a + w) * r0);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function rays(ctx, cx, cy, r0, r1, n, colour, alpha = 1, phase = 0, width = 2) {
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.strokeStyle = colour;
+  ctx.lineWidth = width;
+  for (let i = 0; i < n; i++) {
+    const a = phase + (i / n) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(Math.round(cx + Math.cos(a) * r0), Math.round(cy + Math.sin(a) * r0));
+    ctx.lineTo(Math.round(cx + Math.cos(a) * r1), Math.round(cy + Math.sin(a) * r1));
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/** A ring leaving a point: the visual of something landing. */
+function burst(ctx, x, y, age, colour = BLUE, alpha = 1) {
+  if (age < 0 || age > 0.8) return;
+  const k = age / 0.8;
+  ctx.save();
+  ctx.globalAlpha *= alpha * (1 - k);
+  ctx.strokeStyle = colour;
+  ctx.lineWidth = 3;
+  for (const f of [1, 0.62]) {
+    ctx.beginPath();
+    ctx.arc(x, y, Math.round(40 + age * 320 * f), 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
 
 // ---------------------------------------------------------------------------
 // Q1 out-lesson -- the memory section
@@ -290,6 +346,21 @@ function outLesson(ctx, t, s) {
       if (u >= SCAN_AT[i] - 0.05) {
         label(ctx, c.delta, c.x + c.w - 20, c.y + 36, 14, active ? BLUE : PAPER_DIM, "right");
       }
+      // the reason the third cell wins, and it is not the number: this is the only
+      // memory with a reply printed in it. The other two are hollow rings.
+      const rx = c.x + c.w / 2;
+      const ry = c.y + c.h - 150;
+      if (i === 2) {
+        disc(ctx, rx, ry, 9, PAPER, 1);
+        if (selected) {
+          rays(ctx, rx, ry, 18, 70, 16, PAPER, 0.55, 0.2, 1.5);
+          burst(ctx, rx, ry, t - sel, BLUE, 0.7);
+        }
+        label(ctx, "a reply", rx, ry + 26, 12, PAPER_MID, "center");
+      } else {
+        disc(ctx, rx, ry, 9, "rgba(0,180,230,0.35)", 1, false, 2);
+        label(ctx, "no reply", rx, ry + 26, 12, PAPER_DIM, "center");
+      }
     });
   });
 
@@ -303,6 +374,8 @@ function outLesson(ctx, t, s) {
   } else {
     // selection: the tick, and the sentence that says what was selected
     const k = clamp01((t - sel) / 0.26);
+    sunburst(ctx, CELLS[2].x + CELLS[2].w / 2, CELLS[2].y + CELLS[2].h / 2, 260, 700, 36, BLUE, 0.14 * k, 0.12);
+    rays(ctx, CELLS[2].x + CELLS[2].w / 2, CELLS[2].y + CELLS[2].h / 2, 320, 760, 40, PAPER, 0.10 * k, 0.05, 1.5);
     tick(ctx, CELLS[2].x + CELLS[2].w - 46, CELLS[2].y + 48, 46, k);
     label(ctx, "SELECTED", CELLS[2].x + CELLS[2].w - 84, CELLS[2].y + 46, 13, PAPER, "right");
     layer(ctx, k, () =>
@@ -401,6 +474,22 @@ function outTest(ctx, t, s) {
   ctx.restore();
   label(ctx, "no cursor", TEST_R.x + TEST_R.w - 44, TEST_R.y + TEST_R.h - 56, 12, PAPER_DIM, "right");
   label(ctx, `recalled ${recalled} / 3`, TEST_R.x + 520, TEST_R.y + 64, 15, PAPER_MID);
+
+  // the punchline of the question: three answers, one answer. The counters are the
+  // same pair the reference prints under its list (answers / distinct), and the big
+  // 1 is stamped over the point all three travelled to.
+  const answers = recalled;
+  const distinct = answers > 0 ? 1 : 0;
+  label(ctx, `answers ${answers}   ·   distinct ${distinct}`, TEST_R.x + 44, TEST_R.y + TEST_R.h - 80, 16, PAPER_MID);
+  if (answers >= 3) {
+    const k = clamp01((t - lineStart(122) - 0.08) / 0.22);
+    sunburst(ctx, SAME_POINT.x, SAME_POINT.y, 40, 220, 28, BLUE, 0.22 * k, 0.1);
+    layer(ctx, k, () => {
+      type(ctx, "1", SAME_POINT.x, SAME_POINT.y - 26, 120, PAPER, "MV Serif", "center");
+      label(ctx, "one answer", SAME_POINT.x, SAME_POINT.y - 96, 13, PAPER_MID, "center");
+    });
+    burst(ctx, SAME_POINT.x, SAME_POINT.y, t - lineStart(122) - 0.08, BLUE, 0.9);
+  }
 
   return { phase: "test", recalled };
 }
@@ -509,6 +598,8 @@ function outFormula(ctx, t, s) {
   if (computed >= N_POINTS - 1) {
     const ax = PLOT.x + PLOT.w + 44;
     const k = clamp01((t - start - 1.6) / 0.4);
+    sunburst(ctx, ax, PLOT.midY, 30, 260, 30, "rgba(127,147,255,1)", 0.20 * k, 0.1);
+    burst(ctx, ax, PLOT.midY, t - start - 1.6, "rgba(127,147,255,1)", 0.8);
     layer(ctx, k, () => {
       ctx.save();
       ctx.setLineDash([7, 7]);
@@ -518,6 +609,17 @@ function outFormula(ctx, t, s) {
       stroke(ctx, [[ax - 14, PLOT.midY + 14], [ax + 14, PLOT.midY - 14]], "rgba(127,147,255,0.9)", 2.4);
       label(ctx, "assumed", ax, PLOT.midY - 110, 12, "rgba(127,147,255,0.85)", "center");
     });
+    // what she can only guess: the rest of the far curve, drawn as inference
+    ctx.save();
+    ctx.setLineDash([5, 9]);
+    const tail = [];
+    for (let i = 0; i < 18; i++) {
+      const v = 0.5 + (i / 17) * 0.5;
+      tail.push([Math.round(xAt(v)), Math.round(youAt(v))]);
+    }
+    stroke(ctx, tail, "rgba(242,247,250,0.28)", 1.8);
+    ctx.restore();
+    label(ctx, "you, inferred", PLOT.x + PLOT.w - 250, PLOT.midY - 150, 12, PAPER_DIM, "right");
   }
 
   // the expression itself, printed above the plot like a line of the question
@@ -610,6 +712,28 @@ function outProof(ctx, t, s) {
   const px = Math.round(PALM_AT.x + (HOVER_AT.x - PALM_AT.x) * travel);
   const arc = Math.sin(Math.PI * clamp01(travel));
   const py = Math.round(PALM_AT.y + (HOVER_AT.y - PALM_AT.y) * travel - 26 * arc);
+  // 4b. the proof does not conclude with the reach: on LO-O-OVE the god plate prints
+  //     over her, in paper, six pixels out of register. It is the same form section 6
+  //     gave her, and it is still inside her closed side while the point is outside.
+  const arrive = clamp01((t - 191.356) / 0.55);
+  if (arrive > 0.01) {
+    const god = figureImages.godPaper;
+    if (god && god.complete) {
+      const sGod = (0.82 * 1080) / 1438;
+      const w = Math.round(1342 * sGod);
+      const h = Math.round(1704 * sGod);
+      const art = scaledArt(god, w, h);
+      if (art) {
+        const gx = Math.round(1263 - w / 2);
+        const gy = Math.round(529 - h / 2);
+        layer(ctx, arrive * 0.42, () => ctx.drawImage(art, gx + 7, gy - 5));
+        layer(ctx, arrive, () => ctx.drawImage(art, gx, gy));
+        sunburst(ctx, 1263, 470, 300, 760, 36, BLUE, 0.16 * arrive, 0.05);
+        rays(ctx, 1263, 470, 360, 900, 48, PAPER, 0.10 * arrive, 0.02, 1.5);
+        label(ctx, "printed on her, not by her", 1263, 990, 13, PAPER_MID, "center");
+      }
+    }
+  }
   // the trail: where it has been, drawn as a hairline
   if (travel > 0.02) {
     ctx.save();
@@ -655,11 +779,44 @@ function outProof(ctx, t, s) {
   return { phase: "proof", travel: Number(travel.toFixed(3)), arrived };
 }
 
+// ---------------------------------------------------------------------------
+// the grade each question hands the stage
+//
+// One hit per shot, on the beat the story turns: the tick in Q1, the third recall
+// in Q2, the assumed crossing in Q3, the god printing over her in Q4. Nothing is
+// on a cut and nothing repeats, so this is a light that arrives once, not a strobe.
+// ---------------------------------------------------------------------------
+const kAt = (t, at, dur) => (t < at ? 0 : clamp01(1 - (t - at) / dur));
+
+function gradeFor(shot, t) {
+  let hit = 0;
+  let line = 0;
+  let offset = 0;
+  let peak = 0.1;
+  if (shot === "out-lesson") { line = 119; offset = 0; peak = 0.08; }
+  if (shot === "out-test") { line = 122; offset = 0.5; peak = 0.10; }
+  if (shot === "out-formula") { line = 123; offset = 1.6; peak = 0.04; }
+  if (shot === "out-proof") { line = 128; offset = 0; peak = 0.12; }
+  const at = line ? lineStart(line) + offset : 0;
+  hit = at ? kAt(t, at, shot === "out-proof" ? 0.9 : 0.5) : 0;
+  return {
+    glow: 0.44 + 0.16 * hit,
+    aberration: Math.round((shot === "out-formula" ? 5 : 4) * hit),
+    flash: peak * hit,
+    camera: {
+      shakeX: Math.round(Math.sin(t * 63) * (shot === "out-proof" ? 2 : 3) * hit),
+      shakeY: Math.round(Math.cos(t * 57) * (shot === "out-proof" ? 2 : 3) * hit),
+    },
+  };
+}
+
+const loveShot = (name, fn) => (ctx, t, s) => ({ ...fn(ctx, t, s), grade: gradeFor(name, t) });
+
 export const SECTION13_RENDER = Object.freeze({
-  "out-lesson": outLesson,
-  "out-test": outTest,
-  "out-formula": outFormula,
-  "out-proof": outProof,
+  "out-lesson": loveShot("out-lesson", outLesson),
+  "out-test": loveShot("out-test", outTest),
+  "out-formula": loveShot("out-formula", outFormula),
+  "out-proof": loveShot("out-proof", outProof),
 });
 
 export const SECTION13_IMPLEMENTED = Object.freeze(Object.keys(SECTION13_RENDER));

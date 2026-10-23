@@ -223,9 +223,12 @@ export const LYRIC_BY_SHOT = Object.freeze({
   // The verse is set in the plate's top-left margin -- the same place the reference
   // puts its section 12 lines -- and never over a plate's subject: the channel, her
   // face, the palm and the trapped figure all own the middle of the sheet.
+  // 072 is the one shot whose ground is her own face, printed paper white: the verse
+  // is set in ink here instead of paper, so it reads like a line printed ON her.
   "cx-eye": {
-    style: "display", size: 52, align: "left", anchor: [150, 200], maxWidth: 900,
-    byLine: { 106: { anchor: [150, 200] }, 107: { anchor: [150, 268] } },
+    style: "display", size: 50, align: "left", anchor: [150, 210], maxWidth: 860,
+    color: "#041220",
+    byLine: { 106: { anchor: [150, 210] }, 107: { anchor: [150, 276] } },
   },
   // The three EXECUTIONs are the plate's title, not a shout, so they are not power
   // lines: the plates already print that word four times, and a power treatment
@@ -245,8 +248,11 @@ export const LYRIC_BY_SHOT = Object.freeze({
     byLine: { 112: { anchor: [150, 180] }, 113: { anchor: [150, 248] } },
   },
   "cx-kw3": { style: "embedded" },
+  // the last plate is a paper-white form with rays across it, so this line is ink on
+  // paper too: it has to stay readable against the one bright frame in the section.
   "cx-fall": {
-    style: "display", size: 46, align: "left", anchor: [150, 200], maxWidth: 560,
+    style: "display", size: 46, align: "left", anchor: [150, 200], maxWidth: 620,
+    color: "#041220",
     byLine: { 115: { anchor: [150, 200] }, 116: { anchor: [150, 268] } },
   },
 

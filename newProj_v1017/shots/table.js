@@ -1477,7 +1477,7 @@ export const SHOTS = [
       107
     ],
     "picture": "plate",
-    "moment": "四张版画的第一张原位重印：第 3 段的坐标轴与第 5 段的波形被压平成一条 96px 宽的青色通道，本端资源成块地射向空端口；套色偏 6px，远端那个点没有印出来，只剩一个虚线圆。",
+    "moment": "整张纸变成她的眼睛：一条 100px 宽的青色通道从瞳孔射出去，本端资源成块地冲出，末端开口的端口把它们退回成碎屑，右下角写着 REPLIES 0。",
     "momentState": "written",
     "inherits": "S44",
     "inheritCoverage": 0.99,
@@ -1497,7 +1497,7 @@ export const SHOTS = [
       108
     ],
     "picture": "plate",
-    "moment": "版画的标题栏第一次印：EXECUTION 压进标题栏，同一张纸上还留着上一张版画的印子；这一印只偏 6px，原来的版名在旁边被划掉。",
+    "moment": "标题栏第一次印：EXECUTION 压进栏里；纸下方四个形态（F / M / cat / god）第一次被印出来，这一印只偏 6px，原来的版名在旁边被划掉。",
     "momentState": "written",
     "inherits": "S44",
     "inheritCoverage": 0.67,
@@ -1517,7 +1517,7 @@ export const SHOTS = [
       110
     ],
     "picture": "plate",
-    "moment": "第二张版画重印：她正面占高 88%，保持原色、轮廓清晰；身后四条通道一拍一条从两侧离开纸边，红只在出画的那个失败端口。网点从这里开始糊。",
+    "moment": "她正面占高 88%，四条通道各送出一份拷贝——她自己、男版、猫娘、神；每一份都在纸的边界被退回（变淡 + 红叉 + 碎屑），计数器走到 04，回复仍是 0。",
     "momentState": "written",
     "inherits": "S45",
     "inheritCoverage": 1,
@@ -1537,7 +1537,7 @@ export const SHOTS = [
       111
     ],
     "picture": "plate",
-    "moment": "标题栏第二次印：纸已经印过一遍，标题栏右角被啃掉一块；EXECUTION 还是正的字，坏的是它下面那张纸。",
+    "moment": "标题栏第二次印：右端没印到头；纸下方四个形态只剩虚线框（F · lost / M · lost …）——这块版已经印不出她们了。",
     "momentState": "written",
     "inherits": "S45",
     "inheritCoverage": 0.76,
@@ -1557,7 +1557,7 @@ export const SHOTS = [
       113
     ],
     "picture": "plate",
-    "moment": "第三张版画重印：回到 68 秒那只手（掌心 1080,540、手宽 620px），心只剩虚线轮廓、计数 000，远端白点没有出现；三次声波向左伸出去，到撕掉的纸边为止。",
+    "moment": "还是第 5 段那只手（掌心 1080,540、手宽 620px）：掌心的心只剩虚线，计数从 001 翻到 000；左边纸上一只「别人的手」的洞，声波撞到撕边堆成碎屑，最后触点收成一个点。",
     "momentState": "written",
     "inherits": "S46",
     "inheritCoverage": 1,
@@ -1597,7 +1597,7 @@ export const SHOTS = [
       116
     ],
     "picture": "plate",
-    "moment": "第四张版画重印：三道声波折回同一张网格，本端暗角色被困在中央的格子里；网格按整数步长向内收紧，远端出口落在纸外，青色能量始终是满的、不提前熄灯。",
+    "moment": "最后一张版画是神：白纸、没有脸、尖刺光环，在格子里长大，黑色网格压在她身上收紧；三道声波折回同一网格，远端出口在纸外，青色始终满格、不提前熄灯。",
     "momentState": "written",
     "inherits": "S47",
     "inheritCoverage": 0.92,
@@ -1617,7 +1617,7 @@ export const SHOTS = [
       119
     ],
     "picture": "plate",
-    "moment": "第 12 段收拢的网格变成一张答题纸的「记忆剖面」：三个大格分别是第 3 段的点集、第 4 段的反馈路径、第 5 段的掌心触点；扫描线来回比较三格的差值，最后落在掌心那一格——她收到过的唯一一次确认——打上一个勾，落点正好是 LO-O-OVE 开唱。",
+    "moment": "答题纸的「记忆剖面」三格：点集 / 反馈路径 / 掌心触点。扫描线来回比较三格，只有第三格印着 a reply（收到过的那一次确认），选中时炸开一圈放射光并打勾，落点正好是 LO-O-OVE 开唱。",
     "momentState": "written",
     "inherits": "S48",
     "inheritCoverage": 1,
@@ -1637,7 +1637,7 @@ export const SHOTS = [
       122
     ],
     "picture": "ui",
-    "moment": "短暂回到客户端，但这次是缓存：没有输入框、没有光标、没有正在输入。她保存的三次提问逐条重放，右侧是同样三次的回声缩略；每个答案都回到同一个青点——三次答案只有一种。",
+    "moment": "缓存重放：没有输入框、没有光标、没有正在输入；三次保存的提问逐条重放，每条答案都飞向同一个青点，收尾打出 answers 3 · distinct 1，并在那个点上压一个巨大的 1。",
     "momentState": "written",
     "inherits": "S49",
     "inheritCoverage": 0.98,
@@ -1657,7 +1657,7 @@ export const SHOTS = [
       124
     ],
     "picture": "plate",
-    "moment": "青点逐个算成两条互相逼近、永远相隔一格的曲线（渐近线关系：距离恒为 1 格，不为 0）；远端采样缺了最后三个点，交点由本端假设补出，画成虚线并标注 assumed。不画心形。",
+    "moment": "青点逐个算成两条永远相隔一格的曲线（Δ 1.000 cell 不动）；远端采样缺三个点、被采到之后那段「你」是虚线的推测；交点由本端假设补出、标 assumed。不画心形。",
     "momentState": "written",
     "inherits": "S50",
     "inheritCoverage": 0.98,
@@ -1677,7 +1677,7 @@ export const SHOTS = [
       128
     ],
     "picture": "plate",
-    "moment": "同两条曲线：本端闭合成边界，远端敞开、出画。她居右占高 82%，掌心青点缓缓离手，191.356 停进出口内侧；她停下追赶，出口不替对方关闭。",
+    "moment": "本端闭合成边界、远端敞开、出口在纸外；她居右占高 82%，掌心青点缓缓离手停在出口内侧；LO-O-OVE 上神性形象作为第二次印刷压在她身上，她变成神，边界仍闭合。",
     "momentState": "written",
     "inherits": "S51",
     "inheritCoverage": 0.98,
