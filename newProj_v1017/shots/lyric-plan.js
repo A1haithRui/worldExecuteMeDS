@@ -250,6 +250,47 @@ export const LYRIC_BY_SHOT = Object.freeze({
     byLine: { 115: { anchor: [150, 200] }, 116: { anchor: [150, 268] } },
   },
 
+  // ---- section 13: the exam paper, four questions ---------------------------
+  // The verse is set like a line of the question, in the page's top-left writing
+  // area. The four LO-O-OVE answers are printed on the last ruled line of every
+  // page, in the same place and at the same size: one refrain, four times, and the
+  // answer written at the foot of the sheet.
+  //
+  // L128 starts at 191.356 and runs into section 14, so section 14 MUST keep this
+  // exact placement (bottom left, 96 px, left aligned) or the cut will jump.
+  "out-lesson": {
+    style: "display", size: 44, align: "left", anchor: [330, 210], maxWidth: 900,
+    byLine: {
+      117: { anchor: [330, 210] },
+      118: { anchor: [330, 274] },
+      119: { size: 96, align: "left", anchor: [330, 1000], maxWidth: 1200 },
+    },
+  },
+  "out-test": {
+    style: "display", size: 44, align: "left", anchor: [330, 210], maxWidth: 900,
+    byLine: {
+      120: { anchor: [330, 210] },
+      121: { anchor: [330, 274] },
+      122: { size: 96, align: "left", anchor: [330, 1000], maxWidth: 1200 },
+    },
+  },
+  "out-formula": {
+    style: "display", size: 44, align: "left", anchor: [330, 210], maxWidth: 900,
+    byLine: {
+      123: { anchor: [330, 210] },
+      124: { size: 96, align: "left", anchor: [330, 1000], maxWidth: 1200 },
+    },
+  },
+  "out-proof": {
+    style: "display", size: 42, align: "left", anchor: [330, 200], maxWidth: 620,
+    byLine: {
+      125: { anchor: [330, 200] },
+      126: { anchor: [330, 258] },
+      127: { anchor: [330, 316] },
+      128: { size: 96, align: "left", anchor: [330, 1000], maxWidth: 1200 },
+    },
+  },
+
   "c1-give": { style: "embedded" },
   "c1-kw1": { style: "power", align: "center", anchor: [960, 900], maxWidth: 1500 },
   "c1-only": { style: "embedded" },
