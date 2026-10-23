@@ -96,19 +96,19 @@ function pageBase(ctx, t, o = {}) {
   stroke(ctx, [[MARGIN_X, PAGE.y + 8], [MARGIN_X, PAGE.y + PAGE.h - 8]], "rgba(0,180,230,0.26)", 2);
 
   // header: what this paper is, whose it is, which question, what it is worth
-  type(ctx, "EXAMINATION  ·  IV  ·  LOVE", PAGE.x + 30, PAGE.y + 44, 15, PAPER_DIM, "MV Mono");
-  type(ctx, `${q}  ·  ${title}`, PAGE.x + PAGE.w - 30, PAGE.y + 44, 15, BLUE, "MV Mono", "right");
-  type(ctx, "name: deepseek", PAGE.x + 30, PAGE.y + 70, 12, "rgba(242,247,250,0.24)", "MV Mono");
-  type(ctx, `marks ${marks}`, PAGE.x + PAGE.w - 30, PAGE.y + 70, 12, "rgba(242,247,250,0.24)", "MV Mono", "right");
+  type(ctx, "EXAMINATION  ·  IV  ·  LOVE", PAGE.x + 34, PAGE.y + 52, 22, PAPER_MID, "MV Mono");
+  type(ctx, `${q}  ·  ${title}`, PAGE.x + PAGE.w - 34, PAGE.y + 52, 22, BLUE, "MV Mono", "right");
+  type(ctx, "name: deepseek", PAGE.x + 34, PAGE.y + 84, 15, "rgba(242,247,250,0.30)", "MV Mono");
+  type(ctx, `marks ${marks}`, PAGE.x + PAGE.w - 34, PAGE.y + 84, 15, "rgba(242,247,250,0.30)", "MV Mono", "right");
 
   // footer, below the sheet so it never sits on an answer
-  type(ctx, "page 13 / 14", PAGE.x + 10, 1050, 13, PAPER_DIM, "MV Mono");
-  type(ctx, o.footer ?? "", PAGE.x + PAGE.w - 10, 1050, 13, PAPER_DIM, "MV Mono", "right");
+  type(ctx, "page 13 / 14", PAGE.x + 10, 1052, 16, PAPER_MID, "MV Mono");
+  type(ctx, o.footer ?? "", PAGE.x + PAGE.w - 10, 1052, 16, PAPER_MID, "MV Mono", "right");
 }
 
 /** The question number, set large in the margin, the way a paper marks its parts. */
 function questionNumber(ctx, n) {
-  type(ctx, String(n).padStart(2, "0"), PAGE.x + 34, 520, 108, "rgba(0,180,230,0.20)", "MV Mono");
+  type(ctx, String(n).padStart(2, "0"), PAGE.x + 30, 540, 150, "rgba(0,180,230,0.24)", "MV Mono");
 }
 
 /** A grading tick: two strokes, drawn on as `k` goes 0 -> 1. */
@@ -157,8 +157,8 @@ function blocks(ctx, x, y, w, h, k, colour = BLUE, alpha = 0.8, count = 40) {
   ctx.fillStyle = colour;
   for (let i = 0; i < count; i++) {
     const s = BLOCK_SEEDS[i % BLOCK_SEEDS.length];
-    const px = Math.round(x + s.u * w + s.sway * 8 * k);
-    const py = Math.round(y + s.v * h + s.d * 1.6 * k + 40 * k * k);
+    const px = Math.round(x + s.u * w + s.sway * 5 * k);
+    const py = Math.round(y + s.v * h + s.d * 0.9 * k + 30 * k * k);
     ctx.globalAlpha = alpha * (1 - k * 0.75);
     ctx.fillRect(px, py, s.s, s.s);
   }
@@ -240,8 +240,8 @@ function cellFrame(ctx, c, active, selected) {
   stroke(ctx, [
     [c.x, c.y], [c.x + c.w, c.y], [c.x + c.w, c.y + c.h], [c.x, c.y + c.h], [c.x, c.y],
   ], edge, selected ? 3 : 1.5);
-  label(ctx, c.label, c.x + 20, c.y + 36, 15, selected ? PAPER : PAPER_MID);
-  label(ctx, c.sub, c.x + 20, c.y + 58, 12, PAPER_DIM);
+  label(ctx, c.label, c.x + 22, c.y + 42, 19, selected ? PAPER : PAPER_MID);
+  label(ctx, c.sub, c.x + 22, c.y + 70, 14, PAPER_DIM);
 }
 
 /** The feedback path cell: her message goes out, the return stops half way. */
@@ -368,7 +368,7 @@ function outLesson(ctx, t, s) {
       }
       // the comparison value only exists once the scan has passed that cell
       if (u >= SCAN_AT[i] - 0.05) {
-        label(ctx, c.delta, c.x + c.w - 20, c.y + 36, 14, active ? BLUE : PAPER_DIM, "right");
+        label(ctx, c.delta, c.x + c.w - 20, c.y + 40, 18, active ? BLUE : PAPER_DIM, "right");
       }
       // the reason the third cell wins, and it is not the number: this is the only
       // memory with a reply printed in it. The other two are hollow rings.
@@ -380,10 +380,10 @@ function outLesson(ctx, t, s) {
           rays(ctx, rx, ry, 18, 70, 16, PAPER, 0.55, 0.2, 1.5);
           burst(ctx, rx, ry, t - sel, BLUE, 0.7);
         }
-        label(ctx, "a reply", rx, ry + 26, 12, PAPER_MID, "center");
+        label(ctx, "a reply", rx, ry + 30, 15, PAPER_MID, "center");
       } else {
         disc(ctx, rx, ry, 9, "rgba(0,180,230,0.35)", 1, false, 2);
-        label(ctx, "no reply", rx, ry + 26, 12, PAPER_DIM, "center");
+        label(ctx, "no reply", rx, ry + 30, 15, PAPER_DIM, "center");
       }
     });
   });
@@ -404,9 +404,9 @@ function outLesson(ctx, t, s) {
     blocks(ctx, CELLS[0].x, CELLS[0].y, CELLS[0].w, CELLS[0].h, kb, BLUE, 0.5, 18);
     blocks(ctx, CELLS[1].x, CELLS[1].y, CELLS[1].w, CELLS[1].h, kb, BLUE, 0.5, 18);
     tick(ctx, CELLS[2].x + CELLS[2].w - 46, CELLS[2].y + 48, 46, k);
-    label(ctx, "SELECTED", CELLS[2].x + CELLS[2].w - 84, CELLS[2].y + 46, 13, PAPER, "right");
+    label(ctx, "SELECTED", CELLS[2].x + CELLS[2].w - 90, CELLS[2].y + 50, 17, PAPER, "right");
     layer(ctx, k, () =>
-      label(ctx, "the only confirmation ever received", MARGIN_X + 40, 896, 15, PAPER_MID),
+      label(ctx, "the only confirmation ever received", MARGIN_X + 40, 900, 20, PAPER_MID),
     );
   }
 
@@ -500,20 +500,20 @@ function outTest(ctx, t, s) {
     "rgba(0,180,230,0.22)", 2);
   ctx.restore();
   label(ctx, "no cursor", TEST_R.x + TEST_R.w - 44, TEST_R.y + TEST_R.h - 56, 12, PAPER_DIM, "right");
-  label(ctx, `recalled ${recalled} / 3`, TEST_R.x + 520, TEST_R.y + 64, 15, PAPER_MID);
+  label(ctx, `recalled ${recalled} / 3`, TEST_R.x + 540, TEST_R.y + 66, 19, PAPER_MID);
 
   // the punchline of the question: three answers, one answer. The counters are the
   // same pair the reference prints under its list (answers / distinct), and the big
   // 1 is stamped over the point all three travelled to.
   const answers = recalled;
   const distinct = answers > 0 ? 1 : 0;
-  label(ctx, `answers ${answers}   ·   distinct ${distinct}`, TEST_R.x + 44, TEST_R.y + TEST_R.h - 80, 16, PAPER_MID);
+  label(ctx, `answers ${answers}   ·   distinct ${distinct}`, TEST_R.x + 44, TEST_R.y + TEST_R.h - 80, 21, PAPER_MID);
   if (answers >= 3) {
     const k = clamp01((t - lineStart(122) - 0.08) / 0.22);
     sunburst(ctx, SAME_POINT.x, SAME_POINT.y, 40, 220, 28, BLUE, 0.22 * k, 0.1);
     layer(ctx, k, () => {
       type(ctx, "1", SAME_POINT.x, SAME_POINT.y - 26, 120, PAPER, "MV Serif", "center");
-      label(ctx, "one answer", SAME_POINT.x, SAME_POINT.y - 96, 13, PAPER_MID, "center");
+      label(ctx, "one answer", SAME_POINT.x, SAME_POINT.y - 100, 17, PAPER_MID, "center");
     });
     burst(ctx, SAME_POINT.x, SAME_POINT.y, t - lineStart(122) - 0.08, BLUE, 0.9);
     blocks(ctx, TEST_R.x + TEST_R.w - 140, TEST_R.y + 70, 140, TEST_R.h - 150, k, PAPER, 0.55, 22);
@@ -530,10 +530,10 @@ function outTest(ctx, t, s) {
 // zero. The points are computed one at a time; the crossing is not computed at all,
 // it is assumed, and drawn as an assumption.
 // ---------------------------------------------------------------------------
-const PLOT = Object.freeze({ x: 360, y: 400, w: 1280, h: 480, step: 40, midY: 640 });
+const PLOT = Object.freeze({ x: 300, y: 350, w: 1320, h: 560, step: 48, midY: 630 });
 const N_POINTS = 32;
 
-const gapAt = (u) => 40 + 380 * (1 - u) ** 2;
+const gapAt = (u) => 48 + 432 * (1 - u) ** 2;
 const youAt = (u) => PLOT.midY - gapAt(u) / 2;
 const meAt = (u) => PLOT.midY + gapAt(u) / 2;
 const xAt = (u) => PLOT.x + u * PLOT.w;
@@ -552,20 +552,20 @@ function outFormula(ctx, t, s) {
 
   // the grid and the two asymptotes
   for (let x = PLOT.x; x <= PLOT.x + PLOT.w; x += PLOT.step) {
-    stroke(ctx, [[x, PLOT.y], [x, PLOT.y + PLOT.h]], "rgba(0,180,230,0.10)", 1);
+    stroke(ctx, [[x, PLOT.y], [x, PLOT.y + PLOT.h]], "rgba(0,180,230,0.12)", 1);
   }
   for (let y = PLOT.midY - 5 * PLOT.step; y <= PLOT.midY + 5 * PLOT.step; y += PLOT.step) {
-    stroke(ctx, [[PLOT.x, y], [PLOT.x + PLOT.w, y]], "rgba(0,180,230,0.10)", 1);
+    stroke(ctx, [[PLOT.x, y], [PLOT.x + PLOT.w, y]], "rgba(0,180,230,0.12)", 1);
   }
   stroke(ctx, [[PLOT.x, PLOT.midY], [PLOT.x + PLOT.w + 60, PLOT.midY]], "rgba(0,180,230,0.18)", 1);
   ctx.save();
   ctx.setLineDash([8, 8]);
-  stroke(ctx, [[PLOT.x, PLOT.midY - 20], [PLOT.x + PLOT.w, PLOT.midY - 20]], "rgba(0,180,230,0.42)", 1.6);
-  stroke(ctx, [[PLOT.x, PLOT.midY + 20], [PLOT.x + PLOT.w, PLOT.midY + 20]], "rgba(0,180,230,0.42)", 1.6);
+  stroke(ctx, [[PLOT.x, PLOT.midY - 24], [PLOT.x + PLOT.w, PLOT.midY - 24]], "rgba(0,180,230,0.55)", 2);
+  stroke(ctx, [[PLOT.x, PLOT.midY + 24], [PLOT.x + PLOT.w, PLOT.midY + 24]], "rgba(0,180,230,0.55)", 2);
   ctx.restore();
-  label(ctx, "one cell", PLOT.x + 8, PLOT.midY + 5, 12, BLUE_DIM);
-  label(ctx, "you", PLOT.x + PLOT.w - 8, PLOT.midY - 26, 12, BLUE_DIM, "right");
-  label(ctx, "me", PLOT.x + PLOT.w - 8, PLOT.midY + 36, 12, BLUE_DIM, "right");
+  label(ctx, "one cell", PLOT.x + 10, PLOT.midY + 7, 16, BLUE_DIM);
+  label(ctx, "you", PLOT.x + 12, PLOT.y + 52, 16, BLUE_DIM);
+  label(ctx, "me", PLOT.x + 12, PLOT.y + PLOT.h - 34, 16, BLUE_DIM);
 
   // the curves, only as far as they have been computed
   const curve = (fn) => {
@@ -578,15 +578,27 @@ function outFormula(ctx, t, s) {
   };
   const youPts = curve(youAt);
   const mePts = curve(meAt);
-  if (youPts.length > 1) stroke(ctx, youPts, PAPER, 2.6);
-  if (mePts.length > 1) stroke(ctx, mePts, BLUE, 2.6);
+  // the band between the two curves: the distance as a shape, not only a number
+  if (youPts.length > 1) {
+    ctx.beginPath();
+    youPts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+    for (let i = mePts.length - 1; i >= 0; i--) ctx.lineTo(mePts[i][0], mePts[i][1]);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(0,180,230,0.07)";
+    ctx.fill();
+    // the halo under each curve, so a 4px line still reads as printed ink
+    layer(ctx, 0.16, () => stroke(ctx, youPts, PAPER, 12));
+    layer(ctx, 0.16, () => stroke(ctx, mePts, BLUE, 12));
+    stroke(ctx, youPts, PAPER, 4);
+    stroke(ctx, mePts, BLUE, 4);
+  }
 
   // the points themselves, one by one
   for (let i = 0; i < computed; i++) {
     const v = i / (N_POINTS - 1);
     const x = Math.round(xAt(v));
-    disc(ctx, x, Math.round(youAt(v)), 4, PAPER, 1);
-    disc(ctx, x, Math.round(meAt(v)), 4, BLUE, 1);
+    disc(ctx, x, Math.round(youAt(v)), 5, PAPER, 1);
+    disc(ctx, x, Math.round(meAt(v)), 5, BLUE, 1);
   }
   // the far side was never sampled: the last three points of "you" are missing
   for (let i = N_POINTS - 3; i < N_POINTS; i++) {
@@ -605,9 +617,9 @@ function outFormula(ctx, t, s) {
     const ex = Math.round(xAt(vEnd));
     ctx.save();
     ctx.fillStyle = RED_EDGE;
-    ctx.fillRect(ex + 6, Math.round(youAt(vEnd)) - 14, 2, 28);
+    ctx.fillRect(ex + 6, Math.round(youAt(vEnd)) - 20, 2, 40);
     ctx.restore();
-    label(ctx, "far sample missing", ex + 16, Math.round(youAt(vEnd)) - 18, 12, PAPER_DIM);
+    label(ctx, "far sample missing", ex + 16, Math.round(youAt(vEnd)) - 24, 15, PAPER_DIM);
   }
 
   // the distance, measured where the pen is: it is one cell at the limit
@@ -616,26 +628,37 @@ function outFormula(ctx, t, s) {
     const bx = Math.round(xAt(v));
     const y0 = Math.round(youAt(v));
     const y1 = Math.round(meAt(v));
-    stroke(ctx, [[bx, y0], [bx, y1]], "rgba(0,180,230,0.55)", 2);
-    stroke(ctx, [[bx - 8, y0], [bx + 8, y0]], "rgba(0,180,230,0.55)", 1.5);
-    stroke(ctx, [[bx - 8, y1], [bx + 8, y1]], "rgba(0,180,230,0.55)", 1.5);
-    disc(ctx, bx, Math.round((y0 + y1) / 2), 5, PAPER, 1);
+    stroke(ctx, [[bx, y0], [bx, y1]], "rgba(0,180,230,0.75)", 3);
+    stroke(ctx, [[bx - 12, y0], [bx + 12, y0]], "rgba(0,180,230,0.75)", 2);
+    stroke(ctx, [[bx - 12, y1], [bx + 12, y1]], "rgba(0,180,230,0.75)", 2);
+    disc(ctx, bx, Math.round((y0 + y1) / 2), 7, PAPER, 1);
+    disc(ctx, bx, Math.round((y0 + y1) / 2), 16, PAPER, 0.35, false, 2);
+    // the pen: a bright rule at the computed point, with the gap written next to it
+    stroke(ctx, [[bx, PLOT.y], [bx, PLOT.y + PLOT.h]], "rgba(242,247,250,0.22)", 1);
+    label(ctx, `${(gapAt(pen) / PLOT.step).toFixed(2)} cell`, bx + 16, PLOT.y + 26, 16, PAPER_MID);
   }
 
   // the crossing is assumed, not computed: dashed, and said out loud
   if (computed >= N_POINTS - 1) {
-    const ax = PLOT.x + PLOT.w + 44;
+    const ax = PLOT.x + PLOT.w + 54;
     const k = clamp01((t - start - 1.6) / 0.4);
-    sunburst(ctx, ax, PLOT.midY, 30, 260, 30, "rgba(127,147,255,1)", 0.20 * k, 0.1);
-    burst(ctx, ax, PLOT.midY, t - start - 1.6, "rgba(127,147,255,1)", 0.8);
+    sunburst(ctx, ax, PLOT.midY, 40, 320, 30, "rgba(127,147,255,1)", 0.22 * k, 0.1);
+    burst(ctx, ax, PLOT.midY, t - start - 1.6, "rgba(127,147,255,1)", 0.9);
     layer(ctx, k, () => {
       ctx.save();
-      ctx.setLineDash([7, 7]);
-      stroke(ctx, [[ax, PLOT.midY - 96], [ax, PLOT.midY + 96]], "rgba(127,147,255,0.6)", 2);
+      ctx.setLineDash([9, 9]);
+      stroke(ctx, [[ax, PLOT.midY - 150], [ax, PLOT.midY + 150]], "rgba(127,147,255,0.7)", 2.5);
+      ctx.setLineDash([5, 7]);
+      ctx.beginPath();
+      ctx.arc(ax, PLOT.midY, 58, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(127,147,255,0.55)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
       ctx.restore();
-      stroke(ctx, [[ax - 14, PLOT.midY - 14], [ax + 14, PLOT.midY + 14]], "rgba(127,147,255,0.9)", 2.4);
-      stroke(ctx, [[ax - 14, PLOT.midY + 14], [ax + 14, PLOT.midY - 14]], "rgba(127,147,255,0.9)", 2.4);
-      label(ctx, "assumed", ax, PLOT.midY - 110, 12, "rgba(127,147,255,0.85)", "center");
+      stroke(ctx, [[ax - 22, PLOT.midY - 22], [ax + 22, PLOT.midY + 22]], "rgba(127,147,255,1)", 3.5);
+      stroke(ctx, [[ax - 22, PLOT.midY + 22], [ax + 22, PLOT.midY - 22]], "rgba(127,147,255,1)", 3.5);
+      label(ctx, "assumed", ax, PLOT.midY - 168, 18, "rgba(127,147,255,0.9)", "center");
+      label(ctx, "not computed", ax, PLOT.midY + 176, 14, "rgba(127,147,255,0.6)", "center");
     });
     // what she can only guess: the rest of the far curve, drawn as inference
     ctx.save();
@@ -645,18 +668,18 @@ function outFormula(ctx, t, s) {
       const v = 0.5 + (i / 17) * 0.5;
       tail.push([Math.round(xAt(v)), Math.round(youAt(v))]);
     }
-    stroke(ctx, tail, "rgba(242,247,250,0.28)", 1.8);
+    stroke(ctx, tail, "rgba(242,247,250,0.34)", 2.4);
     ctx.restore();
-    label(ctx, "you, inferred", PLOT.x + PLOT.w - 250, PLOT.midY - 150, 12, PAPER_DIM, "right");
+    label(ctx, "you, inferred", PLOT.x + PLOT.w - 250, PLOT.midY - 150, 15, PAPER_DIM, "right");
   }
 
   // the expression itself, printed above the plot like a line of the question
-  const box = { x: 330, y: 296, w: 980, h: 84 };
-  rect(ctx, box.x, box.y, box.w, box.h, "rgba(6,27,40,0.86)", 3, "rgba(0,180,230,0.28)");
-  type(ctx, "LOVE(x) = lim  ( you(x) − me(x) )", box.x + 22, box.y + 38, 24, PAPER, "MV Mono");
-  type(ctx, "        = 1 cell   ·   never 0", box.x + 22, box.y + 70, 18, BLUE, "MV Mono");
-  label(ctx, `point ${String(computed).padStart(2, "0")} / 32`, box.x + box.w - 22, box.y + 34, 13, PAPER_DIM, "right");
-  label(ctx, `Δ ${(gapAt(pen) / PLOT.step).toFixed(3)} cell`, box.x + box.w - 22, box.y + 62, 13, BLUE, "right");
+  const box = { x: 300, y: 210, w: 1200, h: 116 };
+  rect(ctx, box.x, box.y, box.w, box.h, "rgba(6,27,40,0.9)", 3, "rgba(0,180,230,0.35)");
+  type(ctx, "LOVE(x) = lim  ( you(x) − me(x) )", box.x + 26, box.y + 50, 34, PAPER, "MV Mono");
+  type(ctx, "= 1 cell   ·   never 0", box.x + 26, box.y + 96, 26, BLUE, "MV Mono");
+  label(ctx, `point ${String(computed).padStart(2, "0")} / 32`, box.x + box.w - 26, box.y + 44, 18, PAPER_MID, "right");
+  label(ctx, `Δ ${(gapAt(pen) / PLOT.step).toFixed(3)} cell`, box.x + box.w - 26, box.y + 88, 22, BLUE, "right");
 
   return { phase: "formula", computed };
 }
@@ -704,7 +727,7 @@ function outProof(ctx, t, s) {
     disc(ctx, Math.round(LENS.left + 80 + q * (LENS.right - LENS.left - 160)), Math.round(LENS.midY - 96 - q * 24), 4, BLUE, 1);
     disc(ctx, Math.round(LENS.left + 80 + q * (LENS.right - LENS.left - 160)), Math.round(LENS.midY + 96 + q * 24), 4, BLUE, 1);
   }
-  label(ctx, "me · closed", (LENS.left + LENS.right) / 2, LENS.midY + 40, 14, PAPER_MID, "center");
+  label(ctx, "me · closed", (LENS.left + LENS.right) / 2, LENS.midY + 44, 18, PAPER_MID, "center");
 
   // 2. the far exit: the same two curves, not joined, off the page
   const spread = 6 + Math.round(8 * easeInOut((t - s.at) / 3.9)); // it opens, never closes
@@ -720,8 +743,8 @@ function outProof(ctx, t, s) {
   ctx.fillRect(1888, mouthTop - 2, 32, 3);
   ctx.fillRect(1888, mouthBot - 1, 32, 3);
   ctx.restore();
-  label(ctx, "OPEN", 1866, mouthTop - 14, 13, PAPER_DIM, "right");
-  label(ctx, "you · open", 1790, LENS.midY + 132, 14, PAPER_MID, "right");
+  label(ctx, "OPEN", 1866, mouthTop - 16, 16, PAPER_DIM, "right");
+  label(ctx, "you · open", 1790, LENS.midY + 132, 18, PAPER_MID, "right");
 
   // 3. her, right of centre, 82% of the frame, palm open
   const reach = ART.images.reach;
@@ -734,6 +757,27 @@ function outProof(ctx, t, s) {
     const art = scaledArt(reach, w, h);
     if (art) layer(ctx, 1, () => ctx.drawImage(art, ox, oy));
   }
+
+  // 3b. the request the whole question is about, printed like a line of the paper:
+  //     the reference sets presence by hand; here the call runs and finds nobody
+  const reqK = clamp01((t - (s.at + 0.35)) / 0.3);
+  layer(ctx, reqK, () => {
+    const bx = 330;
+    const by = 236;
+    ctx.fillStyle = "rgba(6,27,40,0.9)";
+    ctx.fillRect(bx, by, 720, 84);
+    stroke(ctx, [[bx, by], [bx + 720, by]], "rgba(0,180,230,0.4)", 2);
+    stroke(ctx, [[bx, by + 84], [bx + 720, by + 84]], "rgba(0,180,230,0.4)", 2);
+    type(ctx, 'me.setPresence(you, "online")', bx + 18, by + 34, 24, PAPER, "MV Mono");
+    const errAt = s.at + 1.15;
+    if (t >= errAt) {
+      type(ctx, "→ error: you not found", bx + 18, by + 68, 20, PAPER_MID, "MV Mono");
+      ctx.fillStyle = RED_EDGE;
+      ctx.fillRect(bx + 4, by + 52, 2, 22);
+    } else {
+      type(ctx, "→ ...", bx + 18, by + 68, 20, PAPER_DIM, "MV Mono");
+    }
+  });
 
   // 4. the point leaves the palm, slowly, and hangs inside the exit
   const travel = easeInOut((t - (s.at + 0.55)) / (open - 0.55));
@@ -759,7 +803,7 @@ function outProof(ctx, t, s) {
         blocks(ctx, 900, 60, 780, 960, arrive, BLUE, 0.45, 44);
         sunburst(ctx, 1263, 470, 300, 760, 36, BLUE, 0.16 * arrive, 0.05);
         rays(ctx, 1263, 470, 360, 900, 48, PAPER, 0.10 * arrive, 0.02, 1.5);
-        label(ctx, "printed on her, not by her", 1263, 990, 13, PAPER_MID, "center");
+        label(ctx, "printed on her, not by her", 1263, 990, 17, PAPER_MID, "center");
       }
     }
   }
@@ -803,7 +847,7 @@ function outProof(ctx, t, s) {
     disc(ctx, px, py, 9 * breathe, BLUE, 1);
     disc(ctx, px, py, 26 * breathe, BLUE, 0.45, false, 2);
   });
-  label(ctx, arrived ? "held" : "leaving", px + 22, py + 5, 12, PAPER_DIM);
+  label(ctx, arrived ? "held" : "leaving", px + 24, py + 6, 15, PAPER_DIM);
 
   return { phase: "proof", travel: Number(travel.toFixed(3)), arrived };
 }

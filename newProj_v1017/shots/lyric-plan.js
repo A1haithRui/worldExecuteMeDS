@@ -263,34 +263,34 @@ export const LYRIC_BY_SHOT = Object.freeze({
   // L128 starts at 191.356 and runs into section 14, so section 14 MUST keep this
   // exact placement (bottom left, 96 px, left aligned) or the cut will jump.
   "out-lesson": {
-    style: "display", size: 44, align: "left", anchor: [330, 210], maxWidth: 900,
+    style: "display", size: 68, align: "left", anchor: [330, 214], maxWidth: 1180,
     byLine: {
-      117: { anchor: [330, 210] },
-      118: { anchor: [330, 274] },
+      117: { anchor: [330, 214] },
+      118: { anchor: [330, 300] },
       119: { size: 96, align: "left", anchor: [330, 1000], maxWidth: 1200 },
     },
   },
   "out-test": {
-    style: "display", size: 44, align: "left", anchor: [330, 210], maxWidth: 900,
+    style: "display", size: 68, align: "left", anchor: [330, 214], maxWidth: 1180,
     byLine: {
-      120: { anchor: [330, 210] },
-      121: { anchor: [330, 274] },
+      120: { anchor: [330, 214] },
+      121: { anchor: [330, 300] },
       122: { size: 96, align: "left", anchor: [330, 1000], maxWidth: 1200 },
     },
   },
   "out-formula": {
-    style: "display", size: 44, align: "left", anchor: [330, 210], maxWidth: 900,
+    style: "display", size: 68, align: "left", anchor: [330, 214], maxWidth: 1180,
     byLine: {
-      123: { anchor: [330, 210] },
+      123: { anchor: [330, 214] },
       124: { size: 96, align: "left", anchor: [330, 1000], maxWidth: 1200 },
     },
   },
   "out-proof": {
-    style: "display", size: 42, align: "left", anchor: [330, 200], maxWidth: 620,
+    style: "display", size: 58, align: "left", anchor: [330, 200], maxWidth: 760,
     byLine: {
       125: { anchor: [330, 200] },
-      126: { anchor: [330, 258] },
-      127: { anchor: [330, 316] },
+      126: { anchor: [330, 270] },
+      127: { anchor: [330, 340] },
       128: { size: 96, align: "left", anchor: [330, 1000], maxWidth: 1200 },
     },
   },
