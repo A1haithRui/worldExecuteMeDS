@@ -75,11 +75,18 @@ const P_CONTENT_TOP = Math.round(P_TOP + 128 * P_SCALE);
 const P_CONTENT_W = Math.round(1086 * P_SCALE);
 const P_CONTENT_H = Math.round(1438 * P_SCALE);
 
-// The empty port between the language wall and the plate.
-const PORT = Object.freeze({ x: 1004, y: 802, r: 24 });
-const COLLECTOR_X = 1004;
-const COLLECTOR_TOP = 240;
-const COLLECTOR_BOT = 714;
+// The empty port becomes a full dial: six language slots around the rim, a
+// needle that snaps to the language being tried, and one red failure mark per
+// attempt in the hollow core.
+const WHEEL = Object.freeze({ x: 1000, y: 856, r: 96 });
+const SLIP_X0 = 600;
+const SLIP_X1 = 992;
+const SLIP_Y0 = 250;
+const SLIP_GAP = 74;
+const SLIP_H = 50;
+const BUS_X = WHEEL.x;
+const BUS_TOP = SLIP_Y0 - 10;
+const BUS_BOT = WHEEL.y - WHEEL.r;
 
 const clamp01 = clamp;
 const easeOut = (x) => 1 - (1 - clamp01(x)) ** 3;
@@ -219,108 +226,188 @@ function dissolver(ctx, t, s, n) {
   }
 }
 
-/** The current word, big; the six attempt marks under it are the counter. */
+/** The current word, big; the 2x3 attempt grid uses the whole lower-left. */
 function leftColumn(ctx, t, s, n) {
   const word = lineText(countLine(n));
-  type(ctx, `ATTEMPT ${String(n).padStart(2, "0")} / 06`, 110, 342, 18, PAPER_MID, "MV Mono");
-  type(ctx, `${LANGS[n - 1]} · ${String(n).padStart(2, "0")}`, 110, 376, 14, BLUE, "MV Mono");
+  type(ctx, "ATTEMPT", 110, 700, 13, BLUE, "MV Mono");
+  type(ctx, `${String(n).padStart(2, "0")} / 06 · ${LANGS[n - 1]}`, 110, 722, 16, PAPER_MID, "MV Mono");
   type(ctx, word, 110, 566, 128, PAPER, "MV Serif");
   ctx.font = '600 128px "MV Serif"';
   const w = Math.min(560, ctx.measureText(word).width);
   ctx.fillStyle = BLUE;
   ctx.fillRect(110, 590, Math.round(w), 3);
 
-  // six big attempt marks, one per request; the active one gets a misregistered
-  // echo and one expanding ring, so the beat reads as an event, not a lamp
-  const y = 934;
-  const cell = 64;
-  const gap = 20;
-  type(ctx, "ATTEMPT", 110, 902, 13, BLUE, "MV Mono");
+  // two rows by three columns: the counter is now a printed ledger, not a strip
+  const x0 = 110;
+  const y0 = 760;
+  const cw = 200;
+  const ch = 96;
+  const gx = 18;
+  const gy = 18;
   for (let i = 0; i < 6; i++) {
-    const x = 110 + i * (cell + gap);
+    const col = i % 3;
+    const row = Math.floor(i / 3);
+    const x = x0 + col * (cw + gx);
+    const y = y0 + row * (ch + gy);
     const active = i + 1 === n;
     const done = i + 1 < n;
-    if (i === 0) {
-      // section 10's closed port is the first tick
-      ctx.beginPath();
-      ctx.arc(x + 30, y, 30, 0, Math.PI * 2);
-      ctx.strokeStyle = RED;
-      ctx.lineWidth = active ? 4 : 2;
-      ctx.stroke();
-      type(ctx, "1", x + 30, y + 8, 26, active ? PAPER : PAPER_DIM, "MV Mono", "center");
-    } else {
-      ctx.strokeStyle = active ? BLUE : done ? "rgba(0,180,230,0.55)" : BLUE_FAINT;
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x, y - 30, cell, 60);
-      if (active) {
-        ctx.fillStyle = BLUE;
-        ctx.fillRect(x + 2, y - 28, cell - 4, 56);
-      }
-      // the echo: two pixels of paper, off register
-      if (active) {
-        type(ctx, String(i + 1), x + cell / 2 + 3, y + 10, 34, "rgba(242,247,250,0.30)", "MV Mono", "center");
-      }
-      type(ctx, String(i + 1), x + cell / 2, y + 8, 34, active ? INK : done ? PAPER_MID : PAPER_DIM, "MV Mono", "center");
-    }
-    type(ctx, LANGS[i], x + 30, y + 48, 11, active ? BLUE : PAPER_DIM, "MV Mono", "center");
 
+    ctx.strokeStyle = active ? BLUE : done ? "rgba(0,180,230,0.50)" : BLUE_FAINT;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + 0.5, y + 0.5, cw - 1, ch - 1);
+    if (active) {
+      ctx.fillStyle = BLUE;
+      ctx.fillRect(x + 2, y + 2, cw - 4, ch - 4);
+    }
+    if (done) {
+      ctx.fillStyle = RED;
+      ctx.fillRect(x - 3, y + 8, 2, ch - 16);
+    }
+    if (active) {
+      type(ctx, String(i + 1), x + cw - 20, y + ch - 26, 64, "rgba(242,247,250,0.28)", "MV Mono", "right");
+    }
+    type(
+      ctx,
+      String(i + 1),
+      x + cw - 24,
+      y + ch - 30,
+      64,
+      active ? INK : done ? PAPER_MID : PAPER_DIM,
+      "MV Mono",
+      "right",
+    );
+    type(ctx, LANGS[i], x + 16, y + 24, 12, active ? INK : done ? PAPER_DIM : BLUE_FAINT, "MV Mono");
+    type(
+      ctx,
+      done ? "MISS" : "REQ",
+      x + 16,
+      y + ch - 14,
+      10,
+      active ? INK : done ? "rgba(231,93,105,0.75)" : BLUE_FAINT,
+      "MV Mono",
+    );
     if (active) {
       const k = clamp01((t - s.at) / 0.16);
       ctx.beginPath();
-      ctx.arc(x + 30, y, 34 + Math.round(18 * k), 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(0,180,230,${(0.55 * (1 - k)).toFixed(2)})`;
+      ctx.arc(x + cw / 2, y + ch / 2, 70 + Math.round(26 * k), 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(0,180,230,${(0.5 * (1 - k)).toFixed(2)})`;
       ctx.lineWidth = 2;
       ctx.stroke();
     }
   }
 }
 
-/** The language wall: the same request in six scripts, all to the same port. */
-function languageWall(ctx, t, s, n) {
+/** A slip of paper with a torn left edge, used for the six language strips. */
+function slipPath(ctx, xl, y, w, h) {
+  ctx.beginPath();
+  ctx.moveTo(xl + 9, y);
+  ctx.lineTo(xl + w, y);
+  ctx.lineTo(xl + w, y + h);
+  ctx.lineTo(xl + 9, y + h);
+  ctx.lineTo(xl + 2, y + h * 0.75);
+  ctx.lineTo(xl + 11, y + h * 0.5);
+  ctx.lineTo(xl + 2, y + h * 0.25);
+  ctx.closePath();
+}
+
+/** Six language slips pulled out of a stack, all feeding one bus. */
+function languageSlips(ctx, t, s, n) {
+  stroke(ctx, [[BUS_X, BUS_TOP], [BUS_X, BUS_BOT]], BLUE_FAINT, 1);
   for (let i = 0; i < 6; i++) {
+    const y = SLIP_Y0 + i * SLIP_GAP;
     const active = i + 1 === n;
-    const y = 252 + i * 86;
-    const size = active ? 58 : 42;
-    const colour = active ? PAPER : "rgba(242,247,250,0.24)";
+    const done = i + 1 < n;
+    const slide = active ? Math.round(14 * easeOut(clamp01((t - s.at) / 0.18))) : 0;
+    const xl = SLIP_X0 + (i % 3) * 14 + slide;
+    const w = SLIP_X1 - xl;
+    slipPath(ctx, xl, y, w, SLIP_H);
+    if (active) {
+      ctx.fillStyle = PAPER;
+      ctx.fill();
+      ctx.strokeStyle = BLUE;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    } else {
+      ctx.strokeStyle = done ? "rgba(242,247,250,0.30)" : "rgba(242,247,250,0.16)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    const size = active ? 48 : 38;
     ctx.font = NATIVE[i].font(size);
     ctx.textAlign = "right";
     ctx.textBaseline = "alphabetic";
-    ctx.fillStyle = colour;
-    ctx.fillText(NATIVE[i].word, 872, y);
-    type(ctx, LANGS[i], 894, y - 2, 11, active ? BLUE : PAPER_DIM, "MV Mono");
-    // every route to the same collector
-    stroke(ctx, [[902, y + 10], [COLLECTOR_X, y + 10]], active ? BLUE : "rgba(0,180,230,0.10)", active ? 2 : 1);
-    if (active) {
-      const p = clamp01((t - countStart(n)) / 0.28);
-      const px = Math.round(mix(902, COLLECTOR_X, Math.min(1, p * 1.6)));
-      const py = p > 0.62 ? Math.round(mix(y + 10, PORT.y - PORT.r - 6, (p - 0.62) / 0.38)) : y + 10;
-      disc(ctx, p > 0.62 ? COLLECTOR_X : px, py, 4, PAPER, 0.95);
-    }
+    ctx.fillStyle = active ? INK : done ? "rgba(242,247,250,0.42)" : "rgba(242,247,250,0.20)";
+    ctx.fillText(NATIVE[i].word, SLIP_X1 - 22, y + 36);
+    type(ctx, LANGS[i], xl + 26, y + 30, 10, active ? INK : PAPER_DIM, "MV Mono");
+    stroke(
+      ctx,
+      [[SLIP_X1, y + SLIP_H / 2], [BUS_X, y + SLIP_H / 2]],
+      active ? BLUE : "rgba(0,180,230,0.10)",
+      active ? 2 : 1,
+    );
   }
+}
 
-  // the collector and the one empty port
-  stroke(ctx, [[COLLECTOR_X, COLLECTOR_TOP], [COLLECTOR_X, COLLECTOR_BOT]], BLUE_FAINT, 1);
-  stroke(ctx, [[COLLECTOR_X, COLLECTOR_BOT], [COLLECTOR_X, PORT.y - PORT.r - 6]], BLUE_FAINT, 1);
+/** The enlarged dial: six language slots, a needle, and a hollow core. */
+function bigWheel(ctx, t, s, n) {
+  const { x, y, r } = WHEEL;
+  for (let i = 0; i < 6; i++) {
+    const a = -Math.PI / 2 + (i / 6) * Math.PI * 2;
+    const active = i + 1 === n;
+    const x0 = Math.round(x + Math.cos(a) * (r - 24));
+    const y0 = Math.round(y + Math.sin(a) * (r - 24));
+    const x1 = Math.round(x + Math.cos(a) * r);
+    const y1 = Math.round(y + Math.sin(a) * r);
+    stroke(ctx, [[x0, y0], [x1, y1]], active ? BLUE : PAPER_DIM, active ? 4 : 1);
+    const lx = Math.round(x + Math.cos(a) * (r + 17));
+    const ly = Math.round(y + Math.sin(a) * (r + 17));
+    type(ctx, LANGS[i], lx, ly + 4, 11, active ? BLUE : PAPER_DIM, "MV Mono", "center");
+  }
   ctx.beginPath();
-  ctx.arc(PORT.x, PORT.y, PORT.r, 0, Math.PI * 2);
+  ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.strokeStyle = "rgba(242,247,250,0.55)";
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 2;
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(PORT.x, PORT.y, PORT.r - 8, 0, Math.PI * 2);
+  ctx.arc(x, y, r - 24, 0, Math.PI * 2);
   ctx.strokeStyle = BLUE_FAINT;
   ctx.lineWidth = 1;
   ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(x, y, 32, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(242,247,250,0.60)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  const prev = -Math.PI / 2 + ((Math.max(1, n - 1) - 1) / 6) * Math.PI * 2;
+  const cur = -Math.PI / 2 + ((n - 1) / 6) * Math.PI * 2;
+  const k = easeOut(clamp01((t - s.at) / 0.18));
+  const a = mix(prev, cur, k);
+  const nx = Math.round(x + Math.cos(a) * (r - 30));
+  const ny = Math.round(y + Math.sin(a) * (r - 30));
+  stroke(ctx, [[x, y], [nx, ny]], BLUE, 2);
+  disc(ctx, nx, ny, 4, PAPER, 1);
+  disc(ctx, x, y, 5, BLUE, 1);
+
   for (let j = 0; j < n; j++) {
-    const a = -Math.PI / 2 + (j / 6) * Math.PI * 2;
-    const ax0 = Math.round(PORT.x + Math.cos(a) * (PORT.r + 2));
-    const ay0 = Math.round(PORT.y + Math.sin(a) * (PORT.r + 2));
-    const ax1 = Math.round(PORT.x + Math.cos(a) * (PORT.r + 10));
-    const ay1 = Math.round(PORT.y + Math.sin(a) * (PORT.r + 10));
-    stroke(ctx, [[ax0, ay0], [ax1, ay1]], RED_EDGE, 2);
+    const fa = -Math.PI / 2 + (j / 6) * Math.PI * 2;
+    const fx0 = Math.round(x + Math.cos(fa) * 18);
+    const fy0 = Math.round(y + Math.sin(fa) * 18);
+    const fx1 = Math.round(x + Math.cos(fa) * 27);
+    const fy1 = Math.round(y + Math.sin(fa) * 27);
+    stroke(ctx, [[fx0, fy0], [fx1, fy1]], RED_EDGE, 2);
   }
-  type(ctx, "NO RETURN", PORT.x, PORT.y + 48, 12, PAPER_DIM, "MV Mono", "center");
-  type(ctx, "REPLIES 0", PORT.x, PORT.y + 66, 11, PAPER_DIM, "MV Mono", "center");
+  const p = clamp01((t - countStart(n)) / 0.3);
+  if (p > 0.7) {
+    const rr = Math.round(32 + 24 * ((p - 0.7) / 0.3));
+    ctx.beginPath();
+    ctx.arc(x, y, rr, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(242,247,250,${(0.5 * (1 - (p - 0.7) / 0.3)).toFixed(2)})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  type(ctx, "NO RETURN", x, y + r + 26, 13, PAPER_MID, "MV Mono", "center");
+  type(ctx, "REPLIES 0", x, y + r + 44, 11, PAPER_DIM, "MV Mono", "center");
 }
 
 function countShot(n) {
@@ -328,7 +415,8 @@ function countShot(n) {
     page(ctx);
     header(ctx, n);
     leftColumn(ctx, t, s, n);
-    languageWall(ctx, t, s, n);
+    languageSlips(ctx, t, s, n);
+    bigWheel(ctx, t, s, n);
     dissolver(ctx, t, s, n);
     return {
       phase: "count",
