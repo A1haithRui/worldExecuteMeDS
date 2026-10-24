@@ -740,7 +740,7 @@ function outProof(ctx, t, s) {
   const right = [notch, [HEART.cx + HEART.hs * 0.80, HEART.cy - HEART.hs * 1.30], [HEART.cx + HEART.hs * 1.62, HEART.cy - HEART.hs * 0.18], point];
   const leftAll = bez4(left);
   const rightAll = bez4(right);
-  const drawK = easeInOut((t - (s.at + 0.10)) / 1.15);
+  const drawK = easeInOut((t - (s.at + 0.10)) / 1.45);
   const leftShown = heartHalf(ctx, leftAll, BLUE, drawK, PAPER);
   const rightShown = heartHalf(ctx, rightAll, PAPER, drawK, BLUE);
   // the computed points appear as the pen passes them
@@ -770,7 +770,7 @@ function outProof(ctx, t, s) {
       ctx.globalAlpha = 0.8 * (1 - age / 0.7);
       ctx.strokeStyle = BLUE;
       ctx.lineWidth = 3;
-      for (const f of [1, 0.6]) {
+      for (const f of [1, 0.78, 0.56, 0.34]) {
         ctx.beginPath();
         ctx.arc(point[0], point[1], Math.round(30 + age * 320 * f), 0, Math.PI * 2);
         ctx.stroke();
@@ -779,8 +779,8 @@ function outProof(ctx, t, s) {
     }
   }
   layer(ctx, clamp01((drawK - 0.85) / 0.15), () => {
-    label(ctx, "me · closed", HEART.cx, HEART.cy + 44, 22, PAPER);
-    label(ctx, "the two curves, joined", HEART.cx, HEART.cy + 78, 15, PAPER_MID);
+    label(ctx, "me · closed", HEART.cx, HEART.cy + 4, 22, PAPER, "center");
+    label(ctx, "the two curves, joined", HEART.cx, HEART.cy + 38, 14, PAPER_MID, "center");
   });
 
   // 2. the far exit: the same two curves leaving the heart's right side, not joined,

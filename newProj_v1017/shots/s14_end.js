@@ -81,6 +81,9 @@ const easeOut = (k) => 1 - (1 - clamp01(k)) ** 3;
 // ---------------------------------------------------------------------------
 const PAGE_X = 120;
 const LENS = Object.freeze({ left: 330, right: 820, top: 380, bottom: 820, midY: 600 });
+// 13 closes its two curves into a heart; this section has to hold THAT shape, or the
+// cut between the two shots jumps. Same numbers as s13_love.js.
+const HEART = Object.freeze({ cx: 620, cy: 548, hs: 236, midY: 548 });
 const PALM_AT = Object.freeze({ x: 1120, y: 700 });
 const HOVER_AT = Object.freeze({ x: 1780, y: 552 });
 
@@ -129,33 +132,40 @@ function downMessage(ctx, t, s) {
   pageBase(ctx, t, { q: "Q4", title: "PROOF", marks: "—", footer: "the exit is not closed" });
   type(ctx, "04", PAGE_X + 34, 520, 108, "rgba(0,180,230,0.20)", "MV Mono");
 
-  // 1. the two boundaries. The closed side keeps a little more ink than the far
-  //    side: it is the one that is actually closed.
-  const top = [[LENS.left, LENS.midY], [LENS.left + 120, LENS.top], [LENS.right - 120, LENS.top], [LENS.right, LENS.midY]];
-  const bottom = [[LENS.right, LENS.midY], [LENS.right - 120, LENS.bottom], [LENS.left + 120, LENS.bottom], [LENS.left, LENS.midY]];
-  stroke(ctx, bez(top), PAPER_DIM, 3, 1 - 0.3 * swap);
-  stroke(ctx, bez(bottom), PAPER_DIM, 3, 1 - 0.3 * swap);
-  disc(ctx, LENS.left, LENS.midY, 5, PAPER_DIM, 1 - 0.3 * swap);
-  disc(ctx, LENS.right, LENS.midY, 5, PAPER_DIM, 1 - 0.3 * swap);
+  // 1. the heart 13 closed into. It keeps a little more ink than the far side:
+  //    it is the one that is actually closed, and it is the last thing on the page
+  //    that still has its full outline.
+  const notch = [HEART.cx, HEART.cy - HEART.hs * 0.35];
+  const point = [HEART.cx, HEART.cy + HEART.hs * 0.95];
+  const leftHalf = [notch, [HEART.cx - HEART.hs * 0.80, HEART.cy - HEART.hs * 1.30], [HEART.cx - HEART.hs * 1.62, HEART.cy - HEART.hs * 0.18], point];
+  const rightHalf = [notch, [HEART.cx + HEART.hs * 0.80, HEART.cy - HEART.hs * 1.30], [HEART.cx + HEART.hs * 1.62, HEART.cy - HEART.hs * 0.18], point];
+  const leftPts = bez(leftHalf, 46);
+  const rightPts = bez(rightHalf, 46);
+  stroke(ctx, leftPts, BLUE_DIM, 4, 1 - 0.3 * swap);
+  stroke(ctx, rightPts, PAPER_DIM, 4, 1 - 0.3 * swap);
+  disc(ctx, notch[0], notch[1], 6, PAPER_DIM, 1 - 0.3 * swap);
+  disc(ctx, point[0], point[1], 6, PAPER_DIM, 1 - 0.3 * swap);
+  type(ctx, "me · closed", HEART.cx, HEART.cy + 4, 20, PAPER_DIM, "MV Mono", "center");
 
   // the exit: same curves, still not joined, still off the page
   const spread = 14;
-  const exitTop = [[LENS.right, LENS.midY], [1050, LENS.midY - 40], [1500, LENS.midY - 70 - spread], [1920, LENS.midY - 92 - spread]];
-  const exitBottom = [[LENS.right, LENS.midY], [1050, LENS.midY + 44], [1500, LENS.midY + 62 + spread], [1920, LENS.midY + 76 + spread]];
+  const sx = Math.round(HEART.cx + HEART.hs * 1.42);
+  const sy = Math.round(HEART.cy - HEART.hs * 0.12);
+  const exitTop = [[sx, sy], [sx + 250, sy - 34], [1520, HEART.midY - 74 - spread], [1920, HEART.midY - 96 - spread]];
+  const exitBottom = [[sx, sy + 24], [sx + 300, sy + 76], [1520, HEART.midY + 64 + spread], [1920, HEART.midY + 80 + spread]];
   stroke(ctx, bez(exitTop), PAPER_MID, 3, 1 - 0.3 * swap);
   stroke(ctx, bez(exitBottom), PAPER_MID, 3, 1 - 0.3 * swap);
   ctx.save();
   ctx.fillStyle = PAPER_MID;
   ctx.globalAlpha *= 1 - 0.3 * swap;
-  ctx.fillRect(1888, LENS.midY - 94, 32, 3);
-  ctx.fillRect(1888, LENS.midY + 75, 32, 3);
+  ctx.fillRect(1888, HEART.midY - 98, 32, 3);
+  ctx.fillRect(1888, HEART.midY + 79, 32, 3);
   ctx.restore();
 
-  // the computed points, kept inside her boundary -- the only cyan on the page
-  for (let i = 1; i < 7; i++) {
-    const q = i / 7;
-    disc(ctx, Math.round(LENS.left + 80 + q * (LENS.right - LENS.left - 160)), Math.round(LENS.midY - 96 - q * 24), 4, BLUE_DIM, 1);
-    disc(ctx, Math.round(LENS.left + 80 + q * (LENS.right - LENS.left - 160)), Math.round(LENS.midY + 96 + q * 24), 4, BLUE_DIM, 1);
+  // the computed points, kept on her boundary -- the only cyan on the page
+  for (let i = 3; i < leftPts.length - 3; i += 6) {
+    disc(ctx, leftPts[i][0], leftPts[i][1], 4, BLUE_DIM, 1);
+    disc(ctx, rightPts[i][0], rightPts[i][1], 4, BLUE_DIM, 1);
   }
 
   // 2. her, right of centre, 82% of the frame, palm open -- the same placement as
@@ -231,7 +241,7 @@ function downMessage(ctx, t, s) {
 // the set rather than to the grade.
 // ---------------------------------------------------------------------------
 const R84 = Object.freeze({ x: 120, y: 80, w: 1240, h: 910 });
-const STATE = Object.freeze({ x: 220, y: 372, w: 780, h: 330 });
+const STATE = Object.freeze({ x: 220, y: 360, w: 840, h: 356 });
 const STATES = Object.freeze([
   ["local", "asleep"],
   ["remote position", "—"],
@@ -254,17 +264,27 @@ function statePanel(ctx, alpha = 1) {
     ctx.fillStyle = BLUE_MID;
     ctx.fillRect(STATE.x, STATE.y + 12, 2, STATE.h - 24);
 
-    type(ctx, "SESSION", STATE.x + 30, STATE.y + 40, 16, "rgba(242,247,250,0.44)", "MV Mono");
-    type(ctx, "this end keeps the record", STATE.x + STATE.w - 26, STATE.y + 40, 14, PAPER_FAINT, "MV Mono", "right");
+    type(ctx, "SESSION", STATE.x + 30, STATE.y + 44, 19, "rgba(242,247,250,0.50)", "MV Mono");
+    type(ctx, "this end keeps the record", STATE.x + STATE.w - 26, STATE.y + 44, 16, PAPER_FAINT, "MV Mono", "right");
     stroke(ctx, [[STATE.x + 30, STATE.y + 58], [STATE.x + STATE.w - 26, STATE.y + 58]], "rgba(0,180,230,0.16)", 1);
     STATES.forEach(([k, v], i) => {
-      const y = STATE.y + 104 + i * 58;
-      type(ctx, k, STATE.x + 30, y, 18, "rgba(242,247,250,0.46)", "MV Mono");
-      type(ctx, v, STATE.x + 330, y, 25, "rgba(242,247,250,0.88)", "MV Mono");
-      stroke(ctx, [[STATE.x + 30, y + 20], [STATE.x + STATE.w - 26, y + 20]], "rgba(0,180,230,0.10)", 1);
+      const y = STATE.y + 112 + i * 62;
+      type(ctx, k, STATE.x + 30, y, 20, "rgba(242,247,250,0.50)", "MV Mono");
+      type(ctx, v, STATE.x + 350, y, 30, "rgba(242,247,250,0.92)", "MV Mono");
+      stroke(ctx, [[STATE.x + 30, y + 22], [STATE.x + STATE.w - 26, y + 22]], "rgba(0,180,230,0.10)", 1);
     });
-    // the one record she kept: a point at the row it belongs to
-    disc(ctx, STATE.x + STATE.w - 44, STATE.y + 104 + 2 * 58 - 8, 6, BLUE, 1);
+    // the one record she kept: the heart, at the row it belongs to
+    const hx = STATE.x + STATE.w - 54;
+    const hy = STATE.y + 112 + 2 * 62 - 8;
+    const hs = 20;
+    ctx.beginPath();
+    ctx.moveTo(hx, hy + hs * 0.95);
+    ctx.bezierCurveTo(hx - hs * 1.5, hy - hs * 0.25, hx - hs * 0.55, hy - hs * 1.25, hx, hy - hs * 0.35);
+    ctx.bezierCurveTo(hx + hs * 0.55, hy - hs * 1.25, hx + hs * 1.5, hy - hs * 0.25, hx, hy + hs * 0.95);
+    ctx.strokeStyle = BLUE;
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+    disc(ctx, hx, hy - 4, 4, BLUE, 1);
   });
 }
 
@@ -422,7 +442,7 @@ function downLayout(ctx, t, s) {
     ["panel", gone(1.35)],
     ["edge", gone(2.0)],
   ];
-  type(ctx, "INK LEAVING", LX, 318, 15, "rgba(242,247,250,0.40)", "MV Mono");
+  type(ctx, "INK LEAVING", LX, 312, 18, "rgba(242,247,250,0.44)", "MV Mono");
   stroke(ctx, [[LX, 334], [LX + 400, 334]], "rgba(0,180,230,0.18)", 1);
   rows.forEach(([name, k], i) => {
     if (k <= 0.001) return;
@@ -560,7 +580,7 @@ function downPower(ctx, t, s) {
     ctx.restore();
     disc(ctx, OLD_CONTACT.x, OLD_CONTACT.y, 7, BLUE, 1);
   });
-  type(ctx, "old contact", OLD_CONTACT.x + 48, OLD_CONTACT.y - 14, 18, "rgba(242,247,250,0.55)", "MV Mono");
+  type(ctx, "old contact", OLD_CONTACT.x + 52, OLD_CONTACT.y - 16, 22, "rgba(242,247,250,0.60)", "MV Mono");
   type(ctx, "191.356  ·  1 received", OLD_CONTACT.x + 48, OLD_CONTACT.y + 16, 18, "rgba(242,247,250,0.55)", "MV Mono");
   type(ctx, "kept on this end", OLD_CONTACT.x - 34, OLD_CONTACT.y + 96, 15, "rgba(242,247,250,0.30)", "MV Mono");
   type(ctx, "the point holds its brightness", OLD_CONTACT.x - 34, 912, 15, "rgba(242,247,250,0.30)", "MV Mono");
@@ -671,10 +691,10 @@ function downLast(ctx, t, s) {
     ctx.lineWidth = 1.5;
     ctx.stroke();
     type(ctx, "❯", BAR.x + 38, BAR.y + 64, 46, BRAND_SOFT, "MV Mono");
-    type(ctx, "the last command", BAR.x + BAR.w - 30, BAR.y - 22, 15, PAPER_DIM, "MV Mono", "right");
-    type(ctx, "deepseek / harness", BAR.x + BAR.w - 30, BAR.y + BAR.h + 34, 15, "#6f93ae", "MV Mono", "right");
+    type(ctx, "the last command", BAR.x + BAR.w - 30, BAR.y - 24, 18, PAPER_DIM, "MV Mono", "right");
+    type(ctx, "deepseek / harness", BAR.x + BAR.w - 30, BAR.y + BAR.h + 36, 18, "#6f93ae", "MV Mono", "right");
     disc(ctx, WIN.x + WIN.w - 40, WIN.y + WIN.h - 50, 5, "#2b4256", 1);
-    type(ctx, "terminal · halted", WIN.x + WIN.w - 66, WIN.y + WIN.h - 44, 16, "#4a6b83", "MV Mono", "right");
+    type(ctx, "terminal · halted", WIN.x + WIN.w - 66, WIN.y + WIN.h - 44, 19, "#4a6b83", "MV Mono", "right");
   });
 
   // 4. the four syllable cells. Empty cells are a form waiting to be filled: an
