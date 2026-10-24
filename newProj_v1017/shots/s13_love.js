@@ -709,12 +709,20 @@ function bez4(p, n = 46) {
   return out;
 }
 
-/** A heart half with the same ink weight as Q3's curves: 12px halo, 4px line. */
-function heartHalf(ctx, p, colour) {
-  const pts = bez4(p);
-  layer(ctx, 0.16, () => stroke(ctx, pts, colour, 12));
-  stroke(ctx, pts, colour, 4);
-  return pts;
+/**
+ * A heart half drawn as a pen would draw it: from the notch, outward. `k` is how
+ * much of the curve exists yet. Thick and bright: a wide halo, a 7px line, and a
+ * white core on the cyan half so it reads as lit ink.
+ */
+function heartHalf(ctx, pts, colour, k, core = null) {
+  const n = Math.max(2, Math.round(pts.length * clamp01(k)));
+  const shown = pts.slice(0, n);
+  if (shown.length < 2) return shown;
+  layer(ctx, 0.30, () => stroke(ctx, shown, colour, 26));
+  layer(ctx, 0.22, () => stroke(ctx, shown, BLUE, 46));
+  stroke(ctx, shown, colour, 8);
+  if (core) layer(ctx, 0.95, () => stroke(ctx, shown, core, 3));
+  return shown;
 }
 
 function outProof(ctx, t, s) {
@@ -724,22 +732,56 @@ function outProof(ctx, t, s) {
   const open = 191.356 - s.at; // when LO-O-OVE starts: the point has arrived
 
   // 1. her side: the same two curves as Q3, now joined at the notch and the point.
-  //    They make a heart. "me" is the cyan half, "you" is the paper half.
+  //    They make a heart, and it is drawn from the notch outward, both halves at once,
+  //    so it closes exactly when the pen reaches the bottom point.
   const notch = [HEART.cx, HEART.cy - HEART.hs * 0.35];
   const point = [HEART.cx, HEART.cy + HEART.hs * 0.95];
   const left = [notch, [HEART.cx - HEART.hs * 0.80, HEART.cy - HEART.hs * 1.30], [HEART.cx - HEART.hs * 1.62, HEART.cy - HEART.hs * 0.18], point];
   const right = [notch, [HEART.cx + HEART.hs * 0.80, HEART.cy - HEART.hs * 1.30], [HEART.cx + HEART.hs * 1.62, HEART.cy - HEART.hs * 0.18], point];
-  const leftPts = heartHalf(ctx, left, BLUE);
-  const rightPts = heartHalf(ctx, right, PAPER);
-  // the computed points, kept on her boundary
-  for (let i = 3; i < leftPts.length - 3; i += 6) {
-    disc(ctx, leftPts[i][0], leftPts[i][1], 5, BLUE, 1);
-    disc(ctx, rightPts[i][0], rightPts[i][1], 5, PAPER, 1);
+  const leftAll = bez4(left);
+  const rightAll = bez4(right);
+  const drawK = easeInOut((t - (s.at + 0.10)) / 1.15);
+  const leftShown = heartHalf(ctx, leftAll, BLUE, drawK, PAPER);
+  const rightShown = heartHalf(ctx, rightAll, PAPER, drawK, BLUE);
+  // the computed points appear as the pen passes them
+  for (let i = 3; i < leftAll.length - 3; i += 6) {
+    if (i >= leftShown.length) continue;
+    disc(ctx, leftAll[i][0], leftAll[i][1], 6, BLUE, 1);
+    disc(ctx, leftAll[i][0], leftAll[i][1], 12, BLUE, 0.35, false, 2);
+    disc(ctx, rightAll[i][0], rightAll[i][1], 6, PAPER, 1);
   }
-  disc(ctx, notch[0], notch[1], 7, PAPER, 1);
-  disc(ctx, point[0], point[1], 7, PAPER, 1);
-  label(ctx, "me · closed", HEART.cx, HEART.cy + 44, 20, PAPER_MID, "center");
-  label(ctx, "the two curves, joined", HEART.cx, HEART.cy + 76, 14, PAPER_DIM, "center");
+  // the pen: where the drawing starts, and where it has got to
+  if (drawK > 0 && drawK < 1) {
+    const head = leftShown[leftShown.length - 1];
+    const head2 = rightShown[rightShown.length - 1];
+    disc(ctx, head[0], head[1], 8, PAPER, 1);
+    disc(ctx, head2[0], head2[1], 8, PAPER, 1);
+    disc(ctx, head[0], head[1], 22, BLUE, 0.5, false, 2);
+    disc(ctx, head2[0], head2[1], 22, PAPER, 0.4, false, 2);
+  } else if (drawK > 0) {
+    disc(ctx, notch[0], notch[1], 9, PAPER, 1);
+    disc(ctx, notch[0], notch[1], 26, BLUE, 0.5, false, 2);
+    disc(ctx, point[0], point[1], 9, PAPER, 1);
+    disc(ctx, point[0], point[1], 26, BLUE, 0.5, false, 2);
+    // it closes: one ring out of the point
+    const age = t - (s.at + 1.25);
+    if (age > 0 && age < 0.7) {
+      ctx.save();
+      ctx.globalAlpha = 0.8 * (1 - age / 0.7);
+      ctx.strokeStyle = BLUE;
+      ctx.lineWidth = 3;
+      for (const f of [1, 0.6]) {
+        ctx.beginPath();
+        ctx.arc(point[0], point[1], Math.round(30 + age * 320 * f), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+  }
+  layer(ctx, clamp01((drawK - 0.85) / 0.15), () => {
+    label(ctx, "me · closed", HEART.cx, HEART.cy + 44, 22, PAPER);
+    label(ctx, "the two curves, joined", HEART.cx, HEART.cy + 78, 15, PAPER_MID);
+  });
 
   // 2. the far exit: the same two curves leaving the heart's right side, not joined,
   //    off the page. Open is a boundary, so it is marked like one.
