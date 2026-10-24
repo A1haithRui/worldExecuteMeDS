@@ -29,6 +29,11 @@ function resetCtx(ctx, width, height) {
   // that set a shadow and did not put it back made the NEXT frame render differently
   // -- which is exactly the bug the determinism check exists to catch, and it only
   // showed up when two shots were rendered in sequence rather than alone.
+  //
+  // Text alignment, line width and the stroking properties are the same class of
+  // leak, but resetting them here changed the output of shots that had grown used to
+  // inheriting them, so that is a refactor to do together with a full re-render
+  // rather than after the fact.
   ctx.shadowBlur = 0;
   ctx.shadowColor = "rgba(0,0,0,0)";
   ctx.shadowOffsetX = 0;
