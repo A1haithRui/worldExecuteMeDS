@@ -58,6 +58,30 @@ const BRAND_SOFT = "#7f93ff";
 const PAPER_MID = "rgba(242,247,250,0.62)";
 const PAPER_DIM = "rgba(242,247,250,0.34)";
 const PAPER_FAINT = "rgba(242,247,250,0.16)";
+
+// The drum hits of the last chorus, measured from audio/song.wav. Everything in this
+// section that changes does it ON one of these: a box falls, a row is struck out, a
+// piece of her outline is erased. The last hit is 206.88 -- after that the song is a
+// fade, so 087 is not beat-driven at all, it is the dissolve.
+const BEATS = Object.freeze([
+  192.57, 192.78, 193.05, 193.26, 193.5, 193.71, 194.16, 194.61, 195.09, 195.54,
+  196.02, 196.47, 196.95, 197.13, 197.4, 197.85, 198.3, 198.51, 198.78, 199.23,
+  199.71, 200.16, 200.64, 200.91, 201.09, 201.57, 201.84, 202.02, 202.47, 202.95,
+  203.22, 203.4, 203.88, 204.33, 204.6, 204.78, 205.26, 205.71, 206.19, 206.64, 206.88,
+]);
+/** How many hits have landed by time t. */
+function beatCount(t) {
+  let n = 0;
+  for (const b of BEATS) if (t >= b) n++;
+  return n;
+}
+/** The quick removal that follows a beat: 0 before it, 1 a tenth of a second after. */
+function goneAt(t, beatIndex, dur = 0.12) {
+  if (beatIndex < 0) return 0;
+  const b = BEATS[beatIndex];
+  if (b === undefined) return 0;
+  return clamp((t - b) / dur);
+}
 const BLUE_MID = "rgba(0,180,230,0.55)";
 const BLUE_DIM = "rgba(0,180,230,0.30)";
 const BLUE_FAINT = "rgba(0,180,230,0.12)";
@@ -145,28 +169,39 @@ function downMessage(ctx, t, s) {
   stroke(ctx, rightPts, PAPER_DIM, 4, 1 - 0.3 * swap);
   disc(ctx, notch[0], notch[1], 6, PAPER_DIM, 1 - 0.3 * swap);
   disc(ctx, point[0], point[1], 6, PAPER_DIM, 1 - 0.3 * swap);
-  type(ctx, "me · closed", HEART.cx, HEART.cy + 4, 20, PAPER_DIM, "MV Mono", "center");
+  layer(ctx, 1 - goneAt(t, 4, 0.14), () =>
+    type(ctx, "me · closed", HEART.cx, HEART.cy + 4, 20, PAPER_DIM, "MV Mono", "center"));
 
   // the exit: same curves, still not joined, still off the page
+  const exitGone = 1 - goneAt(t, 1, 0.14);
+  const markGone = 1 - goneAt(t, 2, 0.14);
   const spread = 14;
   const sx = Math.round(HEART.cx + HEART.hs * 1.42);
   const sy = Math.round(HEART.cy - HEART.hs * 0.12);
   const exitTop = [[sx, sy], [sx + 250, sy - 34], [1520, HEART.midY - 74 - spread], [1920, HEART.midY - 96 - spread]];
   const exitBottom = [[sx, sy + 24], [sx + 300, sy + 76], [1520, HEART.midY + 64 + spread], [1920, HEART.midY + 80 + spread]];
-  stroke(ctx, bez(exitTop), PAPER_MID, 3, 1 - 0.3 * swap);
-  stroke(ctx, bez(exitBottom), PAPER_MID, 3, 1 - 0.3 * swap);
+  stroke(ctx, bez(exitTop), PAPER_MID, 3, (1 - 0.3 * swap) * exitGone);
+  stroke(ctx, bez(exitBottom), PAPER_MID, 3, (1 - 0.3 * swap) * exitGone);
   ctx.save();
   ctx.fillStyle = PAPER_MID;
-  ctx.globalAlpha *= 1 - 0.3 * swap;
+  ctx.globalAlpha *= (1 - 0.3 * swap) * markGone;
   ctx.fillRect(1888, HEART.midY - 98, 32, 3);
   ctx.fillRect(1888, HEART.midY + 79, 32, 3);
   ctx.restore();
 
-  // the computed points, kept on her boundary -- the only cyan on the page
-  for (let i = 3; i < leftPts.length - 3; i += 6) {
-    disc(ctx, leftPts[i][0], leftPts[i][1], 4, BLUE_DIM, 1);
-    disc(ctx, rightPts[i][0], rightPts[i][1], 4, BLUE_DIM, 1);
-  }
+  // the computed points, kept on her boundary -- the only cyan on the page. They go
+  // one beat at a time, right to left, so the outline empties where the pen stopped.
+  const dotsGone = goneAt(t, 3, 0.12);
+  const dots = [];
+  for (let i = 3; i < leftPts.length - 3; i += 6) dots.push(i);
+  dots.forEach((idx, k) => {
+    const keep = 1 - clamp(dotsGone * 2 - (dots.length - 1 - k) * 0.18);
+    if (keep <= 0.01) return;
+    layer(ctx, keep, () => {
+      disc(ctx, leftPts[idx][0], leftPts[idx][1], 4, BLUE_DIM, 1);
+      disc(ctx, rightPts[idx][0], rightPts[idx][1], 4, BLUE_DIM, 1);
+    });
+  });
 
   // 2. her, right of centre, 82% of the frame, palm open -- the same placement as
   //    the shot before. The wash is the same plate, not another pose: the palm has
@@ -193,11 +228,14 @@ function downMessage(ctx, t, s) {
   }
 
   // 3. the god plate, printed over her in section 6 and again at the end of 13.
-  //    Here it is the first thing that leaves: a print lifting off, not a light
-  //    being switched off.
+  //    Here it is the first thing that leaves: on the first hit of the chorus it lifts
+  //    off the sheet, and the beats after it take the exit, the mark, the dots and the
+  //    label with them -- one thing per hit, so the hold is still a hold, but it is
+  //    being taken apart while it holds.
+  const lift = 1 - goneAt(t, 0, 0.18);
   const god = figureImages.godPaper;
   if (god && god.complete) {
-    const k = 1 - swap;
+    const k = (1 - swap) * lift;
     const sGod = (0.82 * 1080) / 1438;
     const w = Math.round(1342 * sGod);
     const h = Math.round(1704 * sGod);
@@ -249,8 +287,9 @@ const STATES = Object.freeze([
   ["retry", "never"],
 ]);
 
-function statePanel(ctx, alpha = 1) {
+function statePanel(ctx, alpha = 1, t = -1) {
   if (alpha <= 0.001) return;
+  const nb = t >= 0 ? beatCount(t) : 0;
   layer(ctx, alpha, () => {
     // the block is a plate with its own edge: a 1px rule and a 2px boundary bar on the
     // left, which is how section 9 marked the edge of everything it printed
@@ -269,8 +308,16 @@ function statePanel(ctx, alpha = 1) {
     stroke(ctx, [[STATE.x + 30, STATE.y + 58], [STATE.x + STATE.w - 26, STATE.y + 58]], "rgba(0,180,230,0.16)", 1);
     STATES.forEach(([k, v], i) => {
       const y = STATE.y + 112 + i * 62;
-      type(ctx, k, STATE.x + 30, y, 20, "rgba(242,247,250,0.50)", "MV Mono");
-      type(ctx, v, STATE.x + 350, y, 30, "rgba(242,247,250,0.92)", "MV Mono");
+      // every hit takes one line of the record away, except the contact that was kept:
+      // that one is never struck, it is the reason the panel is still here
+      const struck = i !== 2 && nb > i ? 1 : 0;
+      const ink = 1 - struck * 0.82;
+      type(ctx, k, STATE.x + 30, y, 20, `rgba(242,247,250,${(0.50 * ink).toFixed(3)})`, "MV Mono");
+      type(ctx, v, STATE.x + 350, y, 30, `rgba(242,247,250,${(0.92 * ink).toFixed(3)})`, "MV Mono");
+      if (struck) {
+        ctx.fillStyle = "rgba(231,93,105,0.55)";
+        ctx.fillRect(STATE.x + 26, y - 10, STATE.w - 56, 2);
+      }
       stroke(ctx, [[STATE.x + 30, y + 22], [STATE.x + STATE.w - 26, y + 22]], "rgba(0,180,230,0.10)", 1);
     });
     // the one record she kept: the heart, at the row it belongs to
@@ -307,7 +354,7 @@ function downParams(ctx, t, s) {
     markSize: 0,
   });
 
-  statePanel(ctx, 1);
+  statePanel(ctx, 1, t);
 
   // she is turned away, at 45% of the frame, standing in what the window no longer
   // covers. Her plate is washed once: there is no colour in her any more either.
@@ -523,7 +570,10 @@ function outlineArt(img, width, height, colour, thick = 3) {
 function downPower(ctx, t, s) {
   ground(ctx, t, [1320, 560], true, 0.28);
   const u = t - s.at;
-  const out = clamp01((u - 0.45) / 1.45);
+  // the drain is stepped onto the hits: each one erases another strip of her, so the
+  // figure is being taken away in time with the song rather than fading out of it
+  const HITS = BEATS.filter((b) => b >= 203.3942 && b <= 205.702);
+  const out = clamp01(HITS.filter((b) => t >= b).length / HITS.length);
 
   const low = figureImages.lowlight;
   const h = Math.round(0.84 * 1080);
@@ -787,6 +837,11 @@ function downLast(ctx, t, s) {
 // ---------------------------------------------------------------------------
 function gradeFor(shot, t) {
   const base = { glow: 0.30, aberration: 0, flash: 0, vignette: 0.40, scanline: 0.022, grain: 0.03 };
+  // the last stretch is a slow dim: the room loses its light before the window does
+  if (shot === "down-power" || shot === "down-last") {
+    const dim = clamp((t - 204.6) / 6.4);
+    return { ...base, glow: 0.30 - 0.20 * dim, vignette: 0.40 + 0.34 * dim, grain: 0.03 * (1 - dim), fade: 0.85 * clamp((t - 209.9) / 2.0) };
+  }
   if (shot === "down-message") return { ...base, glow: 0.26, vignette: 0.34 };
   if (shot === "down-params") return { ...base, glow: 0.24, vignette: 0.42 };
   if (shot === "down-layout") return { ...base, glow: 0.20, vignette: 0.46 };
