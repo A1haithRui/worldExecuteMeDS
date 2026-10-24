@@ -285,12 +285,14 @@ export const LYRIC_BY_SHOT = Object.freeze({
       124: { size: 96, align: "left", anchor: [330, 1000], maxWidth: 1200 },
     },
   },
+  // the verse sits at the foot of the page, under the proof, so it never covers the
+  // heart or her. L128 is the refrain and stays at the foot of the sheet at 96 px.
   "out-proof": {
-    style: "display", size: 58, align: "left", anchor: [330, 200], maxWidth: 760,
+    style: "display", size: 52, align: "left", anchor: [330, 806], maxWidth: 900,
     byLine: {
-      125: { anchor: [330, 200] },
-      126: { anchor: [330, 270] },
-      127: { anchor: [330, 340] },
+      125: { anchor: [330, 806] },
+      126: { anchor: [330, 862] },
+      127: { anchor: [330, 918] },
       128: { size: 96, align: "left", anchor: [330, 1000], maxWidth: 1200 },
     },
   },

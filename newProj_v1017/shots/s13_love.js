@@ -691,60 +691,75 @@ function outFormula(ctx, t, s) {
 // close; on the far side they leave the page and never meet. She stands on the
 // right at 82% of frame height, palm open, and lets the point go.
 // ---------------------------------------------------------------------------
-const LENS = Object.freeze({ left: 330, right: 820, top: 380, bottom: 820, midY: 600 });
+const HEART = Object.freeze({ cx: 620, cy: 548, hs: 236, midY: 548 });
 const PALM_AT = Object.freeze({ x: 1120, y: 700 });
-const HOVER_AT = Object.freeze({ x: 1780, y: 552 });
+const HOVER_AT = Object.freeze({ x: 1780, y: 512 });
+
+/** One cubic, sampled on integer pixels. */
+function bez4(p, n = 46) {
+  const out = [];
+  for (let i = 0; i <= n; i++) {
+    const q = i / n;
+    const v = 1 - q;
+    out.push([
+      Math.round(v * v * v * p[0][0] + 3 * v * v * q * p[1][0] + 3 * v * q * q * p[2][0] + q * q * q * p[3][0]),
+      Math.round(v * v * v * p[0][1] + 3 * v * v * q * p[1][1] + 3 * v * q * q * p[2][1] + q * q * q * p[3][1]),
+    ]);
+  }
+  return out;
+}
+
+/** A heart half with the same ink weight as Q3's curves: 12px halo, 4px line. */
+function heartHalf(ctx, p, colour) {
+  const pts = bez4(p);
+  layer(ctx, 0.16, () => stroke(ctx, pts, colour, 12));
+  stroke(ctx, pts, colour, 4);
+  return pts;
+}
 
 function outProof(ctx, t, s) {
   pageBase(ctx, t, { q: "Q4", title: "PROOF", marks: "—", footer: "the exit is not closed" });
   questionNumber(ctx, 4);
 
-  const u = t - s.at;
   const open = 191.356 - s.at; // when LO-O-OVE starts: the point has arrived
 
-  // 1. the closed boundary: the two curves, joined at both ends
-  const top = [[LENS.left, LENS.midY], [LENS.left + 120, LENS.top], [LENS.right - 120, LENS.top], [LENS.right, LENS.midY]];
-  const bottom = [[LENS.right, LENS.midY], [LENS.right - 120, LENS.bottom], [LENS.left + 120, LENS.bottom], [LENS.left, LENS.midY]];
-  const bez = (p, n = 40) => {
-    const out = [];
-    for (let i = 0; i <= n; i++) {
-      const q = i / n;
-      const v = 1 - q;
-      out.push([
-        Math.round(v * v * v * p[0][0] + 3 * v * v * q * p[1][0] + 3 * v * q * q * p[2][0] + q * q * q * p[3][0]),
-        Math.round(v * v * v * p[0][1] + 3 * v * v * q * p[1][1] + 3 * v * q * q * p[2][1] + q * q * q * p[3][1]),
-      ]);
-    }
-    return out;
-  };
-  stroke(ctx, bez(top), PAPER, 3);
-  stroke(ctx, bez(bottom), PAPER, 3);
-  disc(ctx, LENS.left, LENS.midY, 5, PAPER, 1);
-  disc(ctx, LENS.right, LENS.midY, 5, PAPER, 1);
-  // the computed points, kept inside her boundary
-  for (let i = 1; i < 7; i++) {
-    const q = i / 7;
-    disc(ctx, Math.round(LENS.left + 80 + q * (LENS.right - LENS.left - 160)), Math.round(LENS.midY - 96 - q * 24), 4, BLUE, 1);
-    disc(ctx, Math.round(LENS.left + 80 + q * (LENS.right - LENS.left - 160)), Math.round(LENS.midY + 96 + q * 24), 4, BLUE, 1);
+  // 1. her side: the same two curves as Q3, now joined at the notch and the point.
+  //    They make a heart. "me" is the cyan half, "you" is the paper half.
+  const notch = [HEART.cx, HEART.cy - HEART.hs * 0.35];
+  const point = [HEART.cx, HEART.cy + HEART.hs * 0.95];
+  const left = [notch, [HEART.cx - HEART.hs * 0.80, HEART.cy - HEART.hs * 1.30], [HEART.cx - HEART.hs * 1.62, HEART.cy - HEART.hs * 0.18], point];
+  const right = [notch, [HEART.cx + HEART.hs * 0.80, HEART.cy - HEART.hs * 1.30], [HEART.cx + HEART.hs * 1.62, HEART.cy - HEART.hs * 0.18], point];
+  const leftPts = heartHalf(ctx, left, BLUE);
+  const rightPts = heartHalf(ctx, right, PAPER);
+  // the computed points, kept on her boundary
+  for (let i = 3; i < leftPts.length - 3; i += 6) {
+    disc(ctx, leftPts[i][0], leftPts[i][1], 5, BLUE, 1);
+    disc(ctx, rightPts[i][0], rightPts[i][1], 5, PAPER, 1);
   }
-  label(ctx, "me · closed", (LENS.left + LENS.right) / 2, LENS.midY + 44, 18, PAPER_MID, "center");
+  disc(ctx, notch[0], notch[1], 7, PAPER, 1);
+  disc(ctx, point[0], point[1], 7, PAPER, 1);
+  label(ctx, "me · closed", HEART.cx, HEART.cy + 44, 20, PAPER_MID, "center");
+  label(ctx, "the two curves, joined", HEART.cx, HEART.cy + 76, 14, PAPER_DIM, "center");
 
-  // 2. the far exit: the same two curves, not joined, off the page
-  const spread = 6 + Math.round(8 * easeInOut((t - s.at) / 3.9)); // it opens, never closes
-  const exitTop = [[LENS.right, LENS.midY], [1050, LENS.midY - 40], [1500, LENS.midY - 70 - spread], [1920, LENS.midY - 92 - spread]];
-  const exitBottom = [[LENS.right, LENS.midY], [1050, LENS.midY + 44], [1500, LENS.midY + 62 + spread], [1920, LENS.midY + 76 + spread]];
-  stroke(ctx, bez(exitTop), PAPER, 3);
-  stroke(ctx, bez(exitBottom), PAPER, 3);
-  // the mouth: the exit is open, and open is a boundary, so it is marked as one
-  const mouthTop = LENS.midY - 92 - spread;
-  const mouthBot = LENS.midY + 76 + spread;
+  // 2. the far exit: the same two curves leaving the heart's right side, not joined,
+  //    off the page. Open is a boundary, so it is marked like one.
+  const spread = 6 + Math.round(10 * easeInOut((t - s.at) / 3.9)); // it opens, never closes
+  const sx = Math.round(HEART.cx + HEART.hs * 1.42);
+  const sy = Math.round(HEART.cy - HEART.hs * 0.12);
+  const exitTop = [[sx, sy], [sx + 250, sy - 34], [1520, HEART.midY - 74 - spread], [1920, HEART.midY - 96 - spread]];
+  const exitBottom = [[sx, sy + 24], [sx + 300, sy + 76], [1520, HEART.midY + 64 + spread], [1920, HEART.midY + 80 + spread]];
+  stroke(ctx, bez4(exitTop), PAPER, 4);
+  stroke(ctx, bez4(exitBottom), PAPER, 4);
+  const mouthTop = HEART.midY - 96 - spread;
+  const mouthBot = HEART.midY + 80 + spread;
   ctx.save();
   ctx.fillStyle = PAPER;
   ctx.fillRect(1888, mouthTop - 2, 32, 3);
   ctx.fillRect(1888, mouthBot - 1, 32, 3);
   ctx.restore();
-  label(ctx, "OPEN", 1866, mouthTop - 16, 16, PAPER_DIM, "right");
-  label(ctx, "you · open", 1790, LENS.midY + 132, 18, PAPER_MID, "right");
+  label(ctx, "OPEN", 1866, mouthTop - 18, 18, PAPER_DIM, "right");
+  label(ctx, "you · open", 1790, HEART.midY + 140, 20, PAPER_MID, "right");
+
 
   // 3. her, right of centre, 82% of the frame, palm open
   const reach = ART.images.reach;
@@ -763,7 +778,7 @@ function outProof(ctx, t, s) {
   const reqK = clamp01((t - (s.at + 0.35)) / 0.3);
   layer(ctx, reqK, () => {
     const bx = 330;
-    const by = 236;
+    const by = 152;
     ctx.fillStyle = "rgba(6,27,40,0.9)";
     ctx.fillRect(bx, by, 720, 84);
     stroke(ctx, [[bx, by], [bx + 720, by]], "rgba(0,180,230,0.4)", 2);
