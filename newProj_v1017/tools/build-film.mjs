@@ -10,7 +10,15 @@ import { readdirSync, writeFileSync } from "node:fs";
 import { SHOTS_DERIVED } from "../shots/index.js";
 
 const FF = "G:\\CODE\\worldExecuteMe\\world-execute-me-lyric-mv\\node_modules\\ffmpeg-static\\ffmpeg.exe";
-const files = readdirSync("shots").filter((f) => f.endsWith(".mp4")).sort();
+const argv = process.argv.slice(2);
+const opt = (name, fallback) => {
+  const i = argv.indexOf(name);
+  return i >= 0 && argv[i + 1] ? argv[i + 1] : fallback;
+};
+const DIR = opt("--dir", "shots");
+const OUT = opt("--out", "out/world-execute-me-deepseek-720p30.mp4");
+const FPS = opt("--fps", "30");
+const files = readdirSync(DIR).filter((f) => f.endsWith(".mp4")).sort();
 
 const args = [];
 let total = 0;
@@ -22,7 +30,7 @@ for (let i = 0; i < SHOTS_DERIVED.length; i++) {
   if (!f) throw new Error("missing clip " + n);
   const d = s.until - s.at;
   total += d;
-  args.push("-t", d.toFixed(4), "-i", "shots/" + f);
+  args.push("-t", d.toFixed(4), "-i", DIR + "/" + f);
   parts.push(`[${i}:v]`);
 }
 console.log("shots: " + SHOTS_DERIVED.length + "  video length: " + total.toFixed(3) + " s");
@@ -30,14 +38,14 @@ console.log("shots: " + SHOTS_DERIVED.length + "  video length: " + total.toFixe
 const filter = `${parts.join("")}concat=n=${SHOTS_DERIVED.length}:v=1:a=0[v]`;
 
 // the song starts after the silent warning page, five seconds into the film
-const out = "out/world-execute-me-deepseek-720p30.mp4";
+const out = OUT;
 const full = [
   ...args,
   "-i", "audio/song.wav",
   "-filter_complex", filter,
   "-map", "[v]", "-map", `${SHOTS_DERIVED.length}:a:0`,
   "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p",
-  "-r", "30",
+  "-r", FPS,
   // five seconds of real silence in front, rather than a timestamp offset that some
   // players ignore: the warning page is silent and the song has to start at 5.0
   "-af", "adelay=5000:all=1",
