@@ -605,7 +605,7 @@
       "id": "c1-kw1",
       "section": 5,
       "at": 61.9276,
-      "until": 62.6199,
+      "until": 63.0815,
       "lines": [
         35,
         35
@@ -621,9 +621,9 @@
       },
       "referenceEnter": "cut",
       "index": 18,
-      "duration": 0.692300000000003,
+      "duration": 1.1539000000000001,
       "filmStart": 66.9276,
-      "filmEnd": 67.6199,
+      "filmEnd": 68.0815,
       "barBeat": "33:2.5",
       "offGridMs": 0.00749999999198522,
       "sectionTitle": "5 副歌一：对话与四张版画",
@@ -632,7 +632,7 @@
     {
       "id": "c1-only",
       "section": 5,
-      "at": 62.6199,
+      "at": 63.0815,
       "until": 65.3893,
       "lines": [
         36,
@@ -649,11 +649,11 @@
       },
       "referenceEnter": "cut",
       "index": 19,
-      "duration": 2.7694000000000045,
-      "filmStart": 67.6199,
+      "duration": 2.3078000000000074,
+      "filmStart": 68.0815,
       "filmEnd": 70.3893,
-      "barBeat": "33:4",
-      "offGridMs": 0.024999999995147702,
+      "barBeat": "34:1",
+      "offGridMs": 0.01999999999611816,
       "sectionTitle": "5 副歌一：对话与四张版画",
       "gridExempt": false
     },

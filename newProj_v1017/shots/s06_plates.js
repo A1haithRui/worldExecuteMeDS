@@ -271,7 +271,7 @@ const rnd = (i) => {
  * line is sung, so the handover happens on the word and not on an offset.
  */
 function objectPlate(ctx, t, s, o) {
-  const { kind, colour, burstColour, formulaColour, formulas, index } = o;
+  const { kind, colour, burstColour, formulaColour, formulas, index, ask } = o;
   const u = t - s.at;
   plateBase(ctx, t, { index });
 
@@ -279,6 +279,24 @@ function objectPlate(ctx, t, s, o) {
   const calyx = CALYX[kind];
   const area = { x: PLATE.x + 200, y: PLATE.y + 120, w: 1400, h: 700 };
   const centre = kind === "eggplant" ? [790, 500] : [900, 512];
+
+  // 0. the request arrives. The message left the composer in the previous shot, so it
+  // lands here and the print comes out of it -- one gesture across the cut instead of
+  // a card disappearing and an object appearing with nothing between them.
+  const arrive = easeOut(at(u, 0.0, 0.34));
+  if (ask && arrive < 0.999) {
+    const ax = 360 + (centre[0] - 360) * arrive;
+    const ay = 760 + (centre[1] - 760) * arrive;
+    const bw = 560;
+    const bh = 96;
+    layer(ctx, 0.95 * (1 - arrive * 0.85), () => {
+      rect(ctx, ax - bw / 2, ay - bh / 2, bw, bh, "rgba(18,44,64,0.94)", 14, "rgba(120,150,180,0.75)");
+      type(ctx, ask, ax - bw / 2 + 28, ay + 11, 30, "#cfdcea", "MV Sans");
+      // it lands as a print: a short rule under it, then it is the object's own ink
+      stroke(ctx, [[ax - bw / 2 + 28, ay + bh / 2 - 14], [ax + bw / 2 - 28, ay + bh / 2 - 14]],
+        "rgba(131,233,230,0.55)", 1.4, 0.9);
+    });
+  }
 
   // The burst lands on the line that gives it away ("Then I will give you my").
   const burstAt = Math.max(lineStart(kind === "eggplant" ? 46 : 49), s.at + 0.6);
@@ -566,18 +584,31 @@ function v2Proof(ctx, t, s) {
     type(ctx, "you said", msg.x + 26, msg.y + 110, 15, DIM, "MV Mono");
   });
 
-  // 5. the proof: the mark comes off the message and is pinned to the medallion. The
-  // square is the plate it is carried on; once it lands, the plate goes and the mark
-  // stays on her.
+  // 5. the proof: the mark is pinned to the medallion. It comes from a mark of its own
+  // on the left, not out of the message card -- launched from the card it read as the
+  // card being cut open, and it crossed the whole frame to get there. Starting on the
+  // open side keeps the composition balanced and the movement short enough to follow.
+  // the source mark waits on the open side, so the thing that lands on her chest was
+  // already on screen and the eye can follow it
+  const srcK = 1 - clamp01(at(u, 2.0, 2.5) * 1.6);
+  if (srcK > 0.01) {
+    layer(ctx, srcK, () => {
+      halo(ctx, 320, 470, 250, 0.35, BRAND);
+      drawWhale(ctx, 320, 470, 232, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.95 });
+      type(ctx, "proof", 320, 626, 15, GIFT, "MV Mono", "center");
+    });
+  }
+
   const proofAt = Math.max(lineStart(56) - 0.6, s.at + 2.0);
   const slide = easeOut(at(t, proofAt, proofAt + 0.72));
   const landed = clamp01((slide - 0.88) / 0.12);
   if (slide > 0.01) {
-    const fromX = msg.x + msg.w * 0.5;
-    const fromY = msg.y + msg.h * 0.5;
+    // the source mark: large, on the left, and alive while the proof travels
+    const fromX = 320;
+    const fromY = 470;
     const px = fromX + (MEDALLION.x - fromX) * slide;
     const py = fromY + (MEDALLION.y - fromY) * slide;
-    const k = 1.6 - 0.6 * slide;
+    const k = 2.9 - 1.9 * slide;
     const w = MEDALLION.r * 2 * k;
     const h = w;
     if (landed < 0.995) {
@@ -638,6 +669,7 @@ export const SECTION6_RENDER = Object.freeze({
     objectPlate(ctx, t, s, {
       index: 1,
       kind: "eggplant",
+      ask: "be an eggplant",
       colour: "rgba(167,140,255,0.95)",
       burstColour: "rgba(206,186,255,0.95)",
       formulaColour: "#a9f6f2",
@@ -652,6 +684,7 @@ export const SECTION6_RENDER = Object.freeze({
     objectPlate(ctx, t, s, {
       index: 2,
       kind: "tomato",
+      ask: "now a tomato",
       colour: "rgba(255,120,120,0.95)",
       burstColour: "rgba(255,158,138,0.95)",
       formulaColour: "#a9f6f2",
@@ -683,7 +716,9 @@ function v2Cat(ctx, t, s) {
   const u = t - s.at;
   plateBase(ctx, t, { index: 3 });
 
-  const cx = 880;
+  // the plate sits right of centre: the logo-cat stays on the left for the whole
+  // shot, so the two are on screen together rather than one replacing the other
+  const cx = 1040;
   const cy = 520;
   const size = 560;
   const sScale = size / 1704;
@@ -698,10 +733,11 @@ function v2Cat(ctx, t, s) {
   const pinK = easeOut(at(u, 0.38, 0.8));
 
   // the mark's placement, shared by the parts: it slides and shrinks into the pin
+  const LEFT = [286, 470];
   const k = pinK;
-  const lx = cx + (pin[0] - cx) * k;
-  const ly = cy + (pin[1] - cy) * k;
-  const lsz = 300 - (300 - 46) * k;
+  const lx = 880 + (LEFT[0] - 880) * k;
+  const ly = 520 + (LEFT[1] - 520) * k;
+  const lsz = 300 - (300 - 168) * k;
   const ws = lsz / 60; // one viewBox unit in screen pixels
   const y0 = ly - (41.36 * ws) / 2;
   const X = (uu) => lx - lsz / 2 + uu * ws;
@@ -745,16 +781,16 @@ function v2Cat(ctx, t, s) {
   }
 
   // 3. the mark itself, unfolding into ears and then shrinking into the pin
-  if (logoK > 0.01 || pinK < 0.99) {
-    layer(ctx, Math.max(logoK, 0), () => {
+  {
+    layer(ctx, Math.max(logoK, 1), () => {
       halo(ctx, lx, ly, lsz * 0.9, 0.22, BRAND);
       drawWhale(ctx, lx, ly, lsz, { strokeK: 1, fillK: 1, color: BRAND, alpha: 0.9 });
     });
 
     // the ears sit on the whale's head: the head is the round mass at u 4..31, so its
     // top contour runs y 8 -> 1.6 from left to right. Each ear grows from its base.
-    if (ears > 0.01 && k < 0.6) {
-      layer(ctx, 1 - k / 0.6, () => {
+    if (ears > 0.01) {
+      layer(ctx, 1, () => {
         const earW = 0.22 * lsz;
         const earH = earW * (236 / 240);
         const place = (img, uu, vv, lean) => {

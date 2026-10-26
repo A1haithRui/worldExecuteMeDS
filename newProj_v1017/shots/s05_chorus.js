@@ -78,7 +78,7 @@ function c1Give(ctx, t, s) {
     alpha: cue(t, 33), size: TYPE.her,
   });
   herBubble(ctx, PANEL.x + 60, y1 + 200, 1420, lineText(34), {
-    alpha: cue(t, 34), size: TYPE.beat, hot: true, emph: true,
+    alpha: at(t, s.at + 1.45, s.at + 1.7), size: TYPE.beat, hot: true, emph: true,
   });
   yourBubble(ctx, PANEL.x + PANEL.w - 70, PANEL.y + 90, "ok, go on", {
     // your reply lands a beat after her line, not at a fixed offset

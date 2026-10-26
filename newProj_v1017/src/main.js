@@ -10,6 +10,7 @@ import { createStage, shakeAt } from "./engine/stage.js";
 import { setAudioFeatures, sampleAt } from "./engine/audio.js";
 import { figureReady } from "../shots/figure.js";
 import { drawLyric } from "./engine/lyric.js";
+import { drawSubtitle, SUBTITLE_READY } from "../shots/subtitle.js";
 import { lyricPlanFor } from "../shots/lyric-plan.js";
 import { clamp, mix, smooth } from "./engine/motion.js";
 import { SHOTS_DERIVED, SOURCE, shotAt, shotById } from "../shots/index.js";
@@ -311,6 +312,9 @@ function renderFrame(t) {
     }
     const drew = drawLyric(c, { ...lyricPlan, line }, t);
     if (drew != null) diag.lyric = { style: lyricPlan.style, line: line.index };
+    // The translation sits under everything, in its own band, and follows the same
+    // line the picture is singing.
+    drawSubtitle(c, t, line.index);
   });
   return diag;
 }
@@ -363,7 +367,7 @@ async function boot() {
   // sees it.
   await Promise.all([
     lyricsReady, featuresReady, fontReady, figureReady,
-    SECTION5_READY, SECTION5_ART, S08_READY, linesReady,
+    SECTION5_READY, SECTION5_ART, S08_READY, linesReady, SUBTITLE_READY,
   ]);
   config = await configReady;
   // In render mode the picture is all that matters: ffmpeg muxes the original

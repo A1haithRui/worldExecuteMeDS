@@ -448,7 +448,7 @@ export const SHOTS = [
     "id": "c1-kw1",
     "section": 5,
     "at": 61.9276,
-    "until": 62.6199,
+    "until": 63.0815,
     "lines": [
       35,
       35
@@ -467,7 +467,7 @@ export const SHOTS = [
   {
     "id": "c1-only",
     "section": 5,
-    "at": 62.6199,
+    "at": 63.0815,
     "until": 65.3893,
     "lines": [
       36,
